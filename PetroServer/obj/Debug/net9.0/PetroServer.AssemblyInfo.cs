@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PetroServer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d3a0903fdeb4764d63e9fef63f2eef3b330d9b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("PetroServer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PetroServer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -45,3 +45,4 @@ C:\Users\maiqu\Desktop\repo\linux-windows\Intern\PetroServer\bin\Debug\net9.0\Np
 C:\Users\maiqu\Desktop\repo\linux-windows\Intern\PetroServer\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\Users\maiqu\Desktop\repo\linux-windows\Intern\PetroServer\bin\Debug\net9.0\Sprache.dll
 C:\Users\maiqu\Desktop\repo\linux-windows\Intern\PetroServer\bin\Debug\net9.0\EFCore.NamingConventions.dll
+C:\Users\maiqu\Desktop\repo\linux-windows\Intern\PetroServer\obj\Debug\net9.0\PetroServer.sourcelink.json

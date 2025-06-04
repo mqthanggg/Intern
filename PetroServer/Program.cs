@@ -9,10 +9,10 @@ builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1",new OpenApiInfo{Title = "Petro application API", Description = "List of APIs for petro application", Version = "v1"});
 });
-builder.Services.AddDbContext<DbWrite>((sp,options) => {
+builder.Services.AddDbContextPool<DbWrite>((sp,options) => {
     options.UseNpgsql(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING")).UseSnakeCaseNamingConvention(); 
 });
-builder.Services.AddDbContext<DbRead>((sp,options) => {
+builder.Services.AddDbContextPool<DbRead>((sp,options) => {
     options.UseNpgsql(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING")).UseSnakeCaseNamingConvention(); 
 });
 var app = builder.Build();
