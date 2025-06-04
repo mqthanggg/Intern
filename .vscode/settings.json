@@ -1,7 +1,0 @@
-{
-    "dotnet.defaultSolution": "PetroApplication.sln",
-    "cSpell.words": [
-        "blazor",
-        "stylesheet"
-    ]
-}
