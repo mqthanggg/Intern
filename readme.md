@@ -8,7 +8,7 @@
 **Supposed that a user can managed all the gas stations, there's no need to establish any relation from the user table to other tables.**
 - There are 2 database users: one for reading operations (SELECT) and one for writing operations (INSERT, DELETE, UPDATE).
 - The database can be hosted on port 5432 with the credentials inside the env file (Database/database.env).
-- The tables can be found on database Intern.
+- The tables can be found on **petro_application** schema, in **Intern** database.
 ## Server
 - Using .NET 9 to build a server with minimal APIs
 - The server can establish 2 connections to the database: one for the *read-only* connection and one for the *write-only* connection.
@@ -18,5 +18,5 @@
 - Start making the hardware simulator.
 - Finish the database (if needed).
 - Setup all server endpoints.
-- Build an UI.
+- Build an UI.<br/>
 ...
