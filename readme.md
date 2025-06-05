@@ -6,11 +6,12 @@
 ### The ERD of the gas station management software
 ![Screenshot of the software ERD](./Database/erd.png)
 **Supposed that a user can managed all the gas stations, there's no need to establish any relation from the user table to other tables.**
+**Update: The column password of the table user has been changed from **~~varying character(72)~~** to varying character(84) due to C# not fully supported BCrypt(intended hash algorithm), changed to ASP.NET built in PasswordHasher class.**
 - There are 2 database users: one for reading operations (SELECT) and one for writing operations (INSERT, DELETE, UPDATE).
 - The database can be hosted on port 5432 with the credentials inside the env file (Database/database.env).
 - The tables can be found on **petro_application** schema, in **Intern** database.
 ## Server
-- Using .NET 9 to build a server with minimal APIs
+- Using .NET 9 to build a server with minimal APIs.
 - The server can establish 2 connections to the database: one for the *read-only* connection and one for the *write-only* connection.
 ## UI
 - Will be using Angular for making the UI.
@@ -18,5 +19,5 @@
 - Start making the hardware simulator.
 - Finish the database (if needed).
 - Setup all server endpoints.
-- Build an UI.<br/>
+- ~~Build an UI~~ Finish the UI .<br/>
 ...
