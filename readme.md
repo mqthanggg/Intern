@@ -6,7 +6,7 @@
 ### The ERD of the gas station management software
 ![Screenshot of the software ERD](./Database/erd.png)
 **Supposed that a user can managed all the gas stations, there's no need to establish any relation from the user table to other tables.** <br/> <br/>
-**_Update: The column password of the table user has been changed from **~~varying character(72)~~** to varying character(84) due to C# not fully supported BCrypt(intended hash algorithm), changed to ASP.NET built in PasswordHasher class._**
+**_Update: The column password of the table user has been changed from **~~varying character(72)~~** to varying character(84) due to BCrypt(intended hash algorithm) is not fully supported in C#, ASP.NET built in PasswordHasher class will be used instead._**
 - There are 2 database users: one for reading operations (SELECT) and one for writing operations (INSERT, DELETE, UPDATE).
 - The database can be hosted on port 5432 with the credentials inside the env file (Database/database.env).
 - The tables can be found on **petro_application** schema, in **Intern** database.
