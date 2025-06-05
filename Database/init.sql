@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS petro_application.user
 (
     user_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
     username character varying(15) NOT NULL,
-    password character(72) NOT NULL,
+    password character(84) NOT NULL,
     PRIMARY KEY (user_id)
 );
 
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     fuel_name character varying(15) NOT NULL,
     total_liters real NOT NULL,
     total_amount integer NOT NULL,
-    time timestamp(0) without time zone NOT NULL,
+    time timestamp(0) without time zone NOT NULL DEFAULT now(),
     PRIMARY KEY (log_id)
 );
 
@@ -191,17 +191,30 @@ INSERT INTO petro_application.log (dispenser_id, fuel_name, total_liters, total_
 (3, 'Diesel Oil-I', 15.0, 30000, TIMESTAMP(0) '2025-06-04 14:40:00'),
 (3, 'Diesel Oil-I', 13.2, 26400, TIMESTAMP(0) '2025-06-04 14:55:00'),
 (3, 'Diesel Oil-I', 16.5, 33000, TIMESTAMP(0) '2025-06-04 15:10:00'),
-
 (4, 'Diesel Oil-V', 12.3, 23370, TIMESTAMP(0) '2025-06-04 14:45:00'),
 (4, 'Diesel Oil-V', 10.8, 20520, TIMESTAMP(0) '2025-06-04 15:00:00'),
 (4, 'Diesel Oil-V', 14.5, 27550, TIMESTAMP(0) '2025-06-04 15:15:00');
 
+DO $$ 
+BEGIN 
+    IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'read_user') THEN 
+        EXECUTE 'REVOKE USAGE ON SCHEMA petro_application FROM read_user';
+		EXECUTE 'REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application FROM read_user';
+    END IF; 
+	IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'write_user') THEN 
+        EXECUTE 'REVOKE USAGE ON SCHEMA petro_application FROM write_user';
+		EXECUTE 'REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application FROM write_user';
+    END IF; 
+END $$;
+
 DROP USER IF EXISTS read_user;
 CREATE USER read_user WITH ENCRYPTED PASSWORD 'read123';
+GRANT USAGE ON SCHEMA petro_application TO read_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA petro_application TO read_user;
 
 DROP USER IF EXISTS write_user;
 CREATE USER write_user WITH ENCRYPTED PASSWORD 'write123';
+GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA petro_application TO read_user;
 
 END;
