@@ -13,11 +13,12 @@
 ## Server
 - Using .NET 9 to build a server with minimal APIs.
 - The server can establish 2 connections to the database: one for the *read-only* connection and one for the *write-only* connection.
+- Using JWT with asymmetric keys for authentication. (fixing)
 ## UI
 - Will be using Angular for making the UI.
 ## Todos
 - Start making the hardware simulator.
 - Finish the database (if needed).
 - Setup all server endpoints.
-- ~~Build an UI~~ Finish the UI .<br/>
+- ~~Build an UI~~ Finish the UI. (fixed the login UI)<br/>
 ...

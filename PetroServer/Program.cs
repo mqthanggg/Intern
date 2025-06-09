@@ -1,5 +1,12 @@
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.WebSockets;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Npgsql;
@@ -12,6 +19,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHealthChecks().AddNpgSql(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING"),name:"write").AddNpgSql(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING"),name:"read");
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1",new OpenApiInfo{Title = "Petro application API", Description = "List of APIs for petro application", Version = "v1"});
+});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(op => {
+    op.Authority = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY");
+    op.Audience = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE");
+    op.RequireHttpsMetadata = false;
+    //Using JWKS validation
+    op.TokenValidationParameters = new TokenValidationParameters{
+        ValidIssuer = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
+        ValidAudience = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
+        IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
+            var httpClient = new HttpClient();
+            var res = httpClient.GetStringAsync(DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
+            var jwks_keys = new JsonWebKeySet(res).Keys;
+            return jwks_keys;
+        }
+    };
 });
 builder.Services.AddAuthorization();
 builder.Services.AddCors((op) => {
@@ -29,7 +52,6 @@ var report = await healthCheckService.CheckHealthAsync();
 if (report.Status == HealthStatus.Healthy){
     await using var db_write_dataSource = NpgsqlDataSource.Create(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING"));
     await using var db_read_dataSource = NpgsqlDataSource.Create(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING"));
-    app.Logger.LogInformation("Hashed password: {}",PasswordHasher.Hash(new User{Username="",Password=""},"admin123"));
     app.UseRouting();
     app.UseCors();
     if (app.Environment.IsDevelopment()){
@@ -39,8 +61,9 @@ if (report.Status == HealthStatus.Healthy){
             });
         }
     app.UseAuthorization();
+    app.UseAuthentication();
     app.MapHealthChecks("/health");
-    app.MapGet("/stations", async () => {
+    app.MapGet("/stations", [Authorize] async () => {
         await using var cmd = db_read_dataSource.CreateCommand($"SELECT * FROM {DotNetEnv.Env.GetString("schema")}.station");
         var res = await cmd.ExecuteReaderAsync();
         var dataTable = new DataTable();
@@ -53,16 +76,42 @@ if (report.Status == HealthStatus.Healthy){
         var res = await cmd.ExecuteReaderAsync();
         if (!res.HasRows){
             await res.CloseAsync();
-            return Results.Json(new {why = "username"}, statusCode: 401);
+            return Results.Unauthorized();
         }
         res.Read();
         var encryptedPassword = res["password"].ToString() ?? "";
         if (PasswordHasher.Verify(body,body.Password,encryptedPassword)){
-            return Results.Ok();
+            var claims = new List<Claim>{
+                new Claim(ClaimTypes.Sid, res["user_id"].ToString() ?? ""),
+                new Claim(ClaimTypes.Name, res["username"].ToString() ?? "")
+            };
+            var creds = new SigningCredentials(new RsaSecurityKey(RSAClass.LoadPrivateRsaKey()),SecurityAlgorithms.RsaSha256);
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
+                audience: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(5),
+                signingCredentials: creds
+            );
+            return Results.Ok(new {token= new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)});
         }
         else{
-            return Results.Json(new {why = "password"}, statusCode: 401);
+            return Results.Unauthorized();
         }        
+    });
+    //Configure route for JWKS
+    app.MapGet("/.well-known/jwks.json",() => {
+        var rsa = RSAClass.LoadPublicRsaKey();
+        var parameters = rsa.ExportParameters(false);
+        var jwk = new JsonWebKey{
+            Kty = "RSA",
+            Alg= SecurityAlgorithms.RsaSha256,
+            Kid= "rsa_public_key",
+            E= Base64UrlEncoder.Encode(parameters.Exponent),
+            N= Base64UrlEncoder.Encode(parameters.Modulus),
+            Use= "sig",
+        };
+        return Results.Json(new {keys = new[]{jwk}});
     });
     app.Run();
 }
