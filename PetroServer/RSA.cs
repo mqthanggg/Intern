@@ -6,13 +6,13 @@ static class RSAClass{
     public static RSA LoadPrivateRsaKey(){
         var rsa = RSA.Create();
         var pemContent = File.ReadAllText(privateKeyPath);
-        rsa.ImportFromPem(pemContent.ToCharArray());
+        rsa.ImportFromPem(pemContent);
         return rsa;
     }
     public static RSA LoadPublicRsaKey(){
         var rsa = RSA.Create();
         var pemContent = File.ReadAllText(publicKeyPath);
-        rsa.ImportFromPem(pemContent.ToCharArray());
+        rsa.ImportFromPem(pemContent);
         return rsa;
     }
 }

@@ -12,6 +12,11 @@ export const routes: Routes = [
         loadComponent: () => import('./error/error.component').then(m => m.ErrorComponent)  
     },
     {
+        path: "user",
+        title: "User",
+        loadComponent: ()=>import('./user/user.component').then(m => m.UserComponent)
+    },
+    {
         path: "",
         pathMatch: "full",
         redirectTo: "/login"

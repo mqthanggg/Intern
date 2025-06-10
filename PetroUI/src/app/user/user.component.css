@@ -1,0 +1,5 @@
+@layer utilities{
+    .w-top-nav{
+        height: 4rem;
+    }
+}

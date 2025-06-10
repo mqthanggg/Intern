@@ -19,6 +19,26 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHealthChecks().AddNpgSql(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING"),name:"write").AddNpgSql(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING"),name:"read");
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1",new OpenApiInfo{Title = "Petro application API", Description = "List of APIs for petro application", Version = "v1"});
+    c.AddSecurityDefinition("Bearer",new OpenApiSecurityScheme{
+        Description = "JWT Authorization using Bearer header",
+        Name = "JWT Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement(){
+        {
+            new OpenApiSecurityScheme{
+                Reference = new OpenApiReference{
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "Bearer",
+                Name = "JWT Authorization",
+                In = ParameterLocation.Header,},
+            new List<string>()
+        }
+    });
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(op => {
     op.Authority = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY");
@@ -26,14 +46,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     op.RequireHttpsMetadata = false;
     //Using JWKS validation
     op.TokenValidationParameters = new TokenValidationParameters{
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
         ValidIssuer = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
         ValidAudience = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
-        IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
-            var httpClient = new HttpClient();
-            var res = httpClient.GetStringAsync(DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
-            var jwks_keys = new JsonWebKeySet(res).Keys;
-            return jwks_keys;
-        }
+        // IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
+        //     var httpClient = new HttpClient();
+        //     var res = httpClient.GetStringAsync(DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
+        //     var jwks_keys = new JsonWebKeySet(res).Keys;
+        //     return jwks_keys;
+        // }
+        IssuerSigningKey = new RsaSecurityKey(RSAClass.LoadPublicRsaKey()),
+        RequireSignedTokens = true
     };
 });
 builder.Services.AddAuthorization();
@@ -80,7 +106,8 @@ if (report.Status == HealthStatus.Healthy){
         }
         res.Read();
         var encryptedPassword = res["password"].ToString() ?? "";
-        if (PasswordHasher.Verify(body,body.Password,encryptedPassword)){
+        var passwordPadding = res["padding"].ToString() ?? "";
+        if (PasswordHasher.Verify(body,body.Password + passwordPadding,encryptedPassword)){
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.Sid, res["user_id"].ToString() ?? ""),
                 new Claim(ClaimTypes.Name, res["username"].ToString() ?? "")
