@@ -89,8 +89,15 @@ if (report.Status == HealthStatus.Healthy){
     app.UseAuthorization();
     app.UseAuthentication();
     app.MapHealthChecks("/health");
-    app.MapGet("/stations", [Authorize] async () => {
-        await using var cmd = db_read_dataSource.CreateCommand($"SELECT * FROM {DotNetEnv.Env.GetString("schema")}.station");
+    app.MapGet("/station/{id}", async (int id) => {
+        await using var cmd = db_read_dataSource.CreateCommand($"SELECT name,address FROM {DotNetEnv.Env.GetString("schema")}.station WHERE station_id = @id");
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
+        var res = await cmd.ExecuteReaderAsync();
+        res.Read();
+        return Results.Ok(new {name = res["name"],address = res["address"]});
+    });
+    app.MapGet("/stations", async () => {
+        await using var cmd = db_read_dataSource.CreateCommand($"SELECT station_id,name,address FROM {DotNetEnv.Env.GetString("schema")}.station");
         var res = await cmd.ExecuteReaderAsync();
         var dataTable = new DataTable();
         dataTable.Load(res);

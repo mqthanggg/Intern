@@ -173,6 +173,86 @@ ALTER TABLE IF EXISTS petro_application.log
     ON DELETE NO ACTION
     NOT VALID;
 
+CREATE OR REPLACE FUNCTION update_modified_fields()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.last_modified_date = CURRENT_TIMESTAMP;
+  NEW.last_modified_by = CURRENT_USER;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_modified_fields_when_create()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.created_date = CURRENT_TIMESTAMP;
+  NEW.created_by = CURRENT_USER;
+  NEW.last_modified_date = CURRENT_TIMESTAMP;
+  NEW.last_modified_by = CURRENT_USER;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_dispenser_audit_fields
+BEFORE UPDATE ON petro_application.dispenser
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_dispenser_audit_fields_when_create
+BEFORE INSERT ON petro_application.dispenser
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
+CREATE OR REPLACE TRIGGER update_fuel_audit_fields
+BEFORE UPDATE ON petro_application.fuel
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_fuel_audit_fields_when_create
+BEFORE INSERT ON petro_application.fuel
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
+CREATE OR REPLACE TRIGGER update_tank_audit_fields
+BEFORE UPDATE ON petro_application.tank
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_tank_audit_fields_when_create
+BEFORE INSERT ON petro_application.tank
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
+CREATE OR REPLACE TRIGGER update_station_audit_fields
+BEFORE UPDATE ON petro_application.station
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_station_audit_fields_when_create
+BEFORE INSERT ON petro_application.station
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
+CREATE OR REPLACE TRIGGER update_user_audit_fields
+BEFORE UPDATE ON petro_application.user
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_user_audit_fields_when_create
+BEFORE INSERT ON petro_application.user
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
+CREATE OR REPLACE TRIGGER update_log_audit_fields
+BEFORE UPDATE ON petro_application.log
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields();
+
+CREATE OR REPLACE TRIGGER update_log_audit_fields_when_create
+BEFORE INSERT ON petro_application.log
+FOR EACH ROW
+EXECUTE FUNCTION update_modified_fields_when_create();
+
 INSERT INTO petro_application.station (name, address) VALUES
 ('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City'),
 ('PV Oil Station 2', '456 Cach Mang Thang 8, Ward 5, District 3, Ho Chi Minh City'),
@@ -240,85 +320,5 @@ DROP USER IF EXISTS write_user;
 CREATE USER write_user WITH ENCRYPTED PASSWORD 'write123';
 GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA petro_application TO read_user;
-
-CREATE OR REPLACE FUNCTION update_modified_fields()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.last_modified_date = CURRENT_TIMESTAMP;
-  NEW.last_modified_by = SESSION_USER;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION update_modified_fields_when_create()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.created_date = CURRENT_TIMESTAMP;
-  NEW.created_by = SESSION_USER;
-  NEW.last_modified_date = CURRENT_TIMESTAMP;
-  NEW.last_modified_by = SESSION_USER;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER update_dispenser_audit_fields
-BEFORE UPDATE ON petro_application.dispenser
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_dispenser_audit_fields_when_create
-BEFORE INSERT ON petro_application.dispenser
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_fuel_audit_fields
-BEFORE UPDATE ON petro_application.fuel
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_fuel_audit_fields_when_create
-BEFORE INSERT ON petro_application.fuel
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_tank_audit_fields
-BEFORE UPDATE ON petro_application.tank
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_tank_audit_fields_when_create
-BEFORE INSERT ON petro_application.tank
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_station_audit_fields
-BEFORE UPDATE ON petro_application.station
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_station_audit_fields_when_create
-BEFORE INSERT ON petro_application.station
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_user_audit_fields
-BEFORE UPDATE ON petro_application.user
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_user_audit_fields_when_create
-BEFORE INSERT ON petro_application.user
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_log_audit_fields
-BEFORE UPDATE ON petro_application.log
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_log_audit_fields_when_create
-BEFORE INSERT ON petro_application.log
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
 
 END;

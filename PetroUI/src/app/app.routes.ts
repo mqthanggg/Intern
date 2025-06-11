@@ -14,7 +14,8 @@ export const routes: Routes = [
     {
         path: "user",
         title: "User",
-        loadComponent: ()=>import('./user/user.component').then(m => m.UserComponent)
+        loadComponent: ()=>import('./user/user.component').then(m => m.UserComponent),
+        loadChildren: () => import('./user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModuleModule)
     },
     {
         path: "",

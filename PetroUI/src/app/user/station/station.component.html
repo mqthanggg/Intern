@@ -1,0 +1,70 @@
+<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
+    @if (isStationLoading){
+        <div class="loader border-amber-500 border-b-transparent absolute top-1/2 left-1/2 -translate-1/2"></div>
+    }
+    @else {
+        <div class="shadow-xl rounded-md p-5 bg-white" ElementDraggable ElementDraggableSection>
+            <div class="text-[#4DA8DA] font-semibold text-xl">Dispenser's status</div>
+            <table class="my-5 border-y rounded-md border-black border-spacing-0 **:[thead>tr,tbody>tr]:border-b **:[thead>tr>th,tbody>tr>td]:px-5 **:[thead>tr>th,tbody>tr>td]:py-3 table-auto">
+                <thead>
+                    <tr class="border-b-gray-500">
+                        <th>Number</th>
+                        <th>Status</th>
+                        <th>Liter</th>
+                        <th>Price</th>
+                        <th>Total price</th>
+                        <th>Fuel</th>
+                        <th>Tank</th>
+                    </tr>
+                </thead>
+                <tbody class="*:border-b-gray-300">
+                    <tr>
+                        <td>AA-1</td>
+                        <td>IDLE</td>
+                        <td>n/a</td>
+                        <td>10,000</td>
+                        <td>n/a</td>
+                        <td>0.5AA-II</td>
+                        <td>AA-1</td>
+                    </tr>
+                    <tr>
+                        <td>AA-1</td>
+                        <td>IDLE</td>
+                        <td>n/a</td>
+                        <td>10,000</td>
+                        <td>n/a</td>
+                        <td>0.5AA-II</td>
+                        <td>AA-1</td>
+                    </tr>
+                    <tr>
+                        <td>AA-1</td>
+                        <td>IDLE</td>
+                        <td>n/a</td>
+                        <td>10,000</td>
+                        <td>n/a</td>
+                        <td>0.5AA-II</td>
+                        <td>AA-1</td>
+                    </tr>
+                    <tr>
+                        <td>AA-1</td>
+                        <td>IDLE</td>
+                        <td>n/a</td>
+                        <td>10,000</td>
+                        <td>n/a</td>
+                        <td>0.5AA-II</td>
+                        <td>AA-1</td>
+                    </tr>
+                    <tr>
+                        <td>AA-1</td>
+                        <td>IDLE</td>
+                        <td>n/a</td>
+                        <td>10,000</td>
+                        <td>n/a</td>
+                        <td>0.5AA-II</td>
+                        <td>AA-1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
