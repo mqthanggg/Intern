@@ -1,15 +1,19 @@
 import { Directive, ElementRef } from '@angular/core';
 
-let draggableElement: HTMLDivElement;
-
 @Directive({
   selector: '[ElementDraggable]',
   standalone: true
 })
 export class ElementDraggableDirective {
+  private draggableElement: HTMLDivElement;
+
   constructor(private elRef: ElementRef<HTMLDivElement>) {
-    draggableElement = this.elRef.nativeElement
-    draggableElement.style.position = 'absolute'
+    this.draggableElement = this.elRef.nativeElement;
+    this.draggableElement.style.position = 'absolute';
+  }
+
+  getElement(): HTMLDivElement {
+    return this.draggableElement;
   }
 }
 
@@ -18,41 +22,43 @@ export class ElementDraggableDirective {
   standalone: true
 })
 export class ElementDraggableSectionDirective {
+  private _startX = 0;
+  private _startY = 0;
+  private _newX = 0;
+  private _newY = 0;
 
-  constructor(private elRef: ElementRef<HTMLDivElement>) {
-    let _startX = 0;
-    let _startY = 0;
-    let _newX = 0;
-    let _newY = 0;
-    let draggleSectionElement = this.elRef.nativeElement;
-    draggleSectionElement.addEventListener('mouseover', (event) => {
-      draggleSectionElement.style.cursor = "pointer"
-    })
-    draggleSectionElement.addEventListener('mousedown', mouseDown)
+  constructor(private elRef: ElementRef<HTMLDivElement>, private draggableDirective: ElementDraggableDirective) {
+    const dragSectionElement = this.elRef.nativeElement;
+    const draggableElement = this.draggableDirective.getElement();
 
-    function mouseDown(e: MouseEvent){
-        draggleSectionElement.style.cursor = 'move'
-        _startX = e.clientX
-        _startY = e.clientY
+    dragSectionElement.addEventListener('mouseover', () => {
+      dragSectionElement.style.cursor = 'pointer';
+    });
 
-        document.addEventListener('mousemove', mouseMove)
-        document.addEventListener('mouseup', mouseUp)
-    }
+    dragSectionElement.addEventListener('mousedown', (event) => {
+      dragSectionElement.style.cursor = 'move';
+      this._startX = event.clientX;
+      this._startY = event.clientY;
 
-    function mouseMove(e: MouseEvent){
-        _newX = _startX - e.clientX 
-        _newY = _startY - e.clientY 
-      
-        _startX = e.clientX
-        _startY = e.clientY
+      document.addEventListener('mousemove', mouseMove);
+      document.addEventListener('mouseup', mouseUp);
+    });
 
-        draggableElement.style.top = (draggableElement.offsetTop - _newY) + 'px'
-        draggableElement.style.left = (draggableElement.offsetLeft - _newX) + 'px'
-    }
+    const mouseMove = (e: MouseEvent) => {
+      this._newX = this._startX - e.clientX;
+      this._newY = this._startY - e.clientY;
 
-    function mouseUp(e: MouseEvent){
-        document.removeEventListener('mousemove', mouseMove)
-    }
+      this._startX = e.clientX;
+      this._startY = e.clientY;
+
+      if (draggableElement) {
+        draggableElement.style.top = (draggableElement.offsetTop - this._newY) + 'px';
+        draggableElement.style.left = (draggableElement.offsetLeft - this._newX) + 'px';
+      }
+    };
+
+    const mouseUp = () => {
+      document.removeEventListener('mousemove', mouseMove);
+    };
   }
-
 }

@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS petro_application.tank
     tank_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
     fuel_id integer NOT NULL,
     station_id integer NOT NULL,
+    name integer NOT NULL,
     max_volume integer NOT NULL,
     created_by character varying(255),
     created_date timestamp(0) DEFAULT now(),
@@ -271,11 +272,11 @@ INSERT INTO petro_application.fuel (short_name, long_name, price) VALUES
 ('DO1', 'Diesel Oil-I', 20000),
 ('DO5', 'Diesel Oil-V', 19000);
 
-INSERT INTO petro_application.tank (fuel_id, station_id, max_volume) VALUES
-(1, 1, 5000), (2, 1, 4000), (3, 1, 6000), (4, 1, 5500), (1, 1, 7000),
-(2, 2, 5000), (3, 2, 7500), (4, 2, 6800), (1, 2, 6000), (2, 2, 4500),
-(3, 3, 7000), (4, 3, 7200), (1, 3, 8000), (2, 3, 5500), (3, 3, 6200),
-(4, 4, 7700), (1, 4, 5200), (2, 4, 4100), (3, 4, 6300), (4, 4, 5600);
+INSERT INTO petro_application.tank (fuel_id, station_id, name, max_volume) VALUES
+(1, 1, 101, 5000), (2, 1, 102, 4000), (3, 1, 103, 6000), (4, 1, 104, 5500), (1, 1, 105, 7000),
+(2, 2, 201, 5000), (3, 2, 202, 7500), (4, 2, 203, 6800), (1, 2, 204, 6000), (2, 2, 205, 4500),
+(3, 3, 301, 7000), (4, 3, 302, 7200), (1, 3, 303, 8000), (2, 3, 304, 5500), (3, 3, 305, 6200),
+(4, 4, 401, 7700), (1, 4, 402, 5200), (2, 4, 403, 4100), (3, 4, 404, 6300), (4, 4, 405, 5600);
 
 INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name) VALUES
 (1, 1, 1, 101), (1, 2, 2, 102), (1, 3, 3, 103), (1, 4, 4, 104), (1, 5, 1, 105),

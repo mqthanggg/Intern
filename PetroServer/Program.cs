@@ -89,12 +89,33 @@ if (report.Status == HealthStatus.Healthy){
     app.UseAuthorization();
     app.UseAuthentication();
     app.MapHealthChecks("/health");
-    app.MapGet("/station/{id}", async (int id) => {
-        await using var cmd = db_read_dataSource.CreateCommand($"SELECT name,address FROM {DotNetEnv.Env.GetString("schema")}.station WHERE station_id = @id");
+    app.MapGet("/dispenser/station/{id}", async (int id) => {
+        string schemaName = DotNetEnv.Env.GetString("SCHEMA");
+        await using var cmd = db_read_dataSource.CreateCommand($@"
+        SELECT dp.name, f.price, f.long_name, f.short_name FROM
+        {schemaName}.dispenser as dp
+        INNER JOIN {schemaName}.fuel as f ON f.fuel_id = dp.fuel_id AND dp.station_id = @id
+        ");
         cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
         var res = await cmd.ExecuteReaderAsync();
         res.Read();
-        return Results.Ok(new {name = res["name"],address = res["address"]});
+        var dataTable = new DataTable();
+        dataTable.Load(res);
+        return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+    });
+    app.MapGet("/tank/station/{id}", async (int id) => {
+        string schemaName = DotNetEnv.Env.GetString("SCHEMA");
+        await using var cmd = db_read_dataSource.CreateCommand($@"
+        SELECT t.name, f.short_name, t.max_volume FROM
+        {schemaName}.tank as t
+        INNER JOIN {schemaName}.fuel as f ON f.fuel_id = t.fuel_id AND t.station_id = @id
+        ");
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
+        var res = await cmd.ExecuteReaderAsync();
+        res.Read();
+        var dataTable = new DataTable();
+        dataTable.Load(res);
+        return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
     });
     app.MapGet("/stations", async () => {
         await using var cmd = db_read_dataSource.CreateCommand($"SELECT station_id,name,address FROM {DotNetEnv.Env.GetString("schema")}.station");
@@ -104,7 +125,7 @@ if (report.Status == HealthStatus.Healthy){
         return JsonConvert.SerializeObject(dataTable,Formatting.Indented);
     });
     app.MapPost("/login", async (User body) => {
-        await using var cmd = db_read_dataSource.CreateCommand($"SELECT * FROM {DotNetEnv.Env.GetString("schema")}.user WHERE username = @username");
+        await using var cmd = db_read_dataSource.CreateCommand($"SELECT username,password FROM {DotNetEnv.Env.GetString("schema")}.user WHERE username = @username");
         cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "username", Value = body.Username});
         var res = await cmd.ExecuteReaderAsync();
         if (!res.HasRows){

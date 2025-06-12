@@ -9,7 +9,7 @@
                     <img src="gas-station.png" alt="Gas station image" class="size-16">
                     <div class="font-semibold text-xl">{{station.name}}</div>
                     <div class="italic wrap-break-word h-fit">{{station.address}}</div>
-                    <a class="bg-[#80D8C3] text-white px-5 py-3 rounded-md shadow-xl hover:cursor-pointer duration-200 hover:bg-[#99d6c8] hover:-translate-y-1 w-fit" [routerLink]="['/user/station',station.station_id]">View</a>
+                    <a class="bg-[#80D8C3] text-white px-5 py-3 rounded-md shadow-xl hover:cursor-pointer duration-200 hover:bg-[#99d6c8] hover:-translate-y-1 w-fit" [routerLink]="['/user/station',station.station_id]" [queryParams]="{name: station.name,address: station.address}">View</a>
                 </div>
             }
         </div>
