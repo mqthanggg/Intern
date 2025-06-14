@@ -94,9 +94,12 @@ DROP TABLE IF EXISTS petro_application.user CASCADE;
 CREATE TABLE IF NOT EXISTS petro_application.user
 (
     user_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    username character varying(15) NOT NULL,
+    username character varying(15) NOT NULL UNIQUE,
     password character(84) NOT NULL,
     padding character(24) NOT NULL UNIQUE,
+    refresh_token character(84) UNIQUE,
+    token_padding character(24) UNIQUE,
+    token_expired_time timestamp(0),
     created_by character varying(255),
     created_date timestamp(0) DEFAULT now(),
     last_modified_by character varying(255),
@@ -320,6 +323,6 @@ GRANT SELECT ON ALL TABLES IN SCHEMA petro_application TO read_user;
 DROP USER IF EXISTS write_user;
 CREATE USER write_user WITH ENCRYPTED PASSWORD 'write123';
 GRANT USAGE ON SCHEMA petro_application TO write_user;
-GRANT INSERT, DELETE, UPDATE ON ALL TABLES IN SCHEMA petro_application TO read_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;

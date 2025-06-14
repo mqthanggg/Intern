@@ -2,17 +2,17 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
 using System.Web;
 public static class PasswordHasher{
-    private static readonly PasswordHasher<User> ph = new PasswordHasher<User>();
+    private static readonly PasswordHasher<Object> ph = new PasswordHasher<Object>();
     private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
-    public static string Hash(User user, string password){
+    public static List<string> Hash(Object obj, string password){
         var padding = new byte[16];
         _rng.GetBytes(padding);
-        return ph.HashPassword(user,password+Convert.ToBase64String(padding));
+        return new List<string>{ph.HashPassword(obj,password+Convert.ToBase64String(padding)),Convert.ToBase64String(padding)};
     }
 
-    public static bool Verify(User user, string inPassword, string hashedPassword){
+    public static bool Verify(Object obj, string inPassword, string hashedPassword){
         return 
-            ph.VerifyHashedPassword(user, hashedPassword, inPassword) == PasswordVerificationResult.Success ||
-            ph.VerifyHashedPassword(user, hashedPassword, inPassword) == PasswordVerificationResult.SuccessRehashNeeded;
+            ph.VerifyHashedPassword(obj, hashedPassword, inPassword) == PasswordVerificationResult.Success ||
+            ph.VerifyHashedPassword(obj, hashedPassword, inPassword) == PasswordVerificationResult.SuccessRehashNeeded;
     }
 }

@@ -36,8 +36,12 @@ export class LoginComponent {
       })
     ).subscribe({
       next: (res: HttpResponse<any>) => {
-        if (res.status === 200)
-          console.log(res);  
+        if (res.status === 200){
+          localStorage.setItem('jwt',res.body);
+          setTimeout(() => {
+            this.http.get(environment.serverURI + "/check-jwt",{observe: "response"}).subscribe()
+          },30*60*1000);
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.alertOpen = true

@@ -3,8 +3,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -46,19 +49,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     op.RequireHttpsMetadata = false;
     //Using JWKS validation
     op.TokenValidationParameters = new TokenValidationParameters{
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
         ValidAudience = DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
-        // IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
-        //     var httpClient = new HttpClient();
-        //     var res = httpClient.GetStringAsync(DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
-        //     var jwks_keys = new JsonWebKeySet(res).Keys;
-        //     return jwks_keys;
-        // }
-        IssuerSigningKey = new RsaSecurityKey(RSAClass.LoadPublicRsaKey()),
+        IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
+            var httpClient = new HttpClient();
+            var res = httpClient.GetStringAsync(DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
+            var jwks_keys = new JsonWebKeySet(res).Keys;
+            return jwks_keys;
+        },
+        ClockSkew = TimeSpan.FromSeconds(1),
         RequireSignedTokens = true
     };
 });
@@ -85,11 +85,45 @@ if (report.Status == HealthStatus.Healthy){
             app.UseSwaggerUI(c => {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json","Petro application APIs v1");
             });
+            app.MapPut("/signup", async () => {
+                await using var cmd = db_write_dataSource.CreateCommand($@"
+                    INSERT INTO {DotNetEnv.Env.GetString("SCHEMA")}.user(username, password, padding) VALUES (@username, @password, @padding);
+                ");
+                while (true){
+                    var hashed = PasswordHasher.Hash(new User{Username = "",Password = ""},"admin123");
+                    var padding = hashed[1];
+                    var hashedPassword = hashed[0];
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "username", Value = "mqthanggg"});
+                    cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "password", Value = hashedPassword});
+                    cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "padding", Value = padding});
+                    int res = -1;
+                    try{
+                        res = await cmd.ExecuteNonQueryAsync();
+                    }
+                    catch (PostgresException e){
+                        if (e.SqlState == "23505"){
+                            /*
+                                Example constraint name: user_<column>_key
+                            */
+                            Regex regex = new Regex(@"user_(\w+)_key");
+                            Match match = regex.Match(e.ConstraintName ?? "");
+                            string column = match.Groups[1].Value;
+                            if (column == "padding")//Rare
+                                continue;
+                            return Results.Json(new {why = column},statusCode: 400);
+                        }
+                        return Results.Json(new {why = e.Message}, statusCode:400);
+                    }
+                    break;
+                }
+                return Results.Ok();
+            });
         }
-    app.UseAuthorization();
     app.UseAuthentication();
+    app.UseAuthorization();
     app.MapHealthChecks("/health");
-    app.MapGet("/dispenser/station/{id}", async (int id) => {
+    app.MapGet("/dispenser/station/{id}", [Authorize]  async ([FromRoute] int id) => {
         string schemaName = DotNetEnv.Env.GetString("SCHEMA");
         await using var cmd = db_read_dataSource.CreateCommand($@"
         SELECT dp.name, f.price, f.long_name, f.short_name FROM
@@ -103,7 +137,7 @@ if (report.Status == HealthStatus.Healthy){
         dataTable.Load(res);
         return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
     });
-    app.MapGet("/tank/station/{id}", async (int id) => {
+    app.MapGet("/tank/station/{id}", [Authorize]  async ([FromRoute] int id) => {
         string schemaName = DotNetEnv.Env.GetString("SCHEMA");
         await using var cmd = db_read_dataSource.CreateCommand($@"
         SELECT t.name, f.short_name, t.max_volume FROM
@@ -117,15 +151,15 @@ if (report.Status == HealthStatus.Healthy){
         dataTable.Load(res);
         return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
     });
-    app.MapGet("/stations", async () => {
+    app.MapGet("/stations", [Authorize] async () => {
         await using var cmd = db_read_dataSource.CreateCommand($"SELECT station_id,name,address FROM {DotNetEnv.Env.GetString("schema")}.station");
         var res = await cmd.ExecuteReaderAsync();
         var dataTable = new DataTable();
         dataTable.Load(res);
         return JsonConvert.SerializeObject(dataTable,Formatting.Indented);
     });
-    app.MapPost("/login", async (User body) => {
-        await using var cmd = db_read_dataSource.CreateCommand($"SELECT username,password FROM {DotNetEnv.Env.GetString("schema")}.user WHERE username = @username");
+    app.MapPost("/login", async ([FromBody] User body) => {
+        await using var cmd = db_read_dataSource.CreateCommand($"SELECT user_id,username,password,padding FROM {DotNetEnv.Env.GetString("schema")}.user WHERE username = @username");
         cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "username", Value = body.Username});
         var res = await cmd.ExecuteReaderAsync();
         if (!res.HasRows){
@@ -135,9 +169,10 @@ if (report.Status == HealthStatus.Healthy){
         res.Read();
         var encryptedPassword = res["password"].ToString() ?? "";
         var passwordPadding = res["padding"].ToString() ?? "";
+        var userId = Convert.ToInt32(res["user_id"]);
         if (PasswordHasher.Verify(body,body.Password + passwordPadding,encryptedPassword)){
             var claims = new List<Claim>{
-                new Claim(ClaimTypes.Sid, res["user_id"].ToString() ?? ""),
+                new Claim(ClaimTypes.Sid, userId.ToString()),
                 new Claim(ClaimTypes.Name, res["username"].ToString() ?? "")
             };
             var creds = new SigningCredentials(new RsaSecurityKey(RSAClass.LoadPrivateRsaKey()),SecurityAlgorithms.RsaSha256);
@@ -148,11 +183,93 @@ if (report.Status == HealthStatus.Healthy){
                 expires: DateTime.UtcNow.AddMinutes(5),
                 signingCredentials: creds
             );
-            return Results.Ok(new {token= new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)});
+            using var refreshTokenCmd = db_write_dataSource.CreateCommand($@"
+                UPDATE {DotNetEnv.Env.GetString("SCHEMA")}.user
+                SET 
+                refresh_token = @refreshToken,
+                token_padding = @refreshTokenPadding,
+                token_expired_time = now() + INTERVAL '7 days'
+                WHERE
+                user_id = @userId
+            ");
+            string randomRefreshToken;
+            using (var _rng = RandomNumberGenerator.Create()){
+                byte[] randomBytes = new byte[16];
+                _rng.GetBytes(randomBytes);
+                randomRefreshToken = Convert.ToBase64String(randomBytes);
+            }
+            res.Close();
+            int col;
+            while (true){
+                List<string> hash = PasswordHasher.Hash(new {},randomRefreshToken);
+                string hashedRefreshToken = hash[0];
+                string refreshTokenPadding = hash[1];
+                refreshTokenCmd.Parameters.Clear();
+                refreshTokenCmd.Parameters.Add(new NpgsqlParameter{ParameterName = "refreshToken", Value = hashedRefreshToken});
+                refreshTokenCmd.Parameters.Add(new NpgsqlParameter{ParameterName = "refreshTokenPadding", Value = refreshTokenPadding});
+                refreshTokenCmd.Parameters.Add(new NpgsqlParameter{ParameterName = "userId", Value = userId});
+                try{
+                    col = await refreshTokenCmd.ExecuteNonQueryAsync();
+                }
+                catch (PostgresException e){
+                    if (e.SqlState == "23505"){
+                        /*
+                            Example constraint name: user_<column>_key
+                        */
+                        Regex regex = new Regex(@"user_(\w+)_key");
+                        Match match = regex.Match(e.ConstraintName ?? "");
+                        string column = match.Groups[1].Value;
+                        if (column == "padding")//Rare
+                            continue;
+                        return Results.Json(new {why = column},statusCode: 400);
+                    }
+                    return Results.Json(new {why = e.Message}, statusCode:400);
+                }
+                break;
+            }
+            if (col > 0){
+                return Results.Ok(new {
+                    token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor),
+                    refresh_token = randomRefreshToken
+                });
+            }
         }
-        else{
+        return Results.Unauthorized();
+    });
+    app.MapGet("/check-jwt", [Authorize] () => {
+        return Results.Ok();
+    } );
+    app.MapPost("/refresh", async ([FromHeader(Name = "Authorization")] string authHeader, Token body) => {
+        var claims = (List<Claim>)new JwtSecurityTokenHandler().ReadJwtToken(authHeader.Substring(7)).Claims;
+        var userId = claims.First(e => e.Type == ClaimTypes.Sid).Value;
+        var username = claims.First(e => e.Type == ClaimTypes.Name).Value;
+        await using var cmd = db_read_dataSource.CreateCommand($@"
+            SELECT username, refresh_token, token_padding, token_expired_time FROM {DotNetEnv.Env.GetString("SCHEMA")}.user
+            WHERE user_id = @userId
+        ");
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "userId", Value = Convert.ToInt32(userId)});
+        var res = await cmd.ExecuteReaderAsync();
+        res.Read();
+        if (!(res.HasRows && res["username"].ToString() == username))
             return Results.Unauthorized();
-        }        
+        var refreshTokenExpiredTime = Convert.ToDateTime(res["token_expired_time"]);
+        var hashedRefreshToken = res["refresh_token"].ToString() ?? "";
+        var refreshTokenPadding = res["token_padding"].ToString();
+        if (
+            DateTime.Now.CompareTo(refreshTokenExpiredTime) > 0 || //Expired
+            !PasswordHasher.Verify(body, body.RefreshToken + refreshTokenPadding, hashedRefreshToken) //Invalid refresh token
+        ) 
+            return Results.Unauthorized();
+        await res.CloseAsync();
+        var creds = new SigningCredentials(new RsaSecurityKey(RSAClass.LoadPrivateRsaKey()),SecurityAlgorithms.RsaSha256);
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
+            audience: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(5),
+            signingCredentials: creds
+        );
+        return Results.Json(new {token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)});
     });
     //Configure route for JWKS
     app.MapGet("/.well-known/jwks.json",() => {
