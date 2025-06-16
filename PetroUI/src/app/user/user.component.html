@@ -20,8 +20,13 @@
         </div>
     </div>
     <div class="grow">
-        <div class="bg-gradient-to-r sticky from-[#4DA8DA] to-[#a9c3d1] flex px-5 h-20 items-center">
+        <div class="bg-gradient-to-r sticky from-[#4DA8DA] to-[#a9c3d1] flex px-5 h-20 items-center justify-between">
             <div class="text-white font-semibold text-4xl pl-5">{{title}}</div>
+            @if (isReturnable){
+                <div class="bg-white p-1 rounded-full hover:cursor-pointer hover:-translate-y-1 duration-200 shadow-xl" (click)="navigateBack()">
+                    <img src="turn-back.png" alt="Turn back image" class="size-7">
+                </div>
+            }
             <div class="bg-[#FFD66B] rounded-r-full absolute z-50 p-1 left-0 hover:cursor-pointer"
                 (click)="isNavExtended = !isNavExtended"
             >

@@ -66,7 +66,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors((op) => {
     op.AddDefaultPolicy(
         policy => {
-            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders(["WWW-Authenticate"]);
         }
     );
 });
@@ -236,9 +236,6 @@ if (report.Status == HealthStatus.Healthy){
         }
         return Results.Unauthorized();
     });
-    app.MapGet("/check-jwt", [Authorize] () => {
-        return Results.Ok();
-    } );
     app.MapPost("/refresh", async ([FromHeader(Name = "Authorization")] string authHeader, Token body) => {
         var claims = (List<Claim>)new JwtSecurityTokenHandler().ReadJwtToken(authHeader.Substring(7)).Claims;
         var userId = claims.First(e => e.Type == ClaimTypes.Sid).Value;
@@ -269,7 +266,7 @@ if (report.Status == HealthStatus.Healthy){
             expires: DateTime.UtcNow.AddMinutes(5),
             signingCredentials: creds
         );
-        return Results.Json(new {token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)});
+        return Results.Json(new {token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)}, statusCode: 200);
     });
     //Configure route for JWKS
     app.MapGet("/.well-known/jwks.json",() => {

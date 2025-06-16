@@ -1,7 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, Event, RouterLink, RouterOutlet, RouterEvent, NavigationEnd } from '@angular/router';
 import { TitleService } from './title.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -12,13 +13,23 @@ import { TitleService } from './title.service';
 })
 export class UserComponent implements OnInit{
   isNavExtended = true;
+  isReturnable = false;
   title: string = "";
   ngOnInit(): void {
     this.title = "Dashboard"
   }
-  constructor(private titleService: TitleService){
+  constructor(private titleService: TitleService, private router:Router){
     this.titleService.title$.subscribe((title: string) => {
       this.title = title
     })
+    this.router.events.pipe(
+      filter((event: Event | RouterEvent) => event instanceof NavigationEnd),
+    ).subscribe((event) => {
+      this.isReturnable = event.url.split('/').at(-1) !== 'user'
+    })
+  }
+  navigateBack(){
+    console.log(this.router.url.split('/'))
+    this.router.navigate([this.router.url.split('/').splice(-1,1)])
   }
 }

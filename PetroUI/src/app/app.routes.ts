@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { userGuard } from './user-guard.guard';
 
 export const routes: Routes = [
     {
@@ -14,6 +15,8 @@ export const routes: Routes = [
     {
         path: "user",
         title: "User",
+        canActivateChild: [userGuard],
+        canActivate: [userGuard],
         loadComponent: ()=>import('./user/user.component').then(m => m.UserComponent),
         loadChildren: () => import('./user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModuleModule)
     },

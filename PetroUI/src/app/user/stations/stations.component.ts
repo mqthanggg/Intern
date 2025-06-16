@@ -3,8 +3,8 @@ import { TitleService } from '../title.service';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { StationRecord } from './station-record';
 import { environment } from '../../../environments/environment';
-import { delay, tap, mergeMap,catchError,finalize,of,throwError } from 'rxjs';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { delay, mergeMap,catchError,finalize,of,throwError} from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-stations',
@@ -34,6 +34,7 @@ export class StationsComponent implements OnInit{
             
           }
         })
+      
     },0)
     
   }

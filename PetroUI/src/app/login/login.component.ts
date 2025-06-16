@@ -4,6 +4,7 @@ import {FormControl, ReactiveFormsModule, UntypedFormGroup, Validators} from '@a
 import { environment } from '../../environments/environment';
 import { NgClass } from '@angular/common';
 import { catchError, delay, finalize, mergeMap, of, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { catchError, delay, finalize, mergeMap, of, throwError } from 'rxjs';
   styles: ``
 })
 export class LoginComponent {
-  constructor(private http:HttpClient){}
+  constructor(private http:HttpClient, private router: Router){}
   loginLoading = false
   alertOpen = false
   alertTimeout: undefined | any = undefined
@@ -37,10 +38,10 @@ export class LoginComponent {
     ).subscribe({
       next: (res: HttpResponse<any>) => {
         if (res.status === 200){
-          localStorage.setItem('jwt',res.body);
-          setTimeout(() => {
-            this.http.get(environment.serverURI + "/check-jwt",{observe: "response"}).subscribe()
-          },30*60*1000);
+          localStorage.clear()
+          localStorage.setItem('jwt',res.body.token);
+          localStorage.setItem('refresh',res.body.refresh_token)
+          this.router.navigate(['/user'])
         }
       },
       error: (err: HttpErrorResponse) => {
