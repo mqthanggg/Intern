@@ -6,7 +6,7 @@ import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@ang
 import { authInterceptor } from './http-interceptor.service';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes, withComponentInputBinding()),provideHttpClient(
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes, withComponentInputBinding(), ),provideHttpClient(
     withXsrfConfiguration({
       cookieName: 'XSRF-COOKIE',
       headerName: 'XSRF-HEADER'

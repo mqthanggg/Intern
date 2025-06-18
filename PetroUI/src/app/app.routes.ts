@@ -18,12 +18,12 @@ export const routes: Routes = [
         canActivateChild: [userGuard],
         canActivate: [userGuard],
         loadComponent: ()=>import('./user/user.component').then(m => m.UserComponent),
-        loadChildren: () => import('./user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModuleModule)
+        loadChildren: () => import('./user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModule)
     },
     {
         path: "",
         pathMatch: "full",
-        redirectTo: "/login"
+        redirectTo: "/user",
     },
     {
         path: "**",

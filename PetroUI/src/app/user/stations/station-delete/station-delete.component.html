@@ -1,0 +1,32 @@
+<div class="absolute top-1/2 left-1/2 -translate-1/2 h-screen w-screen bg-gray-500/30">
+    <div class="absolute top-1/2 left-1/2 -translate-1/2 max-w-xl bg-white rounded-md px-5 py-5 flex flex-col items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="size-16 mb-5"><path class="fill-red-500" d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
+        <span class="mb-5">Are you sure you want to delete station
+            <span class="font-semibold">{{stationName}}</span>? By deleting this station, all of the related dispensers and tanks will also be removed. The action is irreversible!
+        </span>
+        <div class="flex space-x-3 mx-auto **:shadow-xl">
+            <a class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-slate-200 bg-slate-300" routerLink="/user/stations">No, Keep it.</a>
+            <button class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-red-400 text-white bg-red-500" (click)="deleteStation()">
+                @if (isDeleting) {
+                    <div class="loader border-yellow-500 border-b-transparent"></div>
+                }
+                @else {
+                    Yes, Delete!
+                }
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (isOpenErrorModal) {
+    <div class="absolute top-5 right-10 border-1 rounded-md border-red-500 bg-red-200 py-3 flex items-center px-3 space-x-4 shadow-xl duration-200 *:not-[img[alt='Close_icon']]:select-none">
+        <img src="mark.png" alt="Warning icon" class="size-12">
+        <div class="">
+            <div class="font-bold text-red-900">Error:</div>
+            <div class="text-red-900">
+            Cannot delete the station!
+            </div>
+        </div>
+        <img src="close.png" alt="Close icon" class="size-3 hover:cursor-pointer" (click)="isOpenErrorModal = false">
+    </div>
+}

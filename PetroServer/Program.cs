@@ -16,7 +16,9 @@ using Npgsql;
 
 
 DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHealthChecks().AddNpgSql(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING"),name:"write").AddNpgSql(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING"),name:"read");
@@ -132,9 +134,9 @@ if (report.Status == HealthStatus.Healthy){
         ");
         cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
         var res = await cmd.ExecuteReaderAsync();
-        res.Read();
         var dataTable = new DataTable();
         dataTable.Load(res);
+        await res.CloseAsync();
         return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
     });
     app.MapGet("/tank/station/{id}", [Authorize]  async ([FromRoute] int id) => {
@@ -146,16 +148,47 @@ if (report.Status == HealthStatus.Healthy){
         ");
         cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
         var res = await cmd.ExecuteReaderAsync();
-        res.Read();
         var dataTable = new DataTable();
         dataTable.Load(res);
+        await res.CloseAsync();
         return JsonConvert.SerializeObject(dataTable, Formatting.Indented);
+    });
+    app.MapDelete("/station/{id}", [Authorize] async (int id) => {
+        await using var cmd = db_write_dataSource.CreateCommand($@"
+        DELETE FROM {DotNetEnv.Env.GetString("SCHEMA")}.station 
+        WHERE station_id = @stationId
+        ");
+        cmd.Parameters.Clear();
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "stationId", Value = id});
+        var res = await cmd.ExecuteNonQueryAsync();
+        if (res > 0) 
+            return Results.Ok();
+        return Results.BadRequest();
+    });
+    app.MapPut("/station/{id}", [Authorize] async (int id, Station body) => {
+        await using var cmd = db_write_dataSource.CreateCommand($@"
+        UPDATE {DotNetEnv.Env.GetString("SCHEMA")}.station
+        SET 
+        name = @name,
+        address = @address
+        WHERE
+        station_id = @stationId
+        ");
+        cmd.Parameters.Clear();
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "stationId", Value = id});
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "name", Value = body.Name});
+        cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "address", Value = body.Address});
+        var res = await cmd.ExecuteNonQueryAsync();
+        if (res > 0)
+            return Results.Ok();
+        return Results.BadRequest();
     });
     app.MapGet("/stations", [Authorize] async () => {
         await using var cmd = db_read_dataSource.CreateCommand($"SELECT station_id,name,address FROM {DotNetEnv.Env.GetString("schema")}.station");
         var res = await cmd.ExecuteReaderAsync();
         var dataTable = new DataTable();
         dataTable.Load(res);
+        await res.CloseAsync();
         return JsonConvert.SerializeObject(dataTable,Formatting.Indented);
     });
     app.MapPost("/login", async ([FromBody] User body) => {
@@ -260,8 +293,6 @@ if (report.Status == HealthStatus.Healthy){
         await res.CloseAsync();
         var creds = new SigningCredentials(new RsaSecurityKey(RSAClass.LoadPrivateRsaKey()),SecurityAlgorithms.RsaSha256);
         var tokenDescriptor = new JwtSecurityToken(
-            issuer: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
-            audience: DotNetEnv.Env.GetString(builder.Environment.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(5),
             signingCredentials: creds

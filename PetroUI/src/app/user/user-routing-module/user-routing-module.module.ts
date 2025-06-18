@@ -5,13 +5,14 @@ const routes: Routes = [
   {
     path: "stations",
     title: "Stations",
-    loadComponent: () => import('../stations/stations.component').then(m=>m.StationsComponent)
+    loadComponent: () => import('../stations/stations.component').then(m=>m.StationsComponent),
+    loadChildren: () => import('../stations/stations-routing/stations-routing.module').then(m => m.StationsRoutingModule)
   },
   {
     path: "station/:id",
     title: "Station",
     loadComponent: () => import('../station/station.component').then(m=>m.StationComponent)
-  }
+  },
 ]
 
 @NgModule({
@@ -22,4 +23,4 @@ const routes: Routes = [
     RouterModule
   ]
 })
-export class UserRoutingModuleModule { }
+export class UserRoutingModule { }

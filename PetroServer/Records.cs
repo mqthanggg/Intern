@@ -6,3 +6,8 @@ public class User{
 public class Token{
     public required string RefreshToken{get; set;} = "";
 }
+
+public class Station{
+    public required string Name{get; set;} = "";
+    public required string Address{get; set;} = "";
+}

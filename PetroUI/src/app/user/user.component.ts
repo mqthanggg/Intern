@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { Location, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, Event, RouterLink, RouterOutlet, RouterEvent, NavigationEnd } from '@angular/router';
 import { TitleService } from './title.service';
@@ -18,7 +18,7 @@ export class UserComponent implements OnInit{
   ngOnInit(): void {
     this.title = "Dashboard"
   }
-  constructor(private titleService: TitleService, private router:Router){
+  constructor(private titleService: TitleService, private router:Router, private location: Location){
     this.titleService.title$.subscribe((title: string) => {
       this.title = title
     })
@@ -29,7 +29,6 @@ export class UserComponent implements OnInit{
     })
   }
   navigateBack(){
-    console.log(this.router.url.split('/'))
-    this.router.navigate([this.router.url.split('/').splice(-1,1)])
+    this.location.back()
   }
 }

@@ -4,12 +4,13 @@ import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/htt
 import { StationRecord } from './station-record';
 import { environment } from '../../../environments/environment';
 import { delay, mergeMap,catchError,finalize,of,throwError} from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { StationDeleteComponent } from './station-delete/station-delete.component';
 
 @Component({
   selector: 'app-stations',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, StationDeleteComponent, RouterOutlet],
   templateUrl: './stations.component.html',
   styleUrl: './stations.component.css'
 })
@@ -34,8 +35,6 @@ export class StationsComponent implements OnInit{
             
           }
         })
-      
     },0)
-    
   }
 }
