@@ -1,12 +1,12 @@
 <div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
     <div class="shadow-xl rounded-md p-5 bg-white h-[45%] max-h-[45%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
-        <div class="text-[#4DA8DA] font-semibold text-xl">Dispenser's status</div>
+        <div class="text-[#4DA8DA] font-semibold text-xl select-none">Dispenser's status</div>
         <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
             @if (isDispenserLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
             }
             @else{
-                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap mx-auto">
+                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-4">Number</th>
@@ -36,13 +36,13 @@
         </div>
     </div>
     <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[45%] max-h-[45%] w-xl max-w-xl" ElementDraggable ElementDraggableSection>
-        <div class="text-[#4DA8DA] font-semibold text-xl">Tank's status</div>
+        <div class="text-[#4DA8DA] font-semibold text-xl select-none">Tank's status</div>
         <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
             @if (isTankLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
             }
             @else{
-                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap mx-auto">
+                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-2">Number</th>
@@ -64,6 +64,40 @@
                                 </td>
                                 <td class="text-center">{{tank.max_volume * _temp_statusList[$index] / 100}}</td>
                                 <td class="text-center">{{tank.max_volume}}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+    <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[45%] max-h-[45%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
+        <div class="text-[#4DA8DA] font-semibold text-xl">Logs</div>
+        <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
+            @if (isLogLoading) {
+                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
+            }
+            @else{
+                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+                    <thead class="">
+                        <tr class="**:bg-[#4DA8DA]">
+                            <th class="px-2">Dispenser</th>
+                            <th class="px-5">Fuel</th>
+                            <th class="px-5">Total liters</th>
+                            <th class="px-5">Price</th>
+                            <th class="px-5">Total amount</th>
+                            <th class="px-20">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="">
+                        @for (log of logList; track $index) {
+                            <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
+                                <td class="text-center">{{log.name}}</td>
+                                <td class="text-center">{{log.fuel_name}}</td>
+                                <td class="text-center">{{log.total_liters}}</td>
+                                <td class="text-center">{{log.price}}</td>
+                                <td class="text-center">{{log.total_amount}}</td>
+                                <td class="text-center">{{log.time}}</td>
                             </tr>
                         }
                     </tbody>

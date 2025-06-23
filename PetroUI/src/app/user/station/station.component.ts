@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DispenserRecord } from './dispenser-record';
 import { TankRecord } from './tank-record';
 import { NgClass } from '@angular/common';
+import { LogRecord } from './log-record';
 
 
 @Component({
@@ -23,8 +24,10 @@ export class StationComponent implements OnInit{
   stationAddress: string = "";
   isDispenserLoading = false;
   isTankLoading = false;
+  isLogLoading = false;
   dispenserList: DispenserRecord[] = [];
   tankList: TankRecord[] = [];
+  logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
   constructor(private http: HttpClient, private titleServer: TitleService, private route:ActivatedRoute){}
   ngOnInit(): void {
@@ -54,6 +57,18 @@ export class StationComponent implements OnInit{
         ).subscribe({
           next: (res: HttpResponse<any>) => {
             this.tankList = res.body
+          },
+          error: (err: HttpErrorResponse) => {
+
+          }
+      })
+      this.http.get(environment.serverURI+`/log/station/${this.id}`,{observe: "response"}).pipe(
+        mergeMap((res) => of(res).pipe(delay(1000))),//Simulating delay
+        catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),//Simulating delay
+        finalize(() => {this.isLogLoading = false})
+        ).subscribe({
+          next: (res: HttpResponse<any>) => {
+            this.logList = res.body
           },
           error: (err: HttpErrorResponse) => {
 
