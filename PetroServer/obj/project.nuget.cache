@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "ZHNE2UTTAIk=",
+  "dgSpecHash": "0kmvAhTzmI8=",
   "success": true,
   "projectFilePath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maiqu\\.nuget\\packages\\aspnetcore.healthchecks.npgsql\\9.0.0\\aspnetcore.healthchecks.npgsql.9.0.0.nupkg.sha512",
+    "C:\\Users\\maiqu\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\efcore.namingconventions\\9.0.0\\efcore.namingconventions.9.0.0.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.5\\microsoft.aspnetcore.authentication.jwtbearer.9.0.5.nupkg.sha512",

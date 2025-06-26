@@ -1,7 +1,7 @@
-public interface IDbWrite{
-    NpgsqlDataSource DataSource{get; set;}
+public interface IDbWriteConnection{
+    NpgsqlConnection CreateConnection();
 }
 
-public interface IDbRead{
-    NpgsqlDataSource DataSource{get; set;}
+public interface IDbReadConnection{
+    NpgsqlConnection CreateConnection();
 }

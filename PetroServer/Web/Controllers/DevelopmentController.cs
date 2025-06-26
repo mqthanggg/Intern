@@ -1,18 +1,19 @@
 public static class DevelopmentController{
-    public static async Task<IResult> SignupAccount(IDbWrite dbWrite, IHasher hasher, IAuditService audit){
-        var dbWriteDataSource = dbWrite.DataSource;
-        await using var cmd = dbWriteDataSource.CreateCommand($@"
-            INSERT INTO {Env.GetString("SCHEMA")}.user(username, password, padding) VALUES (@username, @password, @padding)
-        ");
+    public static WebApplication MapSignup(this WebApplication app){
+        app.MapPut("/signup", SignupAccount);
+        return app;
+    }
+    public static async Task<IResult> SignupAccount(IHasher hasher, IDbQueryService dbQuery){
         while (true){
             (string hashedPassword, string padding) = hasher.Hash(new object{},"admin123");
-            cmd.Parameters.Clear();
-            cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "username", Value = "mqthanggg"});
-            cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "password", Value = hashedPassword});
-            cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "padding", Value = padding});
-            int res;
+            var user = new User{
+                Username = "mqthanggg",
+                Password = hashedPassword,
+                Padding = padding,
+            }; 
+            int affectedRows;
             try{
-                res = await audit.ExecuteWriteQueryWithUpdateAuditAsync(cmd, "user", DbOperation.INSERT);
+                affectedRows = (int)await dbQuery.ExecuteQueryAsync<User,User>(user, DbOperation.INSERT);
             }
             catch (PostgresException e){
                 if (e.SqlState == "23505"){
