@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { TitleService } from '../title.service';
+import { TitleService } from '../../../infrastructure/services/title.service';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { StationRecord } from './station-record';
-import { environment } from '../../../environments/environment';
+import { environment } from './../../../../environments/environment';
 import { delay, mergeMap,catchError,finalize,of,throwError} from 'rxjs';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { StationDeleteComponent } from './station-delete/station-delete.component';

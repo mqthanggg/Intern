@@ -1,15 +1,14 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { TitleService } from '../title.service';
-import { environment } from '../../../environments/environment';
+import { TitleService } from '../../../infrastructure/services/title.service';
+import { environment } from './../../../../environments/environment';
 import { delay, mergeMap,catchError,finalize,of,throwError } from 'rxjs';
-import { ElementDraggableDirective, ElementDraggableSectionDirective } from '../../element-draggable.directive';
+import { ElementDraggableDirective, ElementDraggableSectionDirective } from './../../../shared/directives/element-draggable.directive';
 import { ActivatedRoute } from '@angular/router';
 import { DispenserRecord } from './dispenser-record';
 import { TankRecord } from './tank-record';
 import { NgClass } from '@angular/common';
 import { LogRecord } from './log-record';
-
 
 @Component({
   selector: 'app-station',

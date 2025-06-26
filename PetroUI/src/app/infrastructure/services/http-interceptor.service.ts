@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, of, switchMap, tap, throwError } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 
 const ignoredURL: string[] = ['login']
 

@@ -54,6 +54,7 @@ COMMENT ON TABLE petro_application.station
 
 DROP TABLE IF EXISTS petro_application.fuel CASCADE;
 
+
 CREATE TABLE IF NOT EXISTS petro_application.fuel
 (
     fuel_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
@@ -332,3 +333,17 @@ GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
+
+
+-- TRUY VẤN DỮ LIỆU
+select * from petro_application.log  -- nhập ký
+select * from petro_application.station  -- trạm xăng
+select * from petro_application.tank      -- bể chứa
+select * from petro_application.user  -- Tài khoản
+select * from petro_application.fuel  -- nhiên liệu
+select * from petro_application.dispenser -- máy bơm xăng
+
+
+
+
+

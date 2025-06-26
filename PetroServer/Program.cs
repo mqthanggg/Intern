@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
-
+using Infrastructure.Security;
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +24,8 @@ var healthCheckService = app.Services.GetRequiredService<HealthCheckService>();
 var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
+    await using var db_write_dataSource = NpgsqlDataSource.Create(DotNetEnv.Env.GetString("DBWRITE_CONNECTION_STRING"));
+    await using var db_read_dataSource = NpgsqlDataSource.Create(DotNetEnv.Env.GetString("DBREAD_CONNECTION_STRING"));
     app.UseRouting();
     app.UseCors();
     if (app.Environment.IsDevelopment()){
@@ -124,7 +126,7 @@ if (report.Status == HealthStatus.Healthy){
         var encryptedPassword = res["password"].ToString() ?? "";
         var passwordPadding = res["padding"].ToString() ?? "";
         var userId = Convert.ToInt32(res["user_id"]);
-        if (PasswordHasher.Verify(body,body.Password + passwordPadding,encryptedPassword)){
+        if (PasswordHasher.Verify("mqthanggg",body.Password + passwordPadding,encryptedPassword)){
             var claims = new List<Claim>{
                 new Claim(ClaimTypes.Sid, userId.ToString()),
                 new Claim(ClaimTypes.Name, res["username"].ToString() ?? "")
@@ -155,7 +157,7 @@ if (report.Status == HealthStatus.Healthy){
             res.Close();
             int col;
             while (true){
-                List<string> hash = PasswordHasher.Hash(new {},randomRefreshToken);
+                List<string> hash = PasswordHasher.Hash(randomRefreshToken);
                 string hashedRefreshToken = hash[0];
                 string refreshTokenPadding = hash[1];
                 refreshTokenCmd.Parameters.Clear();
@@ -208,7 +210,8 @@ if (report.Status == HealthStatus.Healthy){
         var refreshTokenPadding = res["token_padding"].ToString();
         if (
             DateTime.Now.CompareTo(refreshTokenExpiredTime) > 0 || //Expired
-            !PasswordHasher.Verify(body, body.RefreshToken + refreshTokenPadding, hashedRefreshToken) //Invalid refresh token
+          // !PasswordHasher.Verify(body, body.RefreshToken + refreshTokenPadding, hashedRefreshToken) //Invalid refresh token
+           !PasswordHasher.Verify("mqthanggg", body.RefreshToken + refreshTokenPadding, hashedRefreshToken)
         ) 
             return Results.Unauthorized();
         await res.CloseAsync();
@@ -221,7 +224,7 @@ if (report.Status == HealthStatus.Healthy){
         return Results.Json(new {token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor)}, statusCode: 200);
     });
     //Configure route for JWKS
-    app.MapGet("/.well-known/jwks.json",JWKsService.GetJWKs);
+    app.MapGet("/.well-known/jwks.json",JWKsService.GetJWKs1);
     app.Run();
 }
 else{
