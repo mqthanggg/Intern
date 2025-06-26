@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { CanActivateChildFn, CanActivateFn, Router, UrlTree } from '@angular/router';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 import { catchError, map, of } from 'rxjs';
 
 export const userGuard: CanActivateChildFn | CanActivateFn = (childRoute, state) => {

@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import {FormControl, ReactiveFormsModule, UntypedFormGroup, Validators} from '@angular/forms'
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { NgClass } from '@angular/common';
 import { catchError, delay, finalize, mergeMap, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';

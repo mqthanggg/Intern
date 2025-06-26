@@ -1,10 +1,4 @@
-using System.Data;
-using System.Net.WebSockets;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json;
-
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);

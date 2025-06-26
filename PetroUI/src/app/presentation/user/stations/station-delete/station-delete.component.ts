@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { environment } from '../../../../environments/environment';
+import { environment } from './../../../../../environments/environment';
 import { catchError, delay, finalize, mergeMap, of, throwError } from 'rxjs';
 
 @Component({

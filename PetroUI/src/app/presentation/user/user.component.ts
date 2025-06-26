@@ -1,7 +1,7 @@
 import { Location, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, Event, RouterLink, RouterOutlet, RouterEvent, NavigationEnd } from '@angular/router';
-import { TitleService } from './title.service';
+import { TitleService } from '../../infrastructure/services/title.service';
 import { filter } from 'rxjs';
 
 @Component({

@@ -120,5 +120,15 @@
     "C:\\Users\\maiqu\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problem reading the cache file C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\obj\\project.nuget.cache : '<' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
+      "projectPath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
+      "targetGraphs": []
+    }
+  ]
 }
