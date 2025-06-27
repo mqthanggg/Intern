@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0kmvAhTzmI8=",
+  "dgSpecHash": "DW8NvSkW9K4=",
   "success": true,
   "projectFilePath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
   "expectedPackageFiles": [
@@ -61,8 +61,9 @@
     "C:\\Users\\maiqu\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\sprache\\2.3.1\\sprache.2.3.1.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore\\8.1.3\\swashbuckle.aspnetcore.8.1.3.nupkg.sha512",
-    "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\8.1.3\\swashbuckle.aspnetcore.swagger.8.1.3.nupkg.sha512",
-    "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\8.1.3\\swashbuckle.aspnetcore.swaggergen.8.1.3.nupkg.sha512",
+    "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\9.0.1\\swashbuckle.aspnetcore.annotations.9.0.1.nupkg.sha512",
+    "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\9.0.1\\swashbuckle.aspnetcore.swagger.9.0.1.nupkg.sha512",
+    "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\9.0.1\\swashbuckle.aspnetcore.swaggergen.9.0.1.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\8.1.3\\swashbuckle.aspnetcore.swaggerui.8.1.3.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\system.buffers\\4.3.0\\system.buffers.4.3.0.nupkg.sha512",
@@ -120,15 +121,5 @@
     "C:\\Users\\maiqu\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\maiqu\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "message": "Problem reading the cache file C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\obj\\project.nuget.cache : '<' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
-      "projectPath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\maiqu\\Desktop\\repo\\linux-windows\\Intern\\PetroServer\\PetroServer.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }
