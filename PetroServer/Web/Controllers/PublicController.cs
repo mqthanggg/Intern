@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+
 public static class PublicController{
     public static WebApplication MapPublicController(this WebApplication app){
         app.MapGet("log/station/{id}",GetLogByStationId);
@@ -9,5 +11,26 @@ public static class PublicController{
         return TypedResults.Ok(
             JsonConvert.SerializeObject(res, Formatting.Indented)
         );
+    }
+
+    public static async Task<IResult> Login([FromBody] LoginRequest body, IDbQueryService dbQuery, IHasher hasher, IJWTService ijwt)
+    {
+        User obj;
+        try
+        {
+            obj = (User)await dbQuery.ExecuteQueryAsync<User, User>(new User { Username = body.Username }, DbOperation.SELECT);
+        }
+        catch (InvalidOperationException)
+        {
+            return TypedResults.NotFound();
+        }
+        if(hasher.Verify(body, body.Password + obj.Padding, obj.Password))
+        {
+            return TypedResults.Ok(new
+            {
+                token = ijwt.GenerateAccessToken(obj.UserId, obj.Username)
+            });
+
+        }  return TypedResults.NotFound(new { message = "Password not true" });
     }
 }

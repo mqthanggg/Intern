@@ -40,16 +40,22 @@ public class UserRepository : IUserRepository{
     }
     public async Task<User> GetUserLoginAsync(string username){
         await using (var connection = dbWrite.CreateConnection()){
-            User user = await connection.QuerySingle(UserQuery.SelectUserById);
+            User user = await connection.QuerySingleAsync(UserQuery.SelectUserById);
             return user;
         }
     }
 
     public async Task<object> GetAsync<TInput>(TInput entity) where TInput : Entity{
         if (entity is User user){
-            return user.UserId == -1 ?
-                await GetAllAsync() :
-                await GetByIdAsync(user);
+            if (user.UserId == -1)
+            {
+                if(user.Username == "")
+                    return await GetAllAsync();
+                else 
+                    return await GetUserLoginAsync(user.Username);
+            }
+            else
+                return await GetByIdAsync(user);
         }
         throw new InvalidOperationException("Invalid input type");
     }

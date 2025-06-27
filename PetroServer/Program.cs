@@ -118,7 +118,7 @@ if (report.Status == HealthStatus.Healthy){
     //     res.Read();
     //     var encryptedPassword = res["password"].ToString() ?? "";
     //     var passwordPadding = res["padding"].ToString() ?? "";
-    //     var userId = Convert.ToInt32(res["user_id"]);
+    //     var userId = Convert.ToInt32(res["user_pasid"]);
     //     if (PasswordHasher.Verify(body,body.Password + passwordPadding,encryptedPassword)){
     //         var claims = new List<Claim>{
     //             new Claim(ClaimTypes.Sid, userId.ToString()),
