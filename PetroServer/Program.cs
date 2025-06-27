@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,9 @@ builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AuthSetup(env);
 builder.Services.AddServices();
+
+DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 var app = builder.Build();
 
 var healthCheckService = app.Services.GetRequiredService<HealthCheckService>();
@@ -44,9 +48,9 @@ if (report.Status == HealthStatus.Healthy){
     // app.MapGet("/dispenser/station/{id}", [Authorize]  async ([FromRoute] int id) => {
     //     string schemaName = Env.GetString("SCHEMA");
     //     await using var cmd = db_read_dataSource.CreateCommand($@"
-    //     SELECT dp.name, f.price, f.long_name, f.short_name FROM
-    //     {schemaName}.dispenser as dp
-    //     INNER JOIN {schemaName}.fuel as f ON f.fuel_id = dp.fuel_id AND dp.station_id = @id
+        // SELECT dp.name, f.price, f.long_name, f.short_name FROM
+        // {schemaName}.dispenser as dp
+        // INNER JOIN {schemaName}.fuel as f ON f.fuel_id = dp.fuel_id AND dp.station_id = @id
     //     ");
     //     cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
     //     var res = await cmd.ExecuteReaderAsync();

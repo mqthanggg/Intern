@@ -1,8 +1,15 @@
+using Swashbuckle.AspNetCore.Annotations;
+
 public static class DevelopmentController{
     public static WebApplication MapSignup(this WebApplication app){
         app.MapPut("/signup", SignupAccount);
         return app;
     }
+    [ProducesResponseType(200)]
+    [SwaggerOperation(
+        Summary = "Signup a development account.",
+        Description = "Signup a development account with username, password are set to mqthanggg, admin123 (for development only)."
+    )]
     public static async Task<IResult> SignupAccount(IHasher hasher, IDbQueryService dbQuery){
         while (true){
             (string hashedPassword, string padding) = hasher.Hash(new object{},"admin123");

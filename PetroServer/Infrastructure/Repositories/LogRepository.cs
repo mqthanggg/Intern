@@ -49,7 +49,7 @@ public class LogRepository : ILogRepository{
         }
         else if(entity is Station station){
             await using (var connection = dbRead.CreateConnection()){
-                List<Log> logs = (await connection.QueryAsync<Log>(LogQuery.SelectLogByStationId,station)).ToList();
+                List<LogResponse> logs = (await connection.QueryAsync<LogResponse>(LogQuery.SelectLogByStationId,station)).ToList();
                 return logs;
             }
         }

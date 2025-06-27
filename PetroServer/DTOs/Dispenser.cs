@@ -1,6 +1,6 @@
 public class DispenserResponse{
-    public required string Name{get; set;} = "";
-    public required int Price{get; set;} = -1;
-    public required string LongName{get; set;} = "";
-    public required string ShortName{get; set;} = "";
+    public string Name{get; set;} = "";
+    public int Price{get; set;}
+    public string LongName{get; set;} = "";
+    public string ShortName{get; set;} = "";
 }

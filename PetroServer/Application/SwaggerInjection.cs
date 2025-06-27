@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 public static class Swagger{
     public static IServiceCollection SwaggerSetup(this IServiceCollection services){
         services.AddSwaggerGen(c => {
+            c.EnableAnnotations();
             c.SwaggerDoc("v1",new OpenApiInfo{Title = "Petro application API", Description = "List of APIs for petro application", Version = "v1"});
             c.AddSecurityDefinition("Bearer",new OpenApiSecurityScheme{
                 Description = "JWT Authorization using Bearer header",
