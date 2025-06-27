@@ -49,7 +49,9 @@ public static class DispenserQuery{
     public static readonly string UpdateDispenser = $@"
         UPDATE {Schema}.dispenser
         SET
-            name = @Name
+            name = @Name,
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = @LastModifiedDate
         WHERE
             dispenser_id = @DispenserId
     ";

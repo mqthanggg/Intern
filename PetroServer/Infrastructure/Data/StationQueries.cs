@@ -37,7 +37,9 @@ public static class StationQuery{
         UPDATE {Schema}.station
         SET
             name = @Name,
-            address = @Address
+            address = @Address,
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = @LastModifiedDate
         WHERE
             station_id = @StationId
     ";
