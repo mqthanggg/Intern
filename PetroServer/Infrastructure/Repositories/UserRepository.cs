@@ -38,9 +38,9 @@ public class UserRepository : IUserRepository{
             return affectedRows;
         }
     }
-    public async Task<User> GetUserLoginAsync(string username){
+    public async Task<User> GetUserLoginAsync(User entity){
         await using (var connection = dbWrite.CreateConnection()){
-            User user = await connection.QuerySingleAsync(UserQuery.SelectUserById);
+            User user = await connection.QuerySingleAsync(UserQuery.GetUserByUsername,entity);
             return user;
         }
     }
@@ -52,7 +52,7 @@ public class UserRepository : IUserRepository{
                 if(user.Username == "")
                     return await GetAllAsync();
                 else 
-                    return await GetUserLoginAsync(user.Username);
+                    return await GetUserLoginAsync(user);
             }
             else
                 return await GetByIdAsync(user);

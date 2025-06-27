@@ -59,4 +59,14 @@ public static class UserQuery{
         WHERE 
             user_id = @UserId
     ";
+    public static readonly string GetUserByUsername = $@"
+        SELECT
+            user_id, 
+            username, 
+            password, 
+            padding 
+        FROM {Schema}.user
+        WHERE 
+            username = @Username
+    ";
 }
