@@ -49,7 +49,9 @@ public static class LogQuery{
             fuel_name = @FuelName,
             total_liters = @TotalLiters,
             total_amount = @TotalAmount,
-            time = @Time
+            time = @Time,
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = @LastModifiedDate
         WHERE
             log_id = @LogId
     ";

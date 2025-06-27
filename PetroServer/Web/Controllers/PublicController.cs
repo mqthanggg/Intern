@@ -4,6 +4,8 @@ public static class PublicController{
     public static WebApplication MapPublicController(this WebApplication app){
         app.MapGet("log/station/{id}",GetLogByStationId);
         app.MapGet("dispenser/station/{id}",GetDispenserByStationId);
+        app.MapGet("tank/station/{id}",GetTankByStationId);
+        app.MapGet("/.well-known/jwks.json",GetJWKs);
         return app;
     }
     // [Authorize]
@@ -23,8 +25,8 @@ public static class PublicController{
     [ProducesResponseType(typeof(List<DispenserResponse>),200)]
     [Produces("application/json")]
     [SwaggerOperation(
-        Summary = "Retrieve logs by station ID.",
-        Description = "Retrieve a list of logs that are related to the dispensers belong to the given station."
+        Summary = "Retrieve dispensers by station ID.",
+        Description = "Retrieve a list of dispensers that belong to the given station."
     )]
     public static async Task<IResult> GetDispenserByStationId([FromRoute] int id, IDbQueryService dbQuery){
         var res = await dbQuery.ExecuteQueryAsync<Station,Dispenser>(new Station{StationId = id},DbOperation.SELECT);
@@ -32,7 +34,31 @@ public static class PublicController{
             res
         );
     }
+    // [Authorize]
+    [ProducesResponseType(typeof(List<TankResponse>),200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Retrieve tanks by station ID.",
+        Description = "Retrieve a list of tanks that are belong to the given station."
+    )]
+    public static async Task<IResult> GetTankByStationId([FromRoute] int id, IDbQueryService dbQuery){
+        var res = await dbQuery.ExecuteQueryAsync<Station,Tank>(new Station{StationId = id},DbOperation.SELECT);
+        return TypedResults.Ok(
+            res
+        );
+    }
 
+    [ProducesResponseType(typeof(List<JsonWebKey>),200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Retrieve JWKs",
+        Description = "Retrieve a list of JSON web key."
+    )]
+    public static IResult GetJWKs(IJWKsService jWKs){
+        return TypedResults.Ok(
+            jWKs.GetJWKs()
+        );
+    }
     public static async Task<IResult> Login([FromBody] LoginRequest body, IDbQueryService dbQuery, IHasher hasher, IJWTService ijwt)
     {
         User obj;

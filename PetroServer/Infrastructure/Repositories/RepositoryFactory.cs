@@ -4,13 +4,15 @@ public class RepositoryFactory : IRepositoryFactory{
         IUserRepository userRepository,
         IStationRepository stationRepository,
         ILogRepository logRepository,
-        IDispenserRepository dispenserRepository
+        IDispenserRepository dispenserRepository,
+        ITankRepository tankRepository
     ){
         _repositoryDictionary = new Dictionary<Type, object>{
             {typeof(User), userRepository},
             {typeof(Station), stationRepository},
             {typeof(Log),logRepository},
-            {typeof(Dispenser),dispenserRepository}
+            {typeof(Dispenser),dispenserRepository},
+            {typeof(Tank),tankRepository}
         };
     }
     public IRepository<T> GetRepository<T>() where T : Entity{
