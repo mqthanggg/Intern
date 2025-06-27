@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+using Microsoft.AspNetCore.Http.HttpResults;
+=======
 using Swashbuckle.AspNetCore.Annotations;
+>>>>>>> 3dee3400e5456b156d5cde66b101730f2b0b06f4
 
 public static class PublicController{
     public static WebApplication MapPublicController(this WebApplication app){
