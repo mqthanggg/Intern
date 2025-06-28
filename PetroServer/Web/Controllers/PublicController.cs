@@ -2,10 +2,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 public static class PublicController{
     public static WebApplication MapPublicController(this WebApplication app){
-        app.MapGet("log/station/{id}",GetLogByStationId);
-        app.MapGet("dispenser/station/{id}",GetDispenserByStationId);
-        app.MapGet("tank/station/{id}",GetTankByStationId);
-        app.MapGet("/.well-known/jwks.json",GetJWKs);
+       app.MapGet("log/station/{id}", GetLogByStationId);
+        app.MapGet("dispenser/station/{id}", GetDispenserByStationId);
+        app.MapPost("login", Login);
         return app;
     }
     // [Authorize]
@@ -63,67 +62,69 @@ public static class PublicController{
     }
     public static async Task<IResult> Login([FromBody] LoginRequest body, IDbQueryService dbQuery, IHasher hasher, IJWTService ijwt)
     {
-        object obj= new { };
         try
         {
-            var o = await dbQuery.ExecuteQueryAsync<User, User>(new User { Username = body.Username }, DbOperation.SELECT);
-            Console.WriteLine(o);         
+            var result = await dbQuery.ExecuteQueryAsync<User, User>(
+                new User { Username = body.Username },
+                DbOperation.SELECT
+            );
+            var user1 = result as User;
+            if (user1 == null)
+                return TypedResults.NotFound("Tài khoản không tồn tại");
+            if (hasher.Verify(result, body.Password + user1.Padding, user1.Password))
+            {
+                return TypedResults.Ok(new
+                {
+                    token = ijwt.GenerateAccessToken(user1.UserId, user1.Username)
+                });
+            }
+              string randomRefreshToken;
+            using (var _rng = RandomNumberGenerator.Create())
+            {
+                byte[] randomBytes = new byte[16];
+                _rng.GetBytes(randomBytes);
+                randomRefreshToken = Convert.ToBase64String(randomBytes);
+            }
+            int res;
+            while (true)
+            {
+                (string hashed, string padding) = hasher.Hash(new { }, randomRefreshToken);
+                try
+                {
+                    res = (int)await dbQuery.ExecuteQueryAsync<User, User>(new User { Username = body.Username }, DbOperation.UPDATE);
+                }
+                catch (PostgresException e)
+                {
+                    if (e.SqlState == "23505")
+                    {
+                        /*
+                            Example constraint name: user_<column>_key
+                        */
+                        Regex regex = new Regex(@"user_(\w+)_key");
+                        Match match = regex.Match(e.ConstraintName ?? "");
+                        string column = match.Groups[1].Value;
+                        if (column == "token_padding")//Rare
+                            continue;
+                        return TypedResults.InternalServerError(new { why = column });
+                    }
+                    return TypedResults.InternalServerError(new { why = e.Message });
+                }
+                break;
+            }
+            if (res > 0)
+            {
+                return Results.Ok(new
+                {
+                    token = ijwt.GenerateAccessToken(user1.UserId, user1.Username),
+                    refresh_token = randomRefreshToken
+                });
+            }
+            return TypedResults.NotFound();
         }
         catch (InvalidOperationException)
         {
             return TypedResults.NotFound();
         }
-        if (obj is not User user)
-            return TypedResults.InternalServerError();
-        if (hasher.Verify(body, body.Password + user.Padding, user.Password))
-        {
-            return TypedResults.Ok(new
-            {
-                token = ijwt.GenerateAccessToken(user.UserId, user.Username)
-            });
-        }
-        string randomRefreshToken;
-        using (var _rng = RandomNumberGenerator.Create())
-        {
-            byte[] randomBytes = new byte[16];
-            _rng.GetBytes(randomBytes);
-            randomRefreshToken = Convert.ToBase64String(randomBytes);
-        }
-        int res;
-        while (true)
-        {
-            (string hashed, string padding) = hasher.Hash(new { }, randomRefreshToken);
-            try
-            {
-                res = (int)await dbQuery.ExecuteQueryAsync<User, User>(new User { Username = body.Username }, DbOperation.UPDATE);
-            }
-            catch (PostgresException e)
-            {
-                if (e.SqlState == "23505")
-                {
-                    /*
-                        Example constraint name: user_<column>_key
-                    */
-                    Regex regex = new Regex(@"user_(\w+)_key");
-                    Match match = regex.Match(e.ConstraintName ?? "");
-                    string column = match.Groups[1].Value;
-                    if (column == "token_padding")//Rare
-                        continue;
-                    return TypedResults.InternalServerError(new { why = column });
-                }
-                return TypedResults.InternalServerError(new { why = e.Message });
-            }
-            break;
-        }
-        if (res > 0)
-        {
-            return Results.Ok(new
-            {
-                token = ijwt.GenerateAccessToken(user.UserId, user.Username) ,
-                refresh_token = randomRefreshToken
-            });
-        }
-        return TypedResults.NotFound();
     }
-    
+
 }

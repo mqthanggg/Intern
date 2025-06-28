@@ -6449,11 +6449,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nguye\\OneDrive\\Máy tính\\Do_an\\Intern\\PetroServer\\PetroServer.csproj",
+      "projectUniqueName": "C:\\Zalo\\Ngon_Ngu\\Intern\\PetroServer\\PetroServer.csproj",
       "projectName": "PetroServer",
-      "projectPath": "C:\\Users\\Nguye\\OneDrive\\Máy tính\\Do_an\\Intern\\PetroServer\\PetroServer.csproj",
+      "projectPath": "C:\\Zalo\\Ngon_Ngu\\Intern\\PetroServer\\PetroServer.csproj",
       "packagesPath": "C:\\Users\\Nguye\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nguye\\OneDrive\\Máy tính\\Do_an\\Intern\\PetroServer\\obj\\",
+      "outputPath": "C:\\Zalo\\Ngon_Ngu\\Intern\\PetroServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

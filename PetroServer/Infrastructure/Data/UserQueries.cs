@@ -16,7 +16,7 @@ public static class UserQuery{
             @Username, 
             @Password, 
             @Padding,
-            @RefreshToken,
+            @Represents,
             @TokenPadding,
             @TokenExpiredTime,
             @CreatedBy,
@@ -63,7 +63,7 @@ public static class UserQuery{
         SELECT
             user_id, 
             username, 
-            password, 
+            ""password"", 
             padding 
         FROM {Schema}.user
         WHERE 
