@@ -40,7 +40,7 @@ public class UserRepository : IUserRepository{
     }
     public async Task<User> GetUserLoginAsync(User entity){
         await using (var connection = dbWrite.CreateConnection()){
-            User user = await connection.QuerySingleAsync(UserQuery.GetUserByUsername,entity);
+            User user = await connection.QuerySingleAsync<User>(UserQuery.GetUserByUsername,entity);
             return user;
         }
     }
