@@ -7,11 +7,11 @@ var env = builder.Environment;
 
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
 builder.Services.JSONSetup();
+builder.Services.AuthSetup(env);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.HealthCheckSetup();
 builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
-builder.Services.AuthSetup(env);
 builder.Services.AddServices();
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;

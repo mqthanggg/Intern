@@ -20,9 +20,9 @@ public static class UserQuery{
             @TokenPadding,
             @TokenExpiredTime,
             @CreatedBy,
-            @CreatedDate,
+            now(),
             @LastModifiedBy,
-            @LastModifiedDate
+            now()
         )
     ";
     public static readonly string SelectUser = $@"
@@ -47,10 +47,10 @@ public static class UserQuery{
         UPDATE {Schema}.user
         SET
             refresh_token = @RefreshToken,
-            token_padding = @RefreshTokenPadding,
+            token_padding = @TokenPadding,
             token_expired_time = now() + INTERVAL '7 days',
             last_modified_by = @LastModifiedBy,
-            last_modified_date = @LastModifiedDate
+            last_modified_date = now()
         WHERE
             user_id = @UserId
     ";
@@ -63,7 +63,7 @@ public static class UserQuery{
         SELECT
             user_id, 
             username, 
-            ""password"", 
+            password, 
             padding 
         FROM {Schema}.user
         WHERE 

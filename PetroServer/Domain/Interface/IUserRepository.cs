@@ -1,4 +1,4 @@
 
 public interface IUserRepository : IRepository<User>{
-    Task<User> GetUserLoginAsync(User entity);
+    Task<User> GetUserByUsernameAsync(User entity);
 }

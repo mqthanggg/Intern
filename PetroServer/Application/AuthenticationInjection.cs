@@ -3,7 +3,8 @@ public static class Auth{
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(op => {
             op.Authority = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY");
             op.Audience = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE");
-            op.RequireHttpsMetadata = false;
+            op.RequireHttpsMetadata = !_env.IsDevelopment();
+            op.IncludeErrorDetails = _env.IsDevelopment();
             //Using JWKS validation
             op.TokenValidationParameters = new TokenValidationParameters{
                 ValidateIssuerSigningKey = true,
@@ -15,7 +16,7 @@ public static class Auth{
                     var jwks_keys = new JsonWebKeySet(res).Keys;
                     return jwks_keys;
                 },
-                ClockSkew = TimeSpan.FromSeconds(1),
+                ClockSkew = TimeSpan.FromSeconds(0),
                 RequireSignedTokens = true
             };
         });

@@ -10,17 +10,18 @@ public static class DevelopmentController{
         Summary = "Signup a development account.",
         Description = "Signup a development account with username, password are set to mqthanggg, admin123 (for development only)."
     )]
-    public static async Task<IResult> SignupAccount(IHasher hasher, IDbQueryService dbQuery){
+    public static async Task<IResult> SignupAccount(IHasher hasher, IUserRepository userRepository){
         while (true){
             (string hashedPassword, string padding) = hasher.Hash(new object{},"admin123");
-            var user = new User{
+            int affectedRows;
+            try{
+                affectedRows = await userRepository.InsertAsync(new User{
                 Username = "mqthanggg",
                 Password = hashedPassword,
                 Padding = padding,
-            }; 
-            int affectedRows;
-            try{
-                affectedRows = (int)await dbQuery.ExecuteQueryAsync<User,User>(user, DbOperation.INSERT);
+                CreatedBy = "mqthanggg",
+                LastModifiedBy = "mqthanggg"
+            });
             }
             catch (PostgresException e){
                 if (e.SqlState == "23505"){

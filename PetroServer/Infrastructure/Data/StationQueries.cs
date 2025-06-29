@@ -28,9 +28,9 @@ public static class StationQuery{
             @Name,
             @Address,
             @CreatedBy,
-            @CreatedDate,
+            now(),
             @LastModifiedBy,
-            @LastModifiedDate
+            now()
         )
     ";
     public static readonly string UpdateStation = $@"
@@ -39,7 +39,7 @@ public static class StationQuery{
             name = @Name,
             address = @Address,
             last_modified_by = @LastModifiedBy,
-            last_modified_date = @LastModifiedDate
+            last_modified_date = now()
         WHERE
             station_id = @StationId
     ";

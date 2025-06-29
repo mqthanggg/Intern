@@ -22,4 +22,10 @@ public class JWTService : IJWTService{
         );
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
+    public IReadOnlyList<Claim> GetClaims(string bearer){
+        if (bearer[..7] != "Bearer "){
+            throw new InvalidDataException("Invalid bearer token: must starts with \"Bearer <token>\"");
+        }
+        return new JwtSecurityTokenHandler().ReadJwtToken(bearer[7..]).Claims.ToList();
+    }
 }

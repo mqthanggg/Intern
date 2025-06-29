@@ -8,21 +8,6 @@ public class LogRepository : ILogRepository{
         dbWrite = dbWriteConnection;
         dbRead = dbReadConnection;
     }
-
-    public async Task<IReadOnlyList<Log>> GetAllAsync(){
-        await using (var connection = dbRead.CreateConnection()){
-            List<Log> logs = (await connection.QueryAsync<Log>(LogQuery.SelectLog)).ToList();
-            return logs;
-        }
-    }
-
-    public async Task<Log> GetByIdAsync(Log entity){
-        await using (var connection = dbRead.CreateConnection()){
-            Log log = await connection.QuerySingleAsync<Log>(LogQuery.SelectLogById, entity);
-            return log;
-        }
-    }
-
     public async Task<int> InsertAsync(Log entity){
         await using (var connection = dbWrite.CreateConnection()){
             int affectedRows = await connection.ExecuteAsync(LogQuery.InsertLog,entity);
@@ -41,18 +26,10 @@ public class LogRepository : ILogRepository{
             return affectedRows;
         }
     }
-    public async Task<object> GetAsync<TInput>(TInput entity) where TInput : Entity{
-        if (entity is Log log){
-            return log.LogId == -1 ?
-                await GetAllAsync() :
-                await GetByIdAsync(log);
+    public async Task<IReadOnlyList<LogResponse>> GetLogByStationIdAsync(Station entity){
+        await using (var connection = dbRead.CreateConnection()){
+            List<LogResponse> logs = (await connection.QueryAsync<LogResponse>(LogQuery.SelectLogByStationId,entity)).ToList();
+            return logs;
         }
-        else if(entity is Station station){
-            await using (var connection = dbRead.CreateConnection()){
-                List<LogResponse> logs = (await connection.QueryAsync<LogResponse>(LogQuery.SelectLogByStationId,station)).ToList();
-                return logs;
-            }
-        }
-        throw new InvalidOperationException("Invalid input type");
     }
 }

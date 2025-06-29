@@ -6,17 +6,10 @@ public class StationRepository : IStationRepository{
         dbRead = dbReadConnection;
     }
 
-    public async Task<IReadOnlyList<Station>> GetAllAsync(){
+    public async Task<IReadOnlyList<StationResponse>> GetAllStationResponseAsync(){
         await using (var connection = dbRead.CreateConnection()){
-            List<Station> stations = (await connection.QueryAsync<Station>(StationQuery.SelectStation)).ToList();
+            List<StationResponse> stations = (await connection.QueryAsync<StationResponse>(StationQuery.SelectStation)).ToList();
             return stations;
-        }
-    }
-
-    public async Task<Station> GetByIdAsync(Station entity){
-        await using (var connection = dbRead.CreateConnection()){
-            Station station = await connection.QuerySingleAsync<Station>(StationQuery.SelectStationById, entity);
-            return station;
         }
     }
 
@@ -37,14 +30,5 @@ public class StationRepository : IStationRepository{
             int affectedRows = await connection.ExecuteAsync(StationQuery.DeleteStation,entity);
             return affectedRows;
         }
-    }
-
-    public async Task<object> GetAsync<TInput>(TInput entity) where TInput : Entity{
-        if (entity is Station station){
-            return station.StationId == -1 ?
-                await GetAllAsync() :
-                await GetByIdAsync(station);
-        }
-        throw new InvalidOperationException("Invalid input type");
     }
 }
