@@ -5,6 +5,8 @@ public static class TankQuery{
             name,
             max_volume
         FROM {Schema}.tank
+        ORDER BY
+            tank_id
     ";
     public static readonly string SelectTankById = $@"
         SELECT
@@ -61,5 +63,7 @@ public static class TankQuery{
             f.fuel_id = t.fuel_id 
         AND 
             t.station_id = @StationId
+        ORDER BY
+            tank_id
     ";
 }

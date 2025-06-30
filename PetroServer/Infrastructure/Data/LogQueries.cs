@@ -78,5 +78,7 @@ public static class LogQuery{
         INNER JOIN {Schema}.fuel as fuel 
         ON 
             dp.fuel_id = fuel.fuel_id
+        ORDER BY
+            log.log_id
     ";
 }

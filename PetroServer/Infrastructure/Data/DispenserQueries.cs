@@ -12,11 +12,15 @@ public static class DispenserQuery{
             f.fuel_id = dp.fuel_id 
         AND 
             dp.station_id = @StationId
+        ORDER BY
+            dp.name
     ";
     public static readonly string SelectDispenser = $@"
         SELECT 
             name
         FROM {Schema}.dispenser
+        ORDER BY
+            dp.dispenser_id
     ";
     public static readonly string SelectDispenserById = $@"
         SELECT 

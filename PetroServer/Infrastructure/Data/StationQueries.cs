@@ -6,6 +6,8 @@ public static class StationQuery{
             name,
             address
         FROM {Schema}.station
+        ORDER BY
+            station_id
     ";
     public static readonly string SelectStationById = $@"
         SELECT 
