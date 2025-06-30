@@ -15,8 +15,8 @@ export const routes: Routes = [
     {
         path: "user",
         title: "User",
-        canActivateChild: [userGuard],
-        canActivate: [userGuard],
+        // canActivateChild: [userGuard],
+        // canActivate: [userGuard],
         loadComponent: ()=>import('./presentation/user/user.component').then(m => m.UserComponent),
         loadChildren: () => import('./presentation/user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModule)
     },

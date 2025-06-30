@@ -4,14 +4,14 @@ public static class StationQuery{
         SELECT 
             station_id,
             name,
-            address,
+            address
         FROM {Schema}.station
     ";
     public static readonly string SelectStationById = $@"
         SELECT 
             station_id,
             name,
-            address,
+            address
         FROM {Schema}.station
         WHERE
             station_id = @StationId

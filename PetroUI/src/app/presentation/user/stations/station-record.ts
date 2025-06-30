@@ -1,5 +1,5 @@
 export interface StationRecord {
-    station_id: number,
+    stationId: number,
     name: string,
     address: string
 }

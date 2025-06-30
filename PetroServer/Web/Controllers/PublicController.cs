@@ -194,8 +194,9 @@ public static class PublicController{
             var res = await stationRepository.GetAllStationResponseAsync();
             return TypedResults.Ok(res);
         }
-        catch (PostgresException)
+        catch (PostgresException e)
         {
+            Console.WriteLine(e.Message);
             return TypedResults.InternalServerError();
         }
     }
