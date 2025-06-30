@@ -40,7 +40,7 @@ export class LoginComponent {
         if (res.status === 200){
           localStorage.clear()
           localStorage.setItem('jwt',res.body.token);
-          localStorage.setItem('refresh',res.body.refresh_token)
+          localStorage.setItem('refresh',res.body.refreshToken)
           this.router.navigate(['/user'])
         }
       },

@@ -1,8 +1,8 @@
 export interface LogRecord {
     name: number,
-    fuel_name: string,
-    total_liters: number,
+    fuelName: string,
+    totalLiters: number,
     price: number
-    total_amount: number,
+    totalAmount: number,
     time: string
 }

@@ -1,20 +1,20 @@
 <div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
-    <div class="shadow-xl rounded-md p-5 bg-white h-[45%] max-h-[45%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
-        <div class="text-[#4DA8DA] font-semibold text-xl select-none">Dispenser's status</div>
-        <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
+    <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
+        <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
+        <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
             @if (isDispenserLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
             }
             @else{
-                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
-                    <thead class="">
+                <table class="border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+                    <thead class="sticky top-0">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-4">Number</th>
                             <th class="px-4">Status</th>
                             <th class="px-7">Liter</th>
                             <th class="px-5">Price</th>
                             <th class="px-10">Total price</th>
-                            <th class="px-10">Fuel</th>
+                            <th class="">Fuel</th>
                             <th class="px-4">Tank</th>
                         </tr>
                     </thead>
@@ -23,11 +23,11 @@
                             <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
                                 <td class="text-center">{{dispenser.name}}</td>
                                 <td class="text-center">{{simulatingStatus}}</td>
-                                <td class="pl-2">{{simulatingLiter}}</td>
+                                <td class="pl-8">{{simulatingLiter}}</td>
                                 <td class="text-center">{{dispenser.price}}</td>
-                                <td class="pl-3">{{simulatingTotalPrice}}</td>
-                                <td class="">{{dispenser.long_name}}</td>
-                                <td class="">{{dispenser.short_name}}</td>
+                                <td class="pl-15">{{simulatingTotalPrice}}</td>
+                                <td class="pl-4">{{dispenser.longName}}</td>
+                                <td class="px-7">{{dispenser.shortName}}</td>
                             </tr>
                         }
                     </tbody>
@@ -35,15 +35,15 @@
             }
         </div>
     </div>
-    <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[45%] max-h-[45%] w-xl max-w-xl" ElementDraggable ElementDraggableSection>
-        <div class="text-[#4DA8DA] font-semibold text-xl select-none">Tank's status</div>
-        <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
+    <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-xl max-w-xl" ElementDraggable ElementDraggableSection>
+        <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Tank's status</div>
+        <div class="w-full max-h-55 overflow-auto relative">
             @if (isTankLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
             }
             @else{
-                <table class="my-5 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
-                    <thead class="">
+                <table class="table-auto border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+                    <thead class="sticky top-0">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-2">Number</th>
                             <th class="px-5">Fuel</th>
@@ -56,14 +56,14 @@
                         @for (tank of tankList; track tank.name) {
                             <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
                                 <td class="text-center">{{tank.name}}</td>
-                                <td class="pl-2">{{tank.short_name}}</td>
-                                <td class="">
+                                <td class="pl-7">{{tank.shortName}}</td>
+                                <td class="pl-5">
                                     <div class="w-full !bg-gray-500 rounded-md h-full z-10">
-                                        <div class="!bg-green-600 h-full rounded-md text-center text-white duration-200" [style.width]="_temp_statusList[$index].toString() + '%'">{{_temp_statusList[$index]}}%</div>
+                                        <div class="!bg-green-550 h-full rounded-md text-center text-white duration-200" [style.width]="_temp_statusList[$index].toString() + '%'">{{_temp_statusList[$index]}}%</div>
                                     </div>
                                 </td>
-                                <td class="text-center">{{tank.max_volume * _temp_statusList[$index] / 100}}</td>
-                                <td class="text-center">{{tank.max_volume}}</td>
+                                <td class="text-center">{{tank.maxVolume * _temp_statusList[$index] / 100}}</td>
+                                <td class="text-center">{{tank.maxVolume}}</td>
                             </tr>
                         }
                     </tbody>
@@ -71,7 +71,6 @@
             }
         </div>
     </div>
-<<<<<<< Updated upstream
     <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[45%] max-h-[45%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
         <div class="text-[#4DA8DA] font-semibold text-xl">Logs</div>
         <div class="h-80 w-full overflow-y-scroll no-scrollbar relative">
@@ -94,10 +93,10 @@
                         @for (log of logList; track $index) {
                             <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
                                 <td class="text-center">{{log.name}}</td>
-                                <td class="text-center">{{log.fuel_name}}</td>
-                                <td class="text-center">{{log.total_liters}}</td>
+                                <td class="text-center">{{log.fuelName}}</td>
+                                <td class="text-center">{{log.totalLiters}}</td>
                                 <td class="text-center">{{log.price}}</td>
-                                <td class="text-center">{{log.total_amount}}</td>
+                                <td class="text-center">{{log.totalAmount}}</td>
                                 <td class="text-center">{{log.time}}</td>
                             </tr>
                         }
@@ -106,7 +105,4 @@
             }
         </div>
     </div>
-=======
-    
->>>>>>> Stashed changes
 </div>

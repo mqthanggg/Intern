@@ -7,13 +7,15 @@ import { catchError, map, of } from 'rxjs';
 export const userGuard: CanActivateChildFn | CanActivateFn = (childRoute, state) => {
   const http = inject(HttpClient)
   const router = inject(Router)
-  return localStorage.getItem('refresh') !== null && localStorage.getItem('jwt') !== null && http.post(`${environment.serverURI}/refresh`,{
+  if (localStorage.getItem('refresh') == null || localStorage.getItem('jwt') == null)
+    return router.parseUrl('login')
+  return http.post(`${environment.serverURI}/refresh`,{
+    token: localStorage.getItem('jwt'),
     refreshToken: localStorage.getItem('refresh')
   },{
     observe: "response"
   }).pipe(
     map((value: HttpResponse<any>) => {
-      console.log('Token refreshed');
       localStorage.setItem('jwt', value.body.token)
       return true
     }),

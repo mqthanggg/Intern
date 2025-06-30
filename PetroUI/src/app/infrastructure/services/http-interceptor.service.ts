@@ -8,7 +8,7 @@ const ignoredURL: string[] = ['login']
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router)
-  const http = inject(HttpClient)
+  const http = inject(HttpClient)  
   if (ignoredURL.find((value) => {
     return value == req.url.split('/').at(-1)
   }) !== undefined)
@@ -24,13 +24,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           req.url.split('/').at(-1) !== 'refresh'
         ) {        
           return http.post(`${environment.serverURI}/refresh`,{
+            token: localStorage.getItem('jwt'),
             refreshToken: localStorage.getItem('refresh')
           },{
             observe: "response"
           }
           ).pipe(
             tap((value: HttpResponse<any>) => {
-              console.log('Token refreshed');
               localStorage.setItem('jwt', value.body.token)
             }),
             switchMap(() => {

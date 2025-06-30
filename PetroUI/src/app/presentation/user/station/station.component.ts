@@ -37,8 +37,8 @@ export class StationComponent implements OnInit{
       this.titleServer.updateTitle(this.stationName)
       this.isDispenserLoading = true
       this.http.get(environment.serverURI+`/dispenser/station/${this.id}`,{observe: "response"}).pipe(
-        mergeMap((res) => of(res).pipe(delay(1000))),//Simulating delay
-        catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),//Simulating delay
+        mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay
+        catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))), //Simulating delay
         finalize(() => {
           this.isDispenserLoading = false
         })).subscribe({
