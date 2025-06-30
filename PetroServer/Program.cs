@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Logging;
 
 Env.Load();
 
@@ -25,9 +26,10 @@ if (report.Status == HealthStatus.Healthy){
     app.UseRouting();
     app.UseCors();
     if (app.Environment.IsDevelopment()){
-            app.Swagger();
-            app.MapSignup();
-        }
+        IdentityModelEventSource.ShowPII = true; 
+        app.Swagger();
+        app.MapSignup();
+    }
     app.UseMiddlewares();
     app.MapPublicController();
     // app.MapGet("log/station/{id}", [Authorize] async([FromRoute] int id) => {

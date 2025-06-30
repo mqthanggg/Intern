@@ -12,8 +12,7 @@ public static class Auth{
                 ValidAudience = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
                 IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
                     var httpClient = new HttpClient();
-                    var res = httpClient.GetStringAsync(Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
-                    var jwks_keys = new JsonWebKeySet(res).Keys;
+                    var jwks_keys = httpClient.GetFromJsonAsync<IEnumerable<JsonWebKey>>(Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY") + "/.well-known/jwks.json").Result;
                     return jwks_keys;
                 },
                 ClockSkew = TimeSpan.FromSeconds(0),

@@ -17,7 +17,7 @@ public class JWTService : IJWTService{
             issuer: _authority,
             audience: _audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(5),
+            expires: DateTime.UtcNow.AddMinutes(10),
             signingCredentials: _creds
         );
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
