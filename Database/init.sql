@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS petro_application.dispenser
     fuel_id integer NOT NULL,
     name integer NOT NULL,
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (dispenser_id)
         INCLUDE(fuel_id, tank_id),
     UNIQUE (tank_id)
@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS petro_application.station
     name character varying(255) NOT NULL,
     address character varying(255) NOT NULL,
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (station_id)
 );
 
@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS petro_application.fuel
     long_name character varying(15) NOT NULL,
     price integer NOT NULL,
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (fuel_id)
 );
 
@@ -81,9 +81,9 @@ CREATE TABLE IF NOT EXISTS petro_application.tank
     name integer NOT NULL,
     max_volume integer NOT NULL,
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (tank_id)
 );
 
@@ -100,11 +100,11 @@ CREATE TABLE IF NOT EXISTS petro_application.user
     padding character(24) NOT NULL UNIQUE,
     refresh_token character(84) UNIQUE,
     token_padding character(24) UNIQUE,
-    token_expired_time timestamp(0),
+    token_expired_time timestamp(0) with time zone,
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (user_id)
 );
 
@@ -122,9 +122,9 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     total_amount integer NOT NULL,
     time timestamp(0) without time zone NOT NULL DEFAULT now(),
     created_by character varying(255),
-    created_date timestamp(0) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
-    last_modified_date timestamp(0) DEFAULT now(),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
     PRIMARY KEY (log_id)
 );
 
@@ -177,86 +177,6 @@ ALTER TABLE IF EXISTS petro_application.log
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
-
-CREATE OR REPLACE FUNCTION update_modified_fields()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.last_modified_date = CURRENT_TIMESTAMP;
-  NEW.last_modified_by = CURRENT_USER;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION update_modified_fields_when_create()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.created_date = CURRENT_TIMESTAMP;
-  NEW.created_by = CURRENT_USER;
-  NEW.last_modified_date = CURRENT_TIMESTAMP;
-  NEW.last_modified_by = CURRENT_USER;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER update_dispenser_audit_fields
-BEFORE UPDATE ON petro_application.dispenser
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_dispenser_audit_fields_when_create
-BEFORE INSERT ON petro_application.dispenser
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_fuel_audit_fields
-BEFORE UPDATE ON petro_application.fuel
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_fuel_audit_fields_when_create
-BEFORE INSERT ON petro_application.fuel
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_tank_audit_fields
-BEFORE UPDATE ON petro_application.tank
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_tank_audit_fields_when_create
-BEFORE INSERT ON petro_application.tank
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_station_audit_fields
-BEFORE UPDATE ON petro_application.station
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_station_audit_fields_when_create
-BEFORE INSERT ON petro_application.station
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_user_audit_fields
-BEFORE UPDATE ON petro_application.user
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_user_audit_fields_when_create
-BEFORE INSERT ON petro_application.user
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
-
-CREATE OR REPLACE TRIGGER update_log_audit_fields
-BEFORE UPDATE ON petro_application.log
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields();
-
-CREATE OR REPLACE TRIGGER update_log_audit_fields_when_create
-BEFORE INSERT ON petro_application.log
-FOR EACH ROW
-EXECUTE FUNCTION update_modified_fields_when_create();
 
 INSERT INTO petro_application.station (name, address) VALUES
 ('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City'),

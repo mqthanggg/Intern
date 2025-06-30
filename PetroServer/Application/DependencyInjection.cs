@@ -4,6 +4,7 @@ public static class DependencyInjection{
         services.AddSingleton<IAsymmetricKeyService,AsymmetricKeyService>();
         services.AddSingleton<IJWKsService,JWKsService>();
         services.AddSingleton<IHasher,Hasher>();
+        services.AddLogging();
         return services;
     }
 }

@@ -69,4 +69,15 @@ public static class UserQuery{
         WHERE 
             username = @Username
     ";
+    public static readonly string GetUserToken = $@"
+        SELECT 
+            refresh_token, 
+            token_padding, 
+            token_expired_time 
+        FROM {Schema}.user
+        WHERE 
+            user_id = @UserId
+        AND
+            username = @Username
+    "; 
 }

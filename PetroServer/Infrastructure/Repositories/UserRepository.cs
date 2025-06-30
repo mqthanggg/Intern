@@ -39,8 +39,14 @@ public class UserRepository : IUserRepository{
         }
     }
     public async Task<User> GetUserByUsernameAsync(User entity){
-        await using (var connection = dbWrite.CreateConnection()){
+        await using (var connection = dbRead.CreateConnection()){
             User user = await connection.QuerySingleAsync<User>(UserQuery.GetUserByUsername,entity);
+            return user;
+        }
+    }
+    public async Task<User> GetUserTokenAsync(User entity){
+        await using (var connection = dbRead.CreateConnection()){
+            User user = await connection.QuerySingleAsync<User>(UserQuery.GetUserToken,entity);
             return user;
         }
     }

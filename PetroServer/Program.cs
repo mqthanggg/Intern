@@ -1,12 +1,8 @@
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.IdentityModel.Logging;
-
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
-builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
 builder.Services.JSONSetup();
 builder.Services.AuthSetup(env);
 builder.Services.AddEndpointsApiExplorer();
@@ -14,6 +10,7 @@ builder.Services.HealthCheckSetup();
 builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AddServices();
+builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 

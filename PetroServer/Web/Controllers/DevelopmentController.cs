@@ -1,5 +1,3 @@
-using Swashbuckle.AspNetCore.Annotations;
-
 public static class DevelopmentController{
     public static WebApplication MapSignup(this WebApplication app){
         app.MapPut("/signup", SignupAccount);

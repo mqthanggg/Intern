@@ -1,6 +1,3 @@
-using System.Globalization;
-using Swashbuckle.AspNetCore.Annotations;
-
 public static class PublicController{
     public static WebApplication MapPublicController(this WebApplication app){
         app.MapGet("log/station/{id}",GetLogByStationId);
@@ -11,6 +8,7 @@ public static class PublicController{
         app.MapDelete("station/{id}",DeleteStationFromId);
         app.MapPut("station/{id}",UpdateStationFromId);
         app.MapGet("stations",GetStations);
+        app.MapPost("refresh", RefreshJWT);
         return app;
     }
     [Authorize]
@@ -199,5 +197,49 @@ public static class PublicController{
             Console.WriteLine(e.Message);
             return TypedResults.InternalServerError();
         }
+    }
+    [ProducesResponseType(typeof(TokenResponse),200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(500)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Refresh access token.",
+        Description = "Return a new access token if the refresh token is valid and not expired to the user."
+    )]
+    public static async Task<IResult> RefreshJWT(ILogger<object> logger, HttpContext httpContext, [FromBody] TokenRequest tokenRequest, IUserRepository userRepository, IJWTService jWTService, IHasher hasher){
+        try
+        {
+            IReadOnlyList<Claim> claims = jWTService.GetClaims(httpContext.Request.Headers.Authorization.First() ?? "");
+            int userId = Convert.ToInt32(claims.First(e => e.Type == ClaimTypes.Sid).Value);
+            string username = claims.First(e => e.Type == ClaimTypes.Name).Value;
+            var user = await userRepository.GetUserTokenAsync(new User{
+                UserId = userId,
+                Username = username
+            });
+            if (
+                DateTime.UtcNow.CompareTo(user.TokenExpiredTime) > 0 ||
+                !hasher.Verify(user, tokenRequest.RefreshToken + user.TokenPadding!, user.RefreshToken!)
+            )
+                return TypedResults.Unauthorized();
+            return TypedResults.Ok(
+                new TokenResponse{
+                    Token = jWTService.GenerateAccessToken(
+                        userId,
+                        username
+                    )
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            if (ex is InvalidDataException){
+                return TypedResults.InternalServerError();
+            }
+            if (ex is PostgresException){
+                return TypedResults.Unauthorized();
+            }
+        }
+
+        return TypedResults.Ok();
     }
 }
