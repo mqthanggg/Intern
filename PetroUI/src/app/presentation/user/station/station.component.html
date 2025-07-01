@@ -1,5 +1,5 @@
-<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
-    <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
+<div class="py-2 px-3 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
+    <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl" >
         <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
         <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
             @if (isDispenserLoading) {
@@ -35,7 +35,8 @@
             }
         </div>
     </div>
-    <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-xl max-w-xl" ElementDraggable ElementDraggableSection>
+  <div class="flex mt-1">
+      <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-xl max-w-xl" >
         <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Tank's status</div>
         <div class="w-full max-h-55 overflow-auto relative">
             @if (isTankLoading) {
@@ -71,7 +72,7 @@
             }
         </div>
     </div>
-    <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl" ElementDraggable ElementDraggableSection>
+    <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl ml-1" >
         <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
         <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
             @if (isLogLoading) {
@@ -105,4 +106,5 @@
             }
         </div>
     </div>
+  </div>
 </div>

@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
   styles: ``
 })
 export class LoginComponent {
+showPassword: any;
   constructor(private http:HttpClient, private router: Router){}
   loginLoading = false
   alertOpen = false

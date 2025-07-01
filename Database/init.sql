@@ -2,6 +2,12 @@ BEGIN;
 
 SET search_path TO petro_application, public;
 
+ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_shift_id_fkey;
+
+ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_staff_id_fkey;
+
+ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_station_id_fkey;
+
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
@@ -13,6 +19,63 @@ ALTER TABLE IF EXISTS petro_application.tank DROP CONSTRAINT IF EXISTS None;
 ALTER TABLE IF EXISTS petro_application.tank DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.log DROP CONSTRAINT IF EXISTS None;
+
+DROP TABLE IF EXISTS petro_application.assignment;
+
+CREATE TABLE IF NOT EXISTS petro_application.assignment
+(
+    assignment_id integer NOT NULL,
+    shift_id integer NOT NULL,
+    staff_id integer NOT NULL,
+    station_id integer NOT NULL,
+    created_by character varying(255) DEFAULT now(),
+    created_date timestamp(0) with time zone,
+    last_modified_by character varying(255),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+    CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id)
+);
+
+COMMENT ON TABLE petro_application.assignment
+    IS 'for staff '' work schedule in each station';
+
+DROP TABLE IF EXISTS petro_application.shift;
+
+CREATE TABLE IF NOT EXISTS petro_application.shift
+(
+    shift_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    shift_type integer NOT NULL,
+    CHECK (shift_type IN (1,2,3,4)),
+    start_time time without time zone NOT NULL,
+    end_time time without time zone NOT NULL,
+    created_by character varying(255),
+    created_date timestamp(0) with time zone DEFAULT now(),
+    last_modified_by character varying(255),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+    CONSTRAINT shift_pkey PRIMARY KEY (shift_id)
+);
+
+COMMENT ON TABLE petro_application.shift
+    IS 'for shiff''s information. shift_type: 1 -> sang, 2 -> trua, 3 -> toi, 4 -> dem';
+
+DROP TABLE IF EXISTS petro_application.staff;
+
+CREATE TABLE IF NOT EXISTS petro_application.staff
+(
+    staff_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    staff_name character varying(30) NOT NULL,
+    date_birth date NOT NULL,
+    phone character varying(10) NOT NULL,
+    address character varying(50) NOT NULL,
+    email character varying(255) NOT NULL,
+    created_by character varying(255),
+    created_date timestamp(0) with time zone DEFAULT now(),
+    last_modified_by character varying(255),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+    CONSTRAINT staff_pkey PRIMARY KEY (staff_id)
+);
+
+COMMENT ON TABLE petro_application.staff
+    IS 'for staff''s information';
 
 DROP TABLE IF EXISTS petro_application.dispenser CASCADE;
 
@@ -121,6 +184,8 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     total_liters real NOT NULL,
     total_amount integer NOT NULL,
     time timestamp(0) without time zone NOT NULL DEFAULT now(),
+    log_type integer NOT NULL,
+    CHECK (log_type IN (1,2,3,4)),
     created_by character varying(255),
     created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
@@ -129,7 +194,27 @@ CREATE TABLE IF NOT EXISTS petro_application.log
 );
 
 COMMENT ON TABLE petro_application.log
-    IS 'Table for storing logs.';
+    IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
+
+ALTER TABLE IF EXISTS petro_application.assignment
+    ADD CONSTRAINT assignment_shift_id_fkey FOREIGN KEY (shift_id)
+    REFERENCES petro_application.shift (shift_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS petro_application.assignment
+    ADD CONSTRAINT assignment_staff_id_fkey FOREIGN KEY (staff_id)
+    REFERENCES petro_application.staff (staff_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS petro_application.assignment
+    ADD CONSTRAINT assignment_station_id_fkey FOREIGN KEY (station_id)
+    REFERENCES petro_application.station (station_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
 
 ALTER TABLE IF EXISTS petro_application.dispenser
     ADD FOREIGN KEY (station_id)
@@ -214,21 +299,21 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name) VAL
 (11, 21, 4, 401), (11, 22, 1, 402), (11, 23, 2, 403), (11, 24, 3, 404), (11, 25, 4, 405),
 (12, 26, 4, 401), (12, 27, 1, 402), (12, 28, 2, 403), (12, 29, 3, 404), (12, 30, 4, 405);
 
-INSERT INTO petro_application.log (dispenser_id, fuel_name, total_liters, total_amount, time) VALUES
-(1, 'A95', 10.5, 26250, TIMESTAMP(0) '2025-06-04 14:30:00'),
-(1, 'A95', 8.2, 20500, TIMESTAMP(0) '2025-06-04 14:45:00'),
-(1, 'A95', 12.0, 30000, TIMESTAMP(0) '2025-06-04 15:00:00'),
+INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time) VALUES
+(1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-06-04 14:30:00'),
+(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-06-04 14:45:00'),
+(1, 'A95', 3, 12.0, 30000, TIMESTAMP(0) '2025-06-04 15:00:00'),
 
-(2, 'E5', 9.5, 21850, TIMESTAMP(0) '2025-06-04 14:35:00'),
-(2, 'E5', 7.8, 17940, TIMESTAMP(0) '2025-06-04 14:50:00'),
-(2, 'E5', 11.2, 25760, TIMESTAMP(0) '2025-06-04 15:05:00'),
+(2, 'E5', 1, 9.5, 21850, TIMESTAMP(0) '2025-06-04 14:35:00'),
+(2, 'E5', 2, 7.8, 17940, TIMESTAMP(0) '2025-06-04 14:50:00'),
+(2, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-06-04 15:05:00'),
 
-(3, 'DO1', 15.0, 30000, TIMESTAMP(0) '2025-06-04 14:40:00'),
-(3, 'DO1', 13.2, 26400, TIMESTAMP(0) '2025-06-04 14:55:00'),
-(3, 'DO1', 16.5, 33000, TIMESTAMP(0) '2025-06-04 15:10:00'),
-(4, 'DO5', 12.3, 23370, TIMESTAMP(0) '2025-06-04 14:45:00'),
-(4, 'DO5', 10.8, 20520, TIMESTAMP(0) '2025-06-04 15:00:00'),
-(4, 'DO5', 14.5, 27550, TIMESTAMP(0) '2025-06-04 15:15:00');
+(3, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-06-04 14:40:00'),
+(3, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-06-04 14:55:00'),
+(3, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-06-04 15:10:00'),
+(4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-06-04 14:45:00'),
+(4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-06-04 15:00:00'),
+(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-06-04 15:15:00');
 
 DO $$ 
 BEGIN 
@@ -254,16 +339,11 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
 
-
--- TRUY VẤN DỮ LIỆU
-select * from petro_application.log  -- nhập ký
-select * from petro_application.station  -- trạm xăng
-select * from petro_application.tank      -- bể chứa
-select * from petro_application.user  -- Tài khoản
-select * from petro_application.fuel  -- nhiên liệu
-select * from petro_application.dispenser -- máy bơm xăng
-
-
-
-
-
+-- -- TRUY VẤN DỮ LIỆU
+-- select * from petro_application.log  -- nhập ký
+-- select * from petro_application.station  -- trạm xăng
+-- select * from petro_application.tank      -- bể chứa
+-- select * from petro_application.user  -- Tài khoản
+-- select * from petro_application.fuel  -- nhiên liệu
+-- select * from petro_application.dispenser -- máy bơm xăng
+--------------------------------------------------------------
