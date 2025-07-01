@@ -7,6 +7,7 @@ public static class DbInjection{
         services.AddScoped<ILogRepository,LogRepository>();
         services.AddScoped<IDispenserRepository,DispenserRepository>();
         services.AddScoped<ITankRepository,TankRepository>();
+      //  services.AddScoped<IStaffRepository, S
         return services;
     }
 }

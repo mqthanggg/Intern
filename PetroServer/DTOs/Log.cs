@@ -4,5 +4,6 @@ public class LogResponse{
     public required float TotalLiters{get; set;} = -1.0f;
     public required int Price{get; set;} = -1;
     public required int TotalAmount{get; set;} = -1;
-    public required DateTime Time{get; set;}    
+    public int? LogType { get; set; } = -1;
+    public required DateTime Time { get; set; }    
 }
