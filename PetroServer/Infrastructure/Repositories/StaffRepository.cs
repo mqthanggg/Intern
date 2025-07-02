@@ -16,7 +16,7 @@ public class StaffRepository : IStaffRepository
             return Staff;
         }
     }
-    public async Task<IReadOnlyList<StaffResponse>> GetAllStaffResponseAsync()
+    public async Task<IReadOnlyList<StaffResponse>> GetAllStaffResponse()
     {
         await using (var connection = dbRead.CreateConnection())
         {

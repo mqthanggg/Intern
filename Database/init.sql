@@ -24,10 +24,11 @@ DROP TABLE IF EXISTS petro_application.assignment;
 
 CREATE TABLE IF NOT EXISTS petro_application.assignment
 (
-    assignment_id integer NOT NULL,
+    assignment_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
     shift_id integer NOT NULL,
     staff_id integer NOT NULL,
-    station_id integer NOT NULL,
+    station_id integer NOT NULL ,
+	work_date date NOT NULL, 
     created_by character varying(255) DEFAULT now(),
     created_date timestamp(0) with time zone,
     last_modified_by character varying(255),
@@ -314,6 +315,19 @@ INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_lite
 (4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-06-04 14:45:00'),
 (4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-06-04 15:00:00'),
 (4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-06-04 15:15:00');
+
+insert into petro_application.shift (shift_type, start_time, end_time) 
+VALUES (1, '06:00:00', '14:00:00'),
+ (2, '06:00:00', '14:00:00'),
+ (3, '06:00:00', '14:00:00'),
+ (4, '06:00:00', '14:00:00');
+
+insert into petro_application.staff (staff_name, date_birth, phone, address, email) 
+values ('Nguyễn Yến Linh', '2004-01-01', '0331231588', '102 Nguyễn Quý Anh', 'yenlinh@gmail.com');
+
+insert into petro_application.assignment (shift_id, staff_id, station_id, work_date) values
+(1, 1, 1, '2015-07-02'),
+(3, 1, 1, '2015-07-05');
 
 DO $$ 
 BEGIN 

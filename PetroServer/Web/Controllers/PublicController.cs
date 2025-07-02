@@ -12,9 +12,113 @@ public static class PublicController
         app.MapGet("stations", GetStations);
         app.MapPost("refresh", RefreshJWT);
 
-     app.MapGet("Staff/{id}", GetLogByStationId);
+        app.MapGet("Staff/{id}", GetStaffByStaffId);
+        app.MapGet("Staff", GetStaff);
+        app.MapGet("Shift", GetShift);
+        app.MapGet("Shift/{id}", GetShiftByShiftId);
+         app.MapGet("Assignment", GetAssignment);
         return app;
     }
+
+    //*********************************************************
+    [Authorize]
+    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Get staff by ID",
+        Description = "Returns staff information by ID with JWT token"
+    )]
+    public static async Task<IResult> GetStaffByStaffId([FromRoute] int id, IStaffRepository StaffRepository)
+    {
+        var res = await StaffRepository.GetStaffById(new Staff { StaffId = id });
+        if (res == null)
+            return Results.NotFound();
+        return TypedResults.Ok(res);
+    }
+
+    [Authorize]
+    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Get staff by ID",
+        Description = "Returns staff information by ID with JWT token"
+    )]
+    public static async Task<IResult> GetStaff(IStaffRepository StaffRepository)
+    {
+       try
+        {
+            var res = await StaffRepository.GetAllStaffResponse();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException e)
+        {
+            Console.WriteLine(e.Message);
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Obtain stations.",
+        Description = "Obtain a list of all stations."
+    )]
+    public static async Task<IResult> GetShift(IShiftRepository shiftRepository)
+    {
+        try
+        {
+            var res = await shiftRepository.GetAllShiftResponseAsync();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException e)
+        {
+            Console.WriteLine(e.Message);
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Obtain stations.",
+        Description = "Obtain a list of all stations."
+    )]
+    public static async Task<IResult> GetShiftByShiftId([FromRoute] int id, IShiftRepository ShiftRepository)
+    {
+        var res = await ShiftRepository.GetShiftById(new Shift { ShiftId = id });
+        if (res == null)
+            return Results.NotFound();
+        return TypedResults.Ok(res);
+    }
+   
+    [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Obtain stations.",
+        Description = "Obtain a list of all stations."
+    )]
+    public static async Task<IResult> GetAssignment(IAssignmentRepository AssignmentRepository)
+    {
+        try
+        {
+            var res = await AssignmentRepository.GetAllAssignmentResponseAsync();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException e)
+        {
+            Console.WriteLine(e.Message);
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    //*********************************************************
+
     [Authorize]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
     [Produces("application/json")]
@@ -29,22 +133,6 @@ public static class PublicController
             res
         );
     }
-    //*********************************************************
-    [Authorize]
-    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Retrieve logs by station ID.",
-        Description = "Retrieve a list of logs that are related to the dispensers belong to the given station."
-    )]
-    public static async Task<IResult> GetStaffByStaffId([FromRoute] int id, IStaffRepository StaffRepository)
-    {
-        var res = await StaffRepository.GetStaffById(new Staff { StaffId = id });
-        return TypedResults.Ok(
-            res
-        );
-    }
-    //*********************************************************
 
     [Authorize]
     [ProducesResponseType(typeof(List<DispenserResponse>), 200)]
@@ -60,6 +148,7 @@ public static class PublicController
             res
         );
     }
+ 
     [Authorize]
     [ProducesResponseType(typeof(List<TankResponse>), 200)]
     [Produces("application/json")]
@@ -87,6 +176,7 @@ public static class PublicController
             jWKs.GetJWKs()
       );
     }
+   
     [ProducesResponseType(typeof(LoginResponse), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -159,6 +249,7 @@ public static class PublicController
             return TypedResults.NotFound();
         }
     }
+
     [Authorize]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
@@ -181,6 +272,7 @@ public static class PublicController
             return TypedResults.Ok();
         return TypedResults.NotFound();
     }
+   
     [Authorize]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
@@ -205,6 +297,7 @@ public static class PublicController
             return TypedResults.Ok();
         return TypedResults.NotFound();
     }
+   
     [Authorize]
     [ProducesResponseType(400)]
     [ProducesResponseType(typeof(List<StationResponse>), 200)]
@@ -226,6 +319,8 @@ public static class PublicController
             return TypedResults.InternalServerError();
         }
     }
+
+
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
@@ -274,28 +369,5 @@ public static class PublicController
         }
 
         return TypedResults.Ok();
-    }
-
-
-    // [ProducesResponseType(typeof(TokenResponse), 200)]
-    // [ProducesResponseType(401)]
-    // [ProducesResponseType(500)]
-    // [Produces("application/json")]
-    // [SwaggerOperation(
-    //     Summary = "Refresh access token.",
-    //     Description = "Return a new access token if the refresh token is valid and not expired to the user."
-    // )]
-    // public static async Task<IResult> GetStaff(IStaffRepository staffRepository) {
-    //     try
-    //     {
-    //         var res = await staffRepository.GetAllStaffResponseAsync();
-    //         return TypedResults.Ok(res);
-    //     }
-    //     catch (PostgresException e)
-    //     {
-    //         Console.WriteLine(e.Message);
-    //         return TypedResults.InternalServerError();
-    //     }
-    // }
-    
+    }    
 }
