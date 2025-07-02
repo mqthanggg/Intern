@@ -29,6 +29,8 @@ if (report.Status == HealthStatus.Healthy){
     }
     app.UseMiddlewares();
     app.MapPublicController();
+    app.UseAuthentication();
+    app.UseAuthorization();
     // app.MapGet("log/station/{id}", [Authorize] async([FromRoute] int id) => {
     //     string schemaName = Env.GetString("SCHEMA");
     //     await using var cmd = db_read_dataSource.CreateCommand($@"
@@ -47,9 +49,9 @@ if (report.Status == HealthStatus.Healthy){
     // app.MapGet("/dispenser/station/{id}", [Authorize]  async ([FromRoute] int id) => {
     //     string schemaName = Env.GetString("SCHEMA");
     //     await using var cmd = db_read_dataSource.CreateCommand($@"
-        // SELECT dp.name, f.price, f.long_name, f.short_name FROM
-        // {schemaName}.dispenser as dp
-        // INNER JOIN {schemaName}.fuel as f ON f.fuel_id = dp.fuel_id AND dp.station_id = @id
+    // SELECT dp.name, f.price, f.long_name, f.short_name FROM
+    // {schemaName}.dispenser as dp
+    // INNER JOIN {schemaName}.fuel as f ON f.fuel_id = dp.fuel_id AND dp.station_id = @id
     //     ");
     //     cmd.Parameters.Add(new NpgsqlParameter{ParameterName = "id", Value = id});
     //     var res = await cmd.ExecuteReaderAsync();

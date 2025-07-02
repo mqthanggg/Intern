@@ -1,14 +1,18 @@
-public static class PublicController{
-    public static WebApplication MapPublicController(this WebApplication app){
-        app.MapGet("log/station/{id}",GetLogByStationId);
-        app.MapGet("dispenser/station/{id}",GetDispenserByStationId);
-        app.MapGet("tank/station/{id}",GetTankByStationId);
-        app.MapGet(".well-known/jwks.json",GetJWKs);
-        app.MapPost("login",Login);
-        app.MapDelete("station/{id}",DeleteStationFromId);
-        app.MapPut("station/{id}",UpdateStationFromId);
-        app.MapGet("stations",GetStations);
+public static class PublicController
+{
+    public static WebApplication MapPublicController(this WebApplication app)
+    {
+        app.MapGet("log/station/{id}", GetLogByStationId);
+        app.MapGet("dispenser/station/{id}", GetDispenserByStationId);
+        app.MapGet("tank/station/{id}", GetTankByStationId);
+        app.MapGet(".well-known/jwks.json", GetJWKs);
+        app.MapPost("login", Login);
+        app.MapDelete("station/{id}", DeleteStationFromId);
+        app.MapPut("station/{id}", UpdateStationFromId);
+        app.MapGet("stations", GetStations);
         app.MapPost("refresh", RefreshJWT);
+
+     app.MapGet("Staff/{id}", GetLogByStationId);
         return app;
     }
     [Authorize]
@@ -20,11 +24,28 @@ public static class PublicController{
     )]
     public static async Task<IResult> GetLogByStationId([FromRoute] int id, ILogRepository logRepository)
     {
-        var res = await logRepository.GetLogByStationIdAsync(new Station{StationId = id});
+        var res = await logRepository.GetLogByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
             res
         );
     }
+    //*********************************************************
+    [Authorize]
+    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Retrieve logs by station ID.",
+        Description = "Retrieve a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task<IResult> GetStaffByStaffId([FromRoute] int id, IStaffRepository StaffRepository)
+    {
+        var res = await StaffRepository.GetStaffById(new Staff { StaffId = id });
+        return TypedResults.Ok(
+            res
+        );
+    }
+    //*********************************************************
+
     [Authorize]
     [ProducesResponseType(typeof(List<DispenserResponse>), 200)]
     [Produces("application/json")]
@@ -34,39 +55,41 @@ public static class PublicController{
     )]
     public static async Task<IResult> GetDispenserByStationId([FromRoute] int id, IDispenserRepository dispenserRepository)
     {
-        var res = await dispenserRepository.GetDispensersByStationIdAsync(new Station{StationId = id});
+        var res = await dispenserRepository.GetDispensersByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
             res
         );
     }
     [Authorize]
-    [ProducesResponseType(typeof(List<TankResponse>),200)]
+    [ProducesResponseType(typeof(List<TankResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Retrieve tanks by station ID.",
         Description = "Retrieve a list of tanks that are belong to the given station."
     )]
-    public static async Task<IResult> GetTankByStationId([FromRoute] int id, ITankRepository tankRepository){
-        var res = await tankRepository.GetTanksByStationIdAsync(new Station{StationId = id});
+    public static async Task<IResult> GetTankByStationId([FromRoute] int id, ITankRepository tankRepository)
+    {
+        var res = await tankRepository.GetTanksByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
             res
         );
     }
 
-    [ProducesResponseType(typeof(List<JsonWebKey>),200)]
+    [ProducesResponseType(typeof(List<JsonWebKey>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Retrieve JWKs",
         Description = "Retrieve a list of JSON web key."
     )]
-    public static IResult GetJWKs(IJWKsService jWKs){
+    public static IResult GetJWKs(IJWKsService jWKs)
+    {
         return TypedResults.Ok(
             jWKs.GetJWKs()
       );
     }
-    [ProducesResponseType(typeof(LoginResponse),200)]
+    [ProducesResponseType(typeof(LoginResponse), 200)]
     [ProducesResponseType(404)]
-    [ProducesResponseType(typeof(ErrorResponse),500)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
     [ProducesResponseType(401)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -77,7 +100,7 @@ public static class PublicController{
     {
         try
         {
-            var user = await userRepository.GetUserByUsernameAsync(new User{Username = body.Username});
+            var user = await userRepository.GetUserByUsernameAsync(new User { Username = body.Username });
             if (hasher.Verify(user, body.Password + user.Padding, user.Password!))
             {
                 string randomRefreshToken;
@@ -93,12 +116,13 @@ public static class PublicController{
                     (string hashed, string padding) = hasher.Hash(new { }, randomRefreshToken);
                     try
                     {
-                        res = await userRepository.UpdateAsync(new User { 
-                                UserId = user.UserId,
-                                RefreshToken = hashed,
-                                TokenPadding = padding,
-                                LastModifiedBy = body.Username,
-                            });
+                        res = await userRepository.UpdateAsync(new User
+                        {
+                            UserId = user.UserId,
+                            RefreshToken = hashed,
+                            TokenPadding = padding,
+                            LastModifiedBy = body.Username,
+                        });
                     }
                     catch (PostgresException e)
                     {
@@ -112,16 +136,17 @@ public static class PublicController{
                             string column = match.Groups[1].Value;
                             if (column == "token_padding")//Rare
                                 continue;
-                            return TypedResults.InternalServerError(new ErrorResponse{Why = column});
+                            return TypedResults.InternalServerError(new ErrorResponse { Why = column });
                         }
-                        return TypedResults.InternalServerError(new ErrorResponse{Why = e.Message});
+                        return TypedResults.InternalServerError(new ErrorResponse { Why = e.Message });
                     }
                     break;
                 }
                 if (res > 0)
                 {
                     return Results.Ok(new
-                    LoginResponse{
+                    LoginResponse
+                    {
                         Token = jwt.GenerateAccessToken(user.UserId!.Value, user.Username!),
                         RefreshToken = randomRefreshToken
                     });
@@ -141,11 +166,12 @@ public static class PublicController{
         Summary = "Delete station",
         Description = "Delete a station from a given id."
     )]
-    public static async Task<IResult> DeleteStationFromId([FromRoute] int id, IStationRepository stationRepository){
+    public static async Task<IResult> DeleteStationFromId([FromRoute] int id, IStationRepository stationRepository)
+    {
         int res;
         try
         {
-            res = await stationRepository.DeleteAsync(new Station{StationId = id});
+            res = await stationRepository.DeleteAsync(new Station { StationId = id });
         }
         catch (PostgresException)
         {
@@ -162,13 +188,14 @@ public static class PublicController{
         Summary = "Update station",
         Description = "Update name, address of a station from a given id."
     )]
-    public static async Task<IResult> UpdateStationFromId([FromRoute] int id, [FromBody] StationUpdateRequest body, HttpContext httpContext, IStationRepository stationRepository, IJWTService jWTService){
+    public static async Task<IResult> UpdateStationFromId([FromRoute] int id, [FromBody] StationUpdateRequest body, HttpContext httpContext, IStationRepository stationRepository, IJWTService jWTService)
+    {
         string bearer = httpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
         string username = jWTService.GetClaims(bearer).First(e => e.Type == ClaimTypes.Name).Value;
         int res;
         try
         {
-            res = await stationRepository.UpdateAsync(new Station{StationId = id, Name = body.Name, Address = body.Address, LastModifiedBy = username});
+            res = await stationRepository.UpdateAsync(new Station { StationId = id, Name = body.Name, Address = body.Address, LastModifiedBy = username });
         }
         catch (PostgresException)
         {
@@ -180,13 +207,14 @@ public static class PublicController{
     }
     [Authorize]
     [ProducesResponseType(400)]
-    [ProducesResponseType(typeof(List<StationResponse>),200)]
+    [ProducesResponseType(typeof(List<StationResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Obtain stations.",
         Description = "Obtain a list of all stations."
     )]
-    public static async Task<IResult> GetStations(IStationRepository stationRepository){
+    public static async Task<IResult> GetStations(IStationRepository stationRepository)
+    {
         try
         {
             var res = await stationRepository.GetAllStationResponseAsync();
@@ -198,7 +226,7 @@ public static class PublicController{
             return TypedResults.InternalServerError();
         }
     }
-    [ProducesResponseType(typeof(TokenResponse),200)]
+    [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
     [Produces("application/json")]
@@ -206,13 +234,15 @@ public static class PublicController{
         Summary = "Refresh access token.",
         Description = "Return a new access token if the refresh token is valid and not expired to the user."
     )]
-    public static async Task<IResult> RefreshJWT(ILogger<object> logger, HttpContext httpContext, [FromBody] TokenRequest tokenRequest, IUserRepository userRepository, IJWTService jWTService, IHasher hasher){
+    public static async Task<IResult> RefreshJWT(ILogger<object> logger, HttpContext httpContext, [FromBody] TokenRequest tokenRequest, IUserRepository userRepository, IJWTService jWTService, IHasher hasher)
+    {
         try
         {
             IReadOnlyList<Claim> claims = jWTService.GetClaims(httpContext.Request.Headers.Authorization.First() ?? "");
             int userId = Convert.ToInt32(claims.First(e => e.Type == ClaimTypes.Sid).Value);
             string username = claims.First(e => e.Type == ClaimTypes.Name).Value;
-            var user = await userRepository.GetUserTokenAsync(new User{
+            var user = await userRepository.GetUserTokenAsync(new User
+            {
                 UserId = userId,
                 Username = username
             });
@@ -222,7 +252,8 @@ public static class PublicController{
             )
                 return TypedResults.Unauthorized();
             return TypedResults.Ok(
-                new TokenResponse{
+                new TokenResponse
+                {
                     Token = jWTService.GenerateAccessToken(
                         userId,
                         username
@@ -232,14 +263,39 @@ public static class PublicController{
         }
         catch (Exception ex)
         {
-            if (ex is InvalidDataException){
+            if (ex is InvalidDataException)
+            {
                 return TypedResults.InternalServerError();
             }
-            if (ex is PostgresException){
+            if (ex is PostgresException)
+            {
                 return TypedResults.Unauthorized();
             }
         }
 
         return TypedResults.Ok();
     }
+
+
+    // [ProducesResponseType(typeof(TokenResponse), 200)]
+    // [ProducesResponseType(401)]
+    // [ProducesResponseType(500)]
+    // [Produces("application/json")]
+    // [SwaggerOperation(
+    //     Summary = "Refresh access token.",
+    //     Description = "Return a new access token if the refresh token is valid and not expired to the user."
+    // )]
+    // public static async Task<IResult> GetStaff(IStaffRepository staffRepository) {
+    //     try
+    //     {
+    //         var res = await staffRepository.GetAllStaffResponseAsync();
+    //         return TypedResults.Ok(res);
+    //     }
+    //     catch (PostgresException e)
+    //     {
+    //         Console.WriteLine(e.Message);
+    //         return TypedResults.InternalServerError();
+    //     }
+    // }
+    
 }
