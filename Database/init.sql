@@ -317,10 +317,9 @@ INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_lite
 (4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-06-04 15:15:00');
 
 insert into petro_application.shift (shift_type, start_time, end_time) 
-VALUES (1, '06:00:00', '14:00:00'),
- (2, '06:00:00', '14:00:00'),
- (3, '06:00:00', '14:00:00'),
- (4, '06:00:00', '14:00:00');
+VALUES (1, '07:00:00', '12:00:00'),
+ (2, '12:00:00', '17:00:00'),
+ (3, '17:00:00', '22:00:00'),
 
 insert into petro_application.staff (staff_name, date_birth, phone, address, email) 
 values ('Nguyễn Yến Linh', '2004-01-01', '0331231588', '102 Nguyễn Quý Anh', 'yenlinh@gmail.com');
