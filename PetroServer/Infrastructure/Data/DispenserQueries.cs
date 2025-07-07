@@ -2,6 +2,7 @@ public static class DispenserQuery{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string GetDispenserByStationId = $@"
         SELECT 
+            dp.dispenser_id,
             dp.name, 
             f.price, 
             f.long_name, 
@@ -17,6 +18,7 @@ public static class DispenserQuery{
     ";
     public static readonly string SelectDispenser = $@"
         SELECT 
+            dispenser_id,
             name
         FROM {Schema}.dispenser
         ORDER BY
@@ -24,6 +26,7 @@ public static class DispenserQuery{
     ";
     public static readonly string SelectDispenserById = $@"
         SELECT 
+            dispenser_id,
             name
         FROM {Schema}.dispenser
         WHERE

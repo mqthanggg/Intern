@@ -2,6 +2,7 @@ public static class TankQuery{
     private static readonly string Schema  = Env.GetString("SCHEMA");
     public static readonly string SelectTank = $@"
         SELECT
+            tank_id,
             name,
             max_volume
         FROM {Schema}.tank
@@ -10,6 +11,7 @@ public static class TankQuery{
     ";
     public static readonly string SelectTankById = $@"
         SELECT
+            tank_id,
             name,
             max_volume
         FROM {Schema}.tank
@@ -54,6 +56,7 @@ public static class TankQuery{
     ";
     public static readonly string SelectTankByStationId = $@"
         SELECT 
+            t.tank_id,
             t.name, 
             f.short_name, 
             t.max_volume 

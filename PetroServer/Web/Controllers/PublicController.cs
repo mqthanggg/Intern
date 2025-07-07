@@ -9,6 +9,7 @@ public static class PublicController{
         app.MapPut("station/{id}",UpdateStationFromId);
         app.MapGet("stations",GetStations);
         app.MapPost("refresh", RefreshJWT);
+        app.Map("ws/{device}/{id}",GetWS);
         return app;
     }
     [Authorize]
@@ -242,4 +243,25 @@ public static class PublicController{
 
         return TypedResults.Ok();
     }
+    //ws/dispenser/id
+    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, IMqttService mqttService, ILogger<object> logger){
+        if (context.WebSockets.IsWebSocketRequest){
+            var socket = await context.WebSockets.AcceptWebSocketAsync();
+            mqttService.AddSocket($"{device}:{id}",socket);
+            var buffer = new byte[1024 * 4];
+            try
+            {
+                while(socket.State == WebSocketState.Open){
+                    await socket.ReceiveAsync(buffer, CancellationToken.None);
+                }
+            }
+            catch (WebSocketException e)
+            {
+                Console.WriteLine($"Websocket closed, reason: {e.Message}");
+            }
+            finally{
+                mqttService.RemoveSocket($"{device}:{id}", socket);
+            }
+        }
+    }   
 }
