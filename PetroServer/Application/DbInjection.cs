@@ -11,6 +11,7 @@ public static class DbInjection{
         services.AddScoped<IStaffRepository, StaffRepository>();
         services.AddScoped<IShiftRepository, ShiftRepository>();
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+        services.AddScoped<IRevenueRepository, RevenueRepository>();
     return services;
     }
 }

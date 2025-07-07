@@ -1,4 +1,5 @@
-public static class ShiftQuery{
+public static class ShiftQuery
+{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SelectShift = $@"
         SELECT 

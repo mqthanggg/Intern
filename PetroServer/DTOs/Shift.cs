@@ -5,3 +5,10 @@ public class ShiftResponse
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
 }
+
+public class ShiftRevenueResponse
+{
+    public string ShiftName { get; set; } = string.Empty;
+    public decimal TotalRevenue { get; set; } = 0;
+    public decimal TotalFuel { get; set; } = 0;
+}

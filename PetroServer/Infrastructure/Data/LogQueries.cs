@@ -1,4 +1,5 @@
-public static class LogQuery{
+public static class LogQuery
+{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SelectLog = $@"
         SELECT 
@@ -87,4 +88,9 @@ public static class LogQuery{
         ORDER BY
             log.log_id
     ";
+    public static readonly string UpdateLogTime = $@"
+            UPDATE  petro_application.log
+            SET time = date_trunc('day', CURRENT_DATE) + (time::time);
+        ";
+
 }

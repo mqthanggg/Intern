@@ -11,6 +11,15 @@ builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AddServices();
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -31,6 +40,7 @@ if (report.Status == HealthStatus.Healthy){
     app.MapPublicController();
     app.UseAuthentication();
     app.UseAuthorization();
+    app.UseCors("AllowAll");
     // app.MapGet("log/station/{id}", [Authorize] async([FromRoute] int id) => {
     //     string schemaName = Env.GetString("SCHEMA");
     //     await using var cmd = db_read_dataSource.CreateCommand($@"

@@ -6,21 +6,81 @@ public static class PublicController
         app.MapGet("dispenser/station/{id}", GetDispenserByStationId);
         app.MapGet("tank/station/{id}", GetTankByStationId);
         app.MapGet(".well-known/jwks.json", GetJWKs);
+        app.MapGet("stations", GetStations);
+        app.MapGet("Staff/{id}", GetStaffByStaffId);
+        app.MapGet("Staffs", GetStaffs);
+        app.MapGet("Shifts", GetShift);
+        app.MapGet("Shift/{id}", GetShiftByShiftId);
+        app.MapGet("Assignments", GetAssignment);
+        app.MapGet("Total/total_revenue", GetSumRevenue);
+        app.MapGet("Total/total_revenue_by_name/{id}", GetSumRevenueByName);
+        app.MapGet("Total/total_revenue_by_type/{id}", GetSumRevenueByType);
+
         app.MapPost("login", Login);
+        app.MapPost("refresh", RefreshJWT);        
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
-        app.MapGet("stations", GetStations);
-        app.MapPost("refresh", RefreshJWT);
-
-        app.MapGet("Staff/{id}", GetStaffByStaffId);
-        app.MapGet("Staff", GetStaff);
-        app.MapGet("Shift", GetShift);
-        app.MapGet("Shift/{id}", GetShiftByShiftId);
-         app.MapGet("Assignment", GetAssignment);
+        app.MapPut("log/update", UpdateLogTime);                  
         return app;
     }
 
-    //*********************************************************
+    [Authorize]
+    [HttpPut("update")]
+    public static async Task<IResult> UpdateLogTime([FromBody] LogResponse entity, [FromServices] ILogRepository logRepository)
+    {
+        var result = await logRepository.UpdateLogTimeAsync(entity);
+        if (result == 0)
+        {
+            return Results.NotFound("Không tìm thấy bản ghi hoặc không cập nhật được.");
+        }   
+        return TypedResults.Ok("Cập nhật thành công");
+    }
+
+    [Authorize]
+    [HttpGet("sum-revenue-by-type/{id}")]
+    [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public static async Task<IResult> GetSumRevenueByType([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
+    {
+        var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
+
+        if (result == null)
+        {
+            return Results.NotFound();
+        }
+        return TypedResults.Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("sum-revenue-by-name/{id}")]
+    [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public static async Task<IResult> GetSumRevenueByName([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
+    {
+        var result = await revenueRepository.GetTotalRevenueByNameAsync(new GetIdRevenue { StationId = id });
+
+        if (result == null)
+        {
+            return Results.NotFound();
+        }
+        return TypedResults.Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("sum-revenue")]
+    [ProducesResponseType(typeof(SumRevenueResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public static async Task<IResult> GetSumRevenue([FromServices] IRevenueRepository revenueRepository)
+    {
+        var result = await revenueRepository.GetTotalRevenueAsync();
+
+        if (result == null)
+        {
+            return Results.NotFound();
+        }
+        return TypedResults.Ok(result);
+    }
+
     [Authorize]
     [ProducesResponseType(typeof(List<StaffResponse>), 200)]
     [Produces("application/json")]
@@ -40,10 +100,10 @@ public static class PublicController
     [ProducesResponseType(typeof(List<StaffResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
-        Summary = "Get staff by ID",
-        Description = "Returns staff information by ID with JWT token"
+        Summary = "Get all staffs",
+        Description = "Obtain a list of all staffs"
     )]
-    public static async Task<IResult> GetStaff(IStaffRepository StaffRepository)
+    public static async Task<IResult> GetStaffs(IStaffRepository StaffRepository)
     {
        try
         {
@@ -62,8 +122,8 @@ public static class PublicController
     [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
-        Summary = "Obtain stations.",
-        Description = "Obtain a list of all stations."
+        Summary = "Obtain shifts.",
+        Description = "Obtain a list of all shifts."
     )]
     public static async Task<IResult> GetShift(IShiftRepository shiftRepository)
     {
@@ -100,8 +160,8 @@ public static class PublicController
     [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
-        Summary = "Obtain stations.",
-        Description = "Obtain a list of all stations."
+        Summary = "Obtain assignment.",
+        Description = "Obtain a list of all Assignments."
     )]
     public static async Task<IResult> GetAssignment(IAssignmentRepository AssignmentRepository)
     {
@@ -116,8 +176,6 @@ public static class PublicController
             return TypedResults.InternalServerError();
         }
     }
-
-    //*********************************************************
 
     [Authorize]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
