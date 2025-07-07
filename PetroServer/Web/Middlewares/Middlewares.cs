@@ -3,6 +3,7 @@ public static class Middlewares{
         applicationBuilder.UseAuthentication();
         applicationBuilder.UseAuthorization();
         applicationBuilder.UseHealthChecks("/health");
+        applicationBuilder.UseWebSockets();
         return applicationBuilder;
     }
 }

@@ -22,10 +22,10 @@
                         @for (dispenser of dispenserList; track dispenser.name) {
                             <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
                                 <td class="text-center">{{dispenser.name}}</td>
-                                <td class="text-center">{{simulatingStatus}}</td>
-                                <td class="pl-8">{{simulatingLiter}}</td>
+                                <td class="text-center">{{dispenser.status ?? "N/A"}}</td>
+                                <td class="pl-8">{{dispenser.liter ?? "N/A"}}</td>
                                 <td class="text-center">{{dispenser.price}}</td>
-                                <td class="pl-15">{{simulatingTotalPrice}}</td>
+                                <td class="pl-15">{{dispenser.totalAmount ?? "N/A"}}</td>
                                 <td class="pl-4">{{dispenser.longName}}</td>
                                 <td class="px-7">{{dispenser.shortName}}</td>
                             </tr>
@@ -60,10 +60,10 @@
                                 <td class="pl-7">{{tank.shortName}}</td>
                                 <td class="pl-5">
                                     <div class="w-full !bg-gray-500 rounded-md h-full z-10">
-                                        <div class="!bg-green-500 h-full rounded-md text-center text-white duration-200" [style.width]="_temp_statusList[$index].toString() + '%'">{{_temp_statusList[$index]}}%</div>
+                                        <div class="!bg-green-500 h-full rounded-md text-center text-white duration-200" [style.width]="(tank.percentage ?? '0') + '%'">{{tank.percentage ?? 'N/A'}}%</div>
                                     </div>
                                 </td>
-                                <td class="text-center">{{tank.maxVolume * _temp_statusList[$index] / 100}}</td>
+                                <td class="text-center">{{tank.currentVolume}}</td>
                                 <td class="text-center">{{tank.maxVolume}}</td>
                             </tr>
                         }

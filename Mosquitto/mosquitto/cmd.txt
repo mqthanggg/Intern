@@ -1,0 +1,4 @@
+Neu chua co image:
+docker build -t <name> .
+Neu chua co container:
+docker run -d --name <container-name> -p 8883:8883 -v "${PWD}/config:/mosquitto/config" -v "${PWD}/certs:/mosquitto/certs" -v "${PWD}/data:/mosquitto/data" -v "${PWD}/log:/mosquitto/log" <name>

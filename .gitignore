@@ -2,4 +2,5 @@
 PetroServer/bin/Debug/net9.0/
 PetroServer/obj
 PetroServer/.vs
+Mosquitto/simulator/venv
 .vs

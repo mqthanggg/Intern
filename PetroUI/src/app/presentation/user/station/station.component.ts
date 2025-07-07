@@ -1,12 +1,14 @@
+declare let BigNumber: any;
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { TitleService } from '../../../infrastructure/services/title.service';
 import { environment } from './../../../../environments/environment';
-import { delay, mergeMap,catchError,finalize,of,throwError } from 'rxjs';
+import { delay, mergeMap,catchError,finalize,of,throwError, Subscription } from 'rxjs';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
 import { ElementDraggableDirective, ElementDraggableSectionDirective } from './../../../shared/directives/element-draggable.directive';
 import { ActivatedRoute } from '@angular/router';
-import { DispenserRecord } from './dispenser-record';
-import { TankRecord } from './tank-record';
+import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
+import { TankRecord, WSTankRecord } from './tank-record';
 import { NgClass } from '@angular/common';
 import { LogRecord } from './log-record';
 
@@ -17,7 +19,7 @@ import { LogRecord } from './log-record';
   templateUrl: './station.component.html',
   styleUrl: './station.component.css'
 })
-export class StationComponent implements OnInit{
+export class StationComponent implements OnInit, OnDestroy{
   @Input() id: number = -1;
   stationName: string = "";
   stationAddress: string = "";
@@ -25,6 +27,8 @@ export class StationComponent implements OnInit{
   isTankLoading = false;
   isLogLoading = false;
   dispenserList: DispenserRecord[] = [];
+  dispenserSocket: {[key: string]: WebSocketSubject<WSDispenserRecord>} = {}
+  tankSocket: {[key: string]: WebSocketSubject<WSTankRecord>} = {}
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
@@ -44,6 +48,19 @@ export class StationComponent implements OnInit{
         })).subscribe({
           next: (res: HttpResponse<any>) => {
             this.dispenserList = res.body
+            this.dispenserList.forEach((value, index) => {
+              this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}`)
+              this.dispenserSocket[value.dispenserId].subscribe({
+                next: (res: WSDispenserRecord) => {
+                  this.dispenserList[index].liter = res.liter
+                  this.dispenserList[index].totalAmount = res.price
+                  this.dispenserList[index].status = res.state
+                },
+                error: (err) => {
+                  console.error(`Error at dispenser ${value.dispenserId}: ${err}`);
+                }
+              })
+            })
           },
           error: (err: HttpErrorResponse) => {
 
@@ -53,9 +70,23 @@ export class StationComponent implements OnInit{
       this.http.get(environment.serverURI+`/tank/station/${this.id}`,{observe: "response"}).pipe(
         mergeMap((res) => of(res).pipe(delay(1000))),//Simulating delay
         catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),//Simulating delay
+        finalize(() => {this.isTankLoading = false})
         ).subscribe({
           next: (res: HttpResponse<any>) => {
             this.tankList = res.body
+            this.tankList.forEach((value, index) => {
+              this.tankSocket[value.tankId] = webSocket<WSTankRecord>(environment.wsServerURI + `/ws/tank/${value.tankId}`)
+              this.tankSocket[value.tankId].subscribe({
+                next: (res: WSTankRecord) => {
+                  this.tankList[index].currentVolume = res.current_volume
+                  const vMax = new BigNumber(this.tankList[index].maxVolume)
+                  this.tankList[index].percentage = new BigNumber(res.current_volume).dividedBy(vMax).times(100).toFixed(2).toString()
+                },
+                error: (err) => {
+                  console.error(`Error at tank ${value.tankId}: ${err}`);
+                }
+              })
+            })
           },
           error: (err: HttpErrorResponse) => {
 
@@ -73,35 +104,17 @@ export class StationComponent implements OnInit{
 
           }
       })
-      setInterval(() => {
-        this.simulation()
-        this.isTankLoading = false
-      },3000)
     },0)
+    window.onbeforeunload = () => this.ngOnDestroy()
   }
-  simulatingStatus: "IDLE" | "PUMP" | "RESET"  = "IDLE"
-  simulatingLiter = 0
-  simulatingTotalPrice = 0
-  simulation(){
-    this.simulatingStatus = "IDLE"
-    this._temp_statusList = new Array(this.tankList.length).fill(0).map(() => Math.round(Math.random() * 100) % 101)    
-    const update = () => {
-      if (this.simulatingTotalPrice < 100000){
-        this.simulatingStatus = "PUMP"
-        this.simulatingLiter += 0.1
-        this.simulatingLiter = Math.round(this.simulatingLiter*10)/10
-        this.simulatingTotalPrice += 50
-        requestAnimationFrame(update)
+  ngOnDestroy(): void {
+    console.log("Calling ngOnDestroy");
+    
+      for(const key in this.dispenserSocket){
+        this.dispenserSocket[key].complete()
       }
-      else {
-        this.simulatingStatus = "RESET"
-        setTimeout(() => {
-          this.simulatingStatus = "IDLE"
-          this.simulatingLiter = 0
-          this.simulatingTotalPrice = 0
-        },2000)
+      for(const key in this.tankSocket){
+        this.tankSocket[key].complete()
       }
-    }
-    update()
   }
 }
