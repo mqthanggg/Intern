@@ -27,7 +27,8 @@ public class RevenueByType : Entity
                 1 => "Bán lẻ",
                 2 => "Công nợ",
                 3 => "Khuyến mãi",
-                4 => "Trả trước"
+                4 => "Trả trước",
+                _ => "Không xác định"
             };
         }
     }

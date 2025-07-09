@@ -303,49 +303,58 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name) VAL
 INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time) VALUES
 (1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00'),
 (1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00'),
+(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
+(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:12:00'),
+(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
 (1, 'A95', 3, 12.0, 30000, TIMESTAMP(0) '2025-07-04 15:00:00'),
-
+(2, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
 (2, 'E5', 1, 9.5, 21850, TIMESTAMP(0) '2025-07-04 08:35:00'),
 (2, 'E5', 2, 7.8, 17940, TIMESTAMP(0) '2025-07-04 08:50:00'),
 (2, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-07-04 15:05:00'),
-
+(2, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
 (3, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-07-04 08:40:00'),
 (3, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-07-04 08:55:00'),
 (3, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-07-04 08:10:00'),
+(3, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
 (4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-07-04 08:45:00'),
 (4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-07-04 08:00:00'),
-(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-07-04 08:15:00');
+(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-07-04 08:15:00'),
+(5, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
+(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
+(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
+(5, 'A95', 3, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
 
-
-INSERT INTO petro_application.log (dispenser_id, fuel_name, total_liters, total_amount, time, log_type)
-values (1, 'A95', 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 1),
-(1, 'A95', 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 1),
-(2, 'E5', 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 1),
-(3, 'DO1', 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 2),
-(2, 'E5', 12.5, 28000, TIMESTAMP(0) '2025-07-04 18:50:00', 2),
-(1, 'A95', 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 1),
-(3, 'DO1', 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 2),
-(3, 'DO1', 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 3),
-(2, 'E5', 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 3),
-(1, 'A95', 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 3),
-(2, 'E5', 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00', 4),
-(1, 'A95', 11.2, 28000, TIMESTAMP(0) '2025-07-04 19:15:00', 4),
-(3, 'DO1', 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 4);
-
-INSERT INTO petro_application.log (dispenser_id, fuel_name, total_liters, total_amount, time, log_type)
-values (1, 'A95', 10.5, 26250, now(), 1),
-(6, 'A95', 8.2, 20500,now(), 1),
-(6, 'E5', 9.0, 22500, now(), 1),
-(6, 'DO1', 15.0, 30000,now(), 2),
-(6, 'E5', 12.5, 28000,now(), 2),
-(7, 'A95', 11.0, 27500, now(), 1),
-(7, 'DO1', 13.0, 29000, now(), 2),
-(7, 'DO1', 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 3),
-(7, 'E5', 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 3),
-(7, 'A95', 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 3),
-(8, 'E5', 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00', 4),
-(8, 'A95', 11.2, 28000, TIMESTAMP(0) '2025-07-04 19:15:00', 4),
-(9, 'DO1', 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 4);
+(6, 'A95', 2, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00'),
+(6, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
+(6, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
+(6, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
+(6, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
+(7, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 18:50:00'),
+(7, 'E5', 1, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
+(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00'),
+(7, 'E5', 1, 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00'),
+(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00'),
+(8, 'DO1', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
+(8, 'DO1', 2, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
+(8, 'DO1', 2, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
+(9, 'D05', 2, 10.5, 26250, now()),
+(9, 'D05', 2, 8.2, 20500,now()),
+(9, 'D05', 2, 11.0, 27500, now()),
+(9, 'D05', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00'),
+(9, 'D05', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00'),
+(11, 'A95', 1, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00'),
+(11, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 08:05:00'),
+(11, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
+(11, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 11:10:00'),
+(11, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
+(12, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 05:45:00'),
+(12, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 05:50:00'),
+(12, 'E5', 4, 14.0, 31000, TIMESTAMP(0) '2025-07-04 05:30:00'),
+(12, 'E5', 3, 9.5, 23000, TIMESTAMP(0) '2025-07-04 04:30:00'),
+(13, 'DO1', 3, 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00'),
+(13, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
+(13, 'DO1',2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
+(14, 'DO1', 4, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00');
 
 insert into petro_application.shift (shift_type, start_time, end_time) 
 VALUES 
@@ -361,7 +370,6 @@ values
 ('Lê Hoàng Nam', '1995-12-10', '0923456789', '789 Cách Mạng Tháng 8, Quận 3, TP.HCM', 'namle@gmail.com'),
 ('Phạm Minh Châu', '1992-07-25', '0934567890', '12 Hai Bà Trưng, Quận 1, TP.HCM', 'chaupham@gmail.com'),
 ('Võ Thanh Tùng', '1985-03-05', '0945678901', '345 Phan Đình Phùng, Phú Nhuận, TP.HCM', 'tungvo@gmail.com');
-
 
 insert into petro_application.assignment (shift_id, staff_id, station_id, work_date) values
 (1, 1, 1, '2015-07-02'),
@@ -403,30 +411,4 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
 
--- -- TRUY VẤN DỮ LIỆU
--- select * from petro_application.log  where dispenser_id = 6 order by log_type ASC -- nhập ký
--- select * from petro_application.station  -- trạm xăng
--- select * from petro_application.tank      -- bể chứa
--- select * from petro_application.user  -- Tài khoản
--- select * from petro_application.fuel  -- nhiên liệu
--- select * from petro_application.dispenser -- vòi bơm xăng
--- select * from  petro_application.shift
--- select * from  petro_application.assignment
-
-
-
-
-select log.*, dispenser.station_id from petro_application.log 
-JOIN 
-    petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
-JOIN 
-    petro_application.station ON station.station_id = dispenser.station_id
-where dispenser.station_id = 2
-and log."time"::date = CURRENT_DATE 
-and	(
-      (CURRENT_TIME >= TIME '06:00:00' AND CURRENT_TIME < TIME '14:00:00' AND log."time"::time BETWEEN TIME '06:00:00' AND TIME '14:00:00') OR
-      (CURRENT_TIME >= TIME '14:00:00' AND CURRENT_TIME < TIME '22:00:00' AND log."time"::time BETWEEN TIME '14:00:00' AND TIME '22:00:00') OR
-      (CURRENT_TIME >= TIME '22:00:00' AND CURRENT_TIME < TIME '06:00:00' AND log."time"::time BETWEEN TIME '22:00:00' AND TIME '06:00:00')
-    )
-----------------------------------------------------------------
 
