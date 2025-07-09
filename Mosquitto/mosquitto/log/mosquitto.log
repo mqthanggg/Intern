@@ -1,0 +1,539 @@
+1751863992: mosquitto version 2.0.21 starting
+1751863992: Config loaded from /mosquitto/config/mosquitto.conf.
+1751863992: Warning: File /mosquitto/config/passwd has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 /mosquitto/config/passwd`.
+1751863992: Opening ipv4 listen socket on port 8883.
+1751863992: Opening ipv6 listen socket on port 8883.
+1751863992: mosquitto version 2.0.21 running
+1751863992: New connection from 172.17.0.1:51608 on port 8883.
+1751863992: New client connected from 172.17.0.1:51608 as mqtt-explorer-de5849f2 (p2, c1, k60, u'mqthanggg').
+1751863992: No will message specified.
+1751863992: Sending CONNACK to mqtt-explorer-de5849f2 (0, 0)
+1751863992: Received SUBSCRIBE from mqtt-explorer-de5849f2
+1751863992: 	# (QoS 0)
+1751863992: mqtt-explorer-de5849f2 0 #
+1751863992: Sending SUBACK to mqtt-explorer-de5849f2
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/3', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/20', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/12', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/19', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/30', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/23', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/13', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/10', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/22', ... (49 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/7', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/26', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/17', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/21', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/6', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/16', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/1', ... (49 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/27', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/15', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/14', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/2', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/24', ... (47 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/8', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/25', ... (51 bytes))
+1751863992: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'test', ... (2 bytes))
+1751863997: Received DISCONNECT from mqtt-explorer-de5849f2
+1751863997: Client mqtt-explorer-de5849f2 disconnected.
+1751863998: New connection from 172.17.0.1:48076 on port 8883.
+1751863998: New client connected from 172.17.0.1:48076 as mqtt-explorer-de5849f2 (p2, c1, k60, u'mqthanggg').
+1751863998: No will message specified.
+1751863998: Sending CONNACK to mqtt-explorer-de5849f2 (0, 0)
+1751863998: Received SUBSCRIBE from mqtt-explorer-de5849f2
+1751863998: 	# (QoS 0)
+1751863998: mqtt-explorer-de5849f2 0 #
+1751863998: Sending SUBACK to mqtt-explorer-de5849f2
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/3', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/20', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/12', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/19', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/30', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/23', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/13', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/10', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/22', ... (49 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/7', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/26', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/17', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/21', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/6', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/16', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/1', ... (49 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/27', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/15', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/14', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/2', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/24', ... (47 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/8', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/25', ... (51 bytes))
+1751863998: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'test', ... (2 bytes))
+1751864059: Received PINGREQ from mqtt-explorer-de5849f2
+1751864059: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864070: New connection from 172.17.0.1:48142 on port 8883.
+1751864070: New client connected from 172.17.0.1:48142 as 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (p5, c1, k15, u'mqthanggg').
+1751864070: No will message specified.
+1751864070: Sending CONNACK to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (0, 0)
+1751864070: Received SUBSCRIBE from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864070: 	devices/# (QoS 0)
+1751864070: 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 0 devices/#
+1751864070: Sending SUBACK to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/3', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/20', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/12', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/19', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/30', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/23', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/13', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/10', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/22', ... (49 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/7', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/26', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/17', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/21', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/6', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/16', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/1', ... (49 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/27', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/15', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/14', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/2', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/24', ... (47 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/8', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1751864070: Sending PUBLISH to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 (d0, q0, r1, m0, 'devices/dispenser/25', ... (51 bytes))
+1751864087: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864087: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864101: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864101: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864118: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864118: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864119: Received PINGREQ from mqtt-explorer-de5849f2
+1751864119: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864131: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864131: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864148: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864148: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864162: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864162: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864175: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864175: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864177: Received PINGREQ from mqtt-explorer-de5849f2
+1751864177: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864192: Received PINGREQ from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864192: Sending PINGRESP to 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864199: Received DISCONNECT from 6a8c5451-be5d-4c15-b063-6b47a3e6cef4
+1751864199: Client 6a8c5451-be5d-4c15-b063-6b47a3e6cef4 disconnected.
+1751864206: New connection from 172.17.0.1:55454 on port 8883.
+1751864206: New client connected from 172.17.0.1:55454 as 53a43740-2951-419a-8aed-d5cb4f9b97ce (p5, c1, k15, u'mqthanggg').
+1751864206: No will message specified.
+1751864206: Sending CONNACK to 53a43740-2951-419a-8aed-d5cb4f9b97ce (0, 0)
+1751864206: Received SUBSCRIBE from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864206: 	devices/# (QoS 0)
+1751864206: 53a43740-2951-419a-8aed-d5cb4f9b97ce 0 devices/#
+1751864206: Sending SUBACK to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/3', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/20', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/12', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/19', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/30', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/23', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/13', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/10', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/22', ... (49 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/7', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/26', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/17', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/21', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/6', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/16', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/1', ... (49 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/27', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/15', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/14', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/2', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/24', ... (47 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/8', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1751864206: Sending PUBLISH to 53a43740-2951-419a-8aed-d5cb4f9b97ce (d0, q0, r1, m0, 'devices/dispenser/25', ... (51 bytes))
+1751864223: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864223: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864236: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864236: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864237: Received PINGREQ from mqtt-explorer-de5849f2
+1751864237: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864253: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864253: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864267: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864267: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864283: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864283: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864297: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864297: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864298: Received PINGREQ from mqtt-explorer-de5849f2
+1751864298: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864314: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864314: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864328: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864328: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864341: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864341: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864358: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864358: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864359: Received PINGREQ from mqtt-explorer-de5849f2
+1751864359: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864372: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864372: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864389: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864389: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864403: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864403: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864419: Received PINGREQ from mqtt-explorer-de5849f2
+1751864419: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864419: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864419: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864433: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864433: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864450: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864450: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864463: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864463: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864480: Received PINGREQ from mqtt-explorer-de5849f2
+1751864480: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864480: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864480: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864494: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864494: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864508: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864508: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864525: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864525: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864537: Received PINGREQ from mqtt-explorer-de5849f2
+1751864537: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864538: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864538: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864555: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864555: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864569: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864569: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864586: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864586: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864598: Received PINGREQ from mqtt-explorer-de5849f2
+1751864598: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864599: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864599: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864616: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864616: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864630: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864630: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864647: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864647: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864659: Received PINGREQ from mqtt-explorer-de5849f2
+1751864659: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864661: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864661: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864677: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864677: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864691: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864691: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864705: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864705: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864719: Received PINGREQ from mqtt-explorer-de5849f2
+1751864719: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864722: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864722: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864735: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864735: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864752: Received PINGREQ from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864752: Sending PINGRESP to 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864756: Received DISCONNECT from 53a43740-2951-419a-8aed-d5cb4f9b97ce
+1751864756: Client 53a43740-2951-419a-8aed-d5cb4f9b97ce disconnected.
+1751864779: Received PINGREQ from mqtt-explorer-de5849f2
+1751864779: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864837: Received PINGREQ from mqtt-explorer-de5849f2
+1751864837: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864898: Received PINGREQ from mqtt-explorer-de5849f2
+1751864898: Sending PINGRESP to mqtt-explorer-de5849f2
+1751864958: Received PINGREQ from mqtt-explorer-de5849f2
+1751864958: Sending PINGRESP to mqtt-explorer-de5849f2
+1751865019: Received PINGREQ from mqtt-explorer-de5849f2
+1751865019: Sending PINGRESP to mqtt-explorer-de5849f2
+1751865079: Received PINGREQ from mqtt-explorer-de5849f2
+1751865079: Sending PINGRESP to mqtt-explorer-de5849f2
+1751865137: Received PINGREQ from mqtt-explorer-de5849f2
+1751865137: Sending PINGRESP to mqtt-explorer-de5849f2
+1751865191: mosquitto version 2.0.21 terminating
+1751865191: Saving in-memory database to /mosquitto/data/mosquitto.db.
+1751897228: mosquitto version 2.0.21 starting
+1751897228: Config loaded from /mosquitto/config/mosquitto.conf.
+1751897228: Warning: File /mosquitto/config/passwd has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 /mosquitto/config/passwd`.
+1751897228: Opening ipv4 listen socket on port 8883.
+1751897228: Opening ipv6 listen socket on port 8883.
+1751897228: mosquitto version 2.0.21 running
+1751897229: New connection from 172.17.0.1:60626 on port 8883.
+1751897229: New client connected from 172.17.0.1:60626 as mqtt-explorer-de5849f2 (p2, c1, k60, u'mqthanggg').
+1751897229: No will message specified.
+1751897229: Sending CONNACK to mqtt-explorer-de5849f2 (0, 0)
+1751897230: Received SUBSCRIBE from mqtt-explorer-de5849f2
+1751897230: 	# (QoS 0)
+1751897230: mqtt-explorer-de5849f2 0 #
+1751897230: Sending SUBACK to mqtt-explorer-de5849f2
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/3', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/20', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/12', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/19', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/30', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/23', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/13', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/10', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/22', ... (49 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/7', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/26', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/17', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/21', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/6', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/16', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/1', ... (49 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/27', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/15', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/14', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/2', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/24', ... (47 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/8', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/25', ... (51 bytes))
+1751897230: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'test', ... (2 bytes))
+1751897289: Received PINGREQ from mqtt-explorer-de5849f2
+1751897289: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897349: Received PINGREQ from mqtt-explorer-de5849f2
+1751897349: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897408: Received PINGREQ from mqtt-explorer-de5849f2
+1751897408: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897468: Received PINGREQ from mqtt-explorer-de5849f2
+1751897468: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897528: Received PINGREQ from mqtt-explorer-de5849f2
+1751897528: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897588: Received PINGREQ from mqtt-explorer-de5849f2
+1751897588: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897649: Received PINGREQ from mqtt-explorer-de5849f2
+1751897649: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897709: Received PINGREQ from mqtt-explorer-de5849f2
+1751897709: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897770: Received PINGREQ from mqtt-explorer-de5849f2
+1751897770: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897828: Received PINGREQ from mqtt-explorer-de5849f2
+1751897828: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897888: Received PINGREQ from mqtt-explorer-de5849f2
+1751897888: Sending PINGRESP to mqtt-explorer-de5849f2
+1751897948: Received PINGREQ from mqtt-explorer-de5849f2
+1751897948: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898009: Received PINGREQ from mqtt-explorer-de5849f2
+1751898009: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898069: Received PINGREQ from mqtt-explorer-de5849f2
+1751898069: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898129: Received PINGREQ from mqtt-explorer-de5849f2
+1751898129: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898187: Received PINGREQ from mqtt-explorer-de5849f2
+1751898187: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898248: Received PINGREQ from mqtt-explorer-de5849f2
+1751898248: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898307: Received PINGREQ from mqtt-explorer-de5849f2
+1751898307: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898368: Received PINGREQ from mqtt-explorer-de5849f2
+1751898368: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898429: Received PINGREQ from mqtt-explorer-de5849f2
+1751898429: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898489: Received PINGREQ from mqtt-explorer-de5849f2
+1751898489: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898547: Received PINGREQ from mqtt-explorer-de5849f2
+1751898547: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898607: Received PINGREQ from mqtt-explorer-de5849f2
+1751898607: Sending PINGRESP to mqtt-explorer-de5849f2
+1751898668: Received PINGREQ from mqtt-explorer-de5849f2
+1751898668: Sending PINGRESP to mqtt-explorer-de5849f2

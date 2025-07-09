@@ -1,4 +1,4 @@
-# Gas station management software
+# Gas station management software (outdated, will be updated)
 ## Hardware (simulator)
 (empty)
 ## Database

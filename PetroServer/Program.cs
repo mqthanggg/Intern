@@ -38,13 +38,6 @@ if (report.Status == HealthStatus.Healthy){
     }
     app.UseMiddlewares();
     app.MapPublicController();
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.UseCors("AllowAll");
-    app.UseWebSockets();
-    app.Map("/ws/total_revenue_by_type/{id}", PublicController.GetSumRevenueByTypeWS);
-
-    
     app.Run();
 }
 else{

@@ -1,0 +1,61 @@
+idea:
+- build a simulator
+- establish the mqtt connection from the simulator to the server
+- the client access the routes
+- the server return an upgrade header to update to websocket
+
+mosquitto:
+- listener 8080
+- protocol websockets
+- cafile /Program Files/mosquitto/certs/ca.crt
+- certfile /Program Files/mosquitto/certs/server.crt
+- keyfile /Program Files/mosquitto/certs/server.key
+- allow_anonymous false
+- connection_messages true
+- log_timestamp true
+- require_certificate true
+- password_file C:\Program Files\mosquitto\passwd (add SYSTEM/Read permission on passwd file)
+
+commands ran:
+- mosquitto_passwd -c ./passwd mqthanggg (password: admin123)
+
+certificate:
+- openssl genrsa -out ca.key 2048
+- openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
++ information:
+- Country Name (2 letter code) [AU]:VN
+- State or Province Name (full name) [Some-State]:.
+- Locality Name (eg, city) []:city
+- Organization Name (eg, company) [Internet Widgits Pty Ltd]:.
+- Organizational Unit Name (eg, section) []:.
+- Common Name (e.g. server FQDN or YOUR name) []:mqthanggg
+- Email Address []:maiquocthang0304@gmail.com
+- openssl genrsa -out server.key 2048
+- openssl req -new -key server.key -out server.csr
++ information:
+Country Name (2 letter code) [AU]:VN
+State or Province Name (full name) [Some-State]:.
+Locality Name (eg, city) []:city
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:.
+Organizational Unit Name (eg, section) []:.
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:maiquocthang0304@gmail.com
+A challenge password []:admin123
+An optional company name []:.
+- openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650
+- openssl genrsa -out client.key 2048
+- openssl req -new -key client.key -out client.csr
++ information:
+- Country Name (2 letter code) [AU]:VN
+- State or Province Name (full name) [Some-State]:.
+- Locality Name (eg, city) []:city
+- Organization Name (eg, company) [Internet Widgits Pty Ltd]:.
+- Organizational Unit Name (eg, section) []:.
+- Common Name (e.g. server FQDN or YOUR name) []:client CERT
+- Email Address []:maiquocthang0304@gmail.com
+- A challenge password []:admin123
+- An optional company name []:.
+- openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 3650
+- openssl pkcs12 -export -out certificate.pfx -inkey client.key -in client.crt
++ information
+- password: admin123

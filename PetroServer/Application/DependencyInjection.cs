@@ -4,6 +4,8 @@ public static class DependencyInjection{
         services.AddSingleton<IAsymmetricKeyService,AsymmetricKeyService>();
         services.AddSingleton<IJWKsService,JWKsService>();
         services.AddSingleton<IHasher,Hasher>();
+        services.AddSingleton<IMqttService,MqttService>();
+        services.AddHostedService(e => (MqttService)e.GetRequiredService<IMqttService>());
         services.AddLogging();
         return services;
     }

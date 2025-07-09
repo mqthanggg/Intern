@@ -25,7 +25,7 @@ public static class PublicController
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
         app.MapPut("log/update", UpdateLogTime);
-
+        app.Map("ws/{device}/{id}",GetWS);
         return app;
     }
 
@@ -473,4 +473,29 @@ public static class PublicController
 
         return TypedResults.Ok();
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for devices",
+        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
+    )]
+    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, IMqttService mqttService, ILogger<object> logger, IJWTService jWTService){
+        if (context.WebSockets.IsWebSocketRequest && jWTService.Verify(token)){
+            var socket = await context.WebSockets.AcceptWebSocketAsync();
+            mqttService.AddSocket($"{device}:{id}",socket);
+            var buffer = new byte[1024 * 4];
+            try
+            {
+                while(socket.State == WebSocketState.Open){
+                    await socket.ReceiveAsync(buffer, CancellationToken.None);
+                }
+            }
+            catch (WebSocketException e)
+            {
+                Console.WriteLine($"Websocket closed, reason: {e.Message}");
+            }
+            finally{
+                mqttService.RemoveSocket($"{device}:{id}", socket);
+            }
+        }
+    }   
 }
