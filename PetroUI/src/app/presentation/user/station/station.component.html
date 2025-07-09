@@ -1,12 +1,15 @@
 <div class="py-2 px-3 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
-    <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl" >
-        <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
-        <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
-            @if (isDispenserLoading) {
-                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
-            }
-            @else{
-                <table class="h-50 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+    <div class="flex mt-1">
+        <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl">
+            <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
+            <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
+                @if (isDispenserLoading) {
+                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
+                </div>
+                }
+                @else{
+                <table
+                    class="h-50 border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="sticky top-0">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-4">Number</th>
@@ -32,18 +35,40 @@
                         }
                     </tbody>
                 </table>
-            }
+                }
+            </div>
+        </div>
+        <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[30%] w-xl max-w-3xl ml-1">
+            <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dữ liệu trong ca</div>
+            <div class="flex pb-2.5">
+                <div style="width: 250px; height: 210px; margin-left: 35px;">
+                    <h3>Biểu đồ thống kê doanh thu</h3>
+                    <canvas baseChart  style="margin-bottom: 3px;"
+                        [data]="revenueChartData"
+                        [type]="'pie'">
+                    </canvas>
+                </div>
+                <div style="width: 250px; height: 210px; margin-left: 20px;">
+                    <h3>Biểu đồ thống kê nhiên liệu</h3>
+                    <canvas baseChart style="margin-bottom: 3px;"
+                        [data]="fuelChartData"
+                        [type]="'pie'">
+                    </canvas>   
+                </div>
+            </div>
         </div>
     </div>
-  <div class="flex mt-1">
-      <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-xl max-w-xl" >
-        <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Tank's status</div>
-        <div class="w-full max-h-55 overflow-auto relative">
-            @if (isTankLoading) {
-                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
-            }
-            @else{
-                <table class="table-auto border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+    <div class="flex mt-1">
+        <div class="shadow-xl top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-xl max-w-xl">
+            <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Tank's status</div>
+            <div class="w-full max-h-55 overflow-auto relative">
+                @if (isTankLoading) {
+                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
+                </div>
+                }
+                @else{
+                <table
+                    class="table-auto border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="sticky top-0">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-2">Number</th>
@@ -69,17 +94,19 @@
                         }
                     </tbody>
                 </table>
-            }
+                }
+            </div>
         </div>
-    </div>
-    <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl ml-1" >
-        <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
-        <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
-            @if (isLogLoading) {
-                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent"></div>
-            }
-            @else{
-                <table class="border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+        <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl ml-1">
+            <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
+            <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
+                @if (isLogLoading) {
+                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
+                </div>
+                }
+                @else{
+                <table
+                    class="border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="sticky top-0">
                         <tr class="**:bg-[#4DA8DA]">
                             <th class="px-2">Dispenser</th>
@@ -92,19 +119,19 @@
                     </thead>
                     <tbody class="">
                         @for (log of logList; track $index) {
-                            <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
-                                <td class="text-center">{{log.name}}</td>
-                                <td class="text-center">{{log.fuelName}}</td>
-                                <td class="text-center">{{log.totalLiters}}</td>
-                                <td class="text-center">{{log.price}}</td>
-                                <td class="text-center">{{log.totalAmount}}</td>
-                                <td class="text-center">{{log.time}}</td>
-                            </tr>
+                        <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
+                            <td class="text-center">{{log.name}}</td>
+                            <td class="text-center">{{log.fuelName}}</td>
+                            <td class="text-center">{{log.totalLiters}}</td>
+                            <td class="text-center">{{log.price}}</td>
+                            <td class="text-center">{{log.totalAmount}}</td>
+                            <td class="text-center">{{log.time}}</td>
+                        </tr>
                         }
                     </tbody>
                 </table>
-            }
+                }
+            </div>
         </div>
     </div>
-  </div>
 </div>

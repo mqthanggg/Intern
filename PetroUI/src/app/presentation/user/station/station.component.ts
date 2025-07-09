@@ -9,13 +9,16 @@ import { ActivatedRoute } from '@angular/router';
 import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
 import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord } from './log-record';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartData, ChartOptions, ChartConfiguration } from 'chart.js';
+
 
 @Component({
   selector: 'app-station',
   standalone: true,
   imports: [],
   templateUrl: './station.component.html',
-  styleUrl: './station.component.css'
+  styleUrls: ['./station.component.css'] // ✅ sửa từ styleUrl → styleUrls
 })
 export class StationComponent implements OnInit, OnDestroy{
   @Input() id: number = -1;
@@ -30,12 +33,89 @@ export class StationComponent implements OnInit, OnDestroy{
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
-  constructor(private http: HttpClient, private titleServer: TitleService, private route:ActivatedRoute){}
+  public pieChartType: any = 'pie';
+  public pieChartOptions: ChartConfiguration<'pie'>['options'] = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      }
+    }
+  }
+
+  socket!: WebSocket;
+  chartLabels: string[] = [];
+  chartDataAccomnt: number[] = [];
+  chartDataFuel: number[] = [];
+  revenueChartData: any;
+  fuelChartData: any;
+
+
+  constructor(
+    private http: HttpClient,
+    private titleServer: TitleService,
+    private route: ActivatedRoute,
+    private TitleService: TitleService
+  ) { }
+
   ngOnInit(): void {
-    const snapshot = this.route.snapshot
-    this.stationName = snapshot.queryParams['name']
-    this.stationAddress = snapshot.queryParams['address']
+    const snapshot = this.route.snapshot;
+    this.stationName = snapshot.queryParams['name'];
+    this.stationAddress = snapshot.queryParams['address'];
     setTimeout(() => {
+      // ✅ Load sum revenue by log type
+      const url = environment.wsServerURI + `/ws/total_revenue_by_type/${this.id}`;
+      this.socket = new WebSocket(url);
+
+      this.socket.onmessage = (event) => {
+        const data: { 
+          LogTypeName: string; 
+          TongDoanhThu: number,
+          TongNhienLieu: number
+        }[] = JSON.parse(event.data);
+        console.log("WebSocket readyState:", this.socket.readyState);
+        console.log("Received data:", data);
+
+        this.chartLabels = data.map(item => item.LogTypeName);
+        this.chartDataAccomnt = data.map(item => item.TongDoanhThu);
+        this.chartDataFuel = data.map(item => item.TongNhienLieu);
+
+        this.revenueChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataAccomnt,
+           // label: 'VNĐ',
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+
+        this.fuelChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataFuel,
+           // label: 'liters',
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      };
+      this.socket.onerror = (err) => console.error('WebSocket error:', err);
+
+
+    }, 0);
+  }
+
       this.titleServer.updateTitle(this.stationName)
     },0)
     this.isDispenserLoading = true

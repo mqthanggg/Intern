@@ -11,6 +11,15 @@ builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AddServices();
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 

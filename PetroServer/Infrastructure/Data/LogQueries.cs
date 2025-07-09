@@ -1,4 +1,5 @@
-public static class LogQuery{
+public static class LogQuery
+{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SelectLog = $@"
         SELECT 
@@ -6,7 +7,8 @@ public static class LogQuery{
             fuel_name,
             total_liters,
             total_amount,
-            time
+            time,
+            log_type
         FROM {Schema}.log
     ";
     public static readonly string SelectLogById = $@"
@@ -15,7 +17,8 @@ public static class LogQuery{
             fuel_name,
             total_liters,
             total_amount,
-            time
+            time,
+            log_type
         FROM {Schema}.log
         WHERE
             log_id = @LogId
@@ -27,6 +30,7 @@ public static class LogQuery{
             total_liters,
             total_amount,
             time,
+            log_type,
             created_by,
             created_date,
             last_modified_by,
@@ -37,6 +41,7 @@ public static class LogQuery{
             @TotalLiters,
             @TotalAmount,
             @Time,
+            @LogType,
             @CreatedBy,
             @CreatedDate,
             @LastModifiedBy,
@@ -50,6 +55,7 @@ public static class LogQuery{
             total_liters = @TotalLiters,
             total_amount = @TotalAmount,
             time = @Time,
+            log_type=@LogType,            
             last_modified_by = @LastModifiedBy,
             last_modified_date = @LastModifiedDate
         WHERE
@@ -68,7 +74,8 @@ public static class LogQuery{
             log.total_liters, 
             fuel.price, 
             log.total_amount, 
-            log.time 
+            log.time,
+            log.log_type 
         FROM {Schema}.log as log
         INNER JOIN {Schema}.dispenser as dp 
         ON 
@@ -81,4 +88,9 @@ public static class LogQuery{
         ORDER BY
             log.log_id
     ";
+    public static readonly string UpdateLogTime = $@"
+            UPDATE  petro_application.log
+            SET time = date_trunc('day', CURRENT_DATE) + (time::time);
+        ";
+
 }
