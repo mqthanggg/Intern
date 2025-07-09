@@ -13,12 +13,12 @@ public static class PublicController
         app.MapGet("Staff/{id}", GetStaffByStaffId);
         app.MapGet("Staffs", GetStaffs);
         app.MapGet("Shifts", GetShift);
-        app.MapGet("Shift/{id}", GetShiftByShiftId);
-        app.MapGet("Assignments", GetAssignment);
-        app.MapGet("Total/total_revenue", GetSumRevenue);
-        app.MapGet("Total/total_revenue_by_name/{id}", GetSumRevenueByName);
-        app.MapGet("Total/total_revenue_by_type/{id}", GetSumRevenueByType);
-        app.MapGet("ws-description/Total/total_revenue_by_type/{id}", GetTotalRevenueListHttp);
+        app.MapGet("shift/{id}", GetShiftByShiftId);
+        app.MapGet("assignments", GetAssignment);
+        app.MapGet("total/totalrevenue", GetSumRevenue);
+        app.MapGet("total/totalrevenuebyname/{id}", GetSumRevenueByName);
+        app.MapGet("total/totalrevenuebytype/{id}", GetSumRevenueByType);
+        app.MapGet("ws-description/total/totalrevenuebytype/{id}", GetTotalRevenueListHttp);
 
         app.MapPost("login", Login);
         app.MapPost("refresh", RefreshJWT);
@@ -42,7 +42,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [HttpGet("sum-revenue-by-type/{id}")]
+    [HttpGet("sumrevenuebytype/{id}")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetSumRevenueByType([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
@@ -56,7 +56,7 @@ public static class PublicController
         return TypedResults.Ok(result);
     }
 
-    [HttpGet("ws-description/Total/total_revenue_by_type/{id}")]
+    [HttpGet("ws/total/type/{id}")]
     [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetTotalRevenueListHttp(
@@ -97,7 +97,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [HttpGet("sum-revenue-by-name/{id}")]
+    [HttpGet("sumrevenuebyname/{id}")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetSumRevenueByName([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
@@ -112,7 +112,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [HttpGet("sum-revenue")]
+    [HttpGet("sumrevenue")]
     [ProducesResponseType(typeof(SumRevenueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetSumRevenue([FromServices] IRevenueRepository revenueRepository)

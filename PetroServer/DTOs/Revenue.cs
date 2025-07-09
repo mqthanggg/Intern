@@ -1,17 +1,17 @@
 
 public class SumRevenueResponse
 {
-    public required string BuoiHienTai { get; set; } = "";
+    public required string ShiftNow { get; set; } = "";
      public required string FuelName { get; set; } = "";
-    public decimal? TongDoanhThu { get; set; } = -1;
-    public decimal? TongNhienLieu { get; set; } = -1;
+    public decimal? TotalAmount { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
 }
 
 public class SumRevenueByNameResponse
 {
      public required string FuelName { get; set; } = "";
-    public decimal? TongDoanhThu { get; set; } = -1;
-    public decimal? TongNhienLieu { get; set; } = -1;
+    public decimal? TotalAmount { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
 }
 
 public class SumRevenueByTypeResponse
@@ -31,7 +31,7 @@ public class SumRevenueByTypeResponse
             };
         }
     }
-    public decimal? TongDoanhThu { get; set; } = null;
-    public decimal? TongNhienLieu { get; set; } = null;
+    public decimal? TotalAmount { get; set; } = null;
+    public decimal? TotalLiters { get; set; } = null;
 
 }

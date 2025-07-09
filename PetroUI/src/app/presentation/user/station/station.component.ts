@@ -16,7 +16,7 @@ import { ChartData, ChartOptions, ChartConfiguration } from 'chart.js';
 @Component({
   selector: 'app-station',
   standalone: true,
-  imports: [],
+  imports: [NgChartsModule],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css'] // ✅ sửa từ styleUrl → styleUrls
 })
@@ -72,15 +72,15 @@ export class StationComponent implements OnInit, OnDestroy{
     this.socket.onmessage = (event) => {
       const data: { 
         LogTypeName: string; 
-        TongDoanhThu: number,
-        TongNhienLieu: number
+        TotalAmount: number,
+        TotalLiters: number
       }[] = JSON.parse(event.data);
       console.log("WebSocket readyState:", this.socket.readyState);
       console.log("Received data:", data);
 
       this.chartLabels = data.map(item => item.LogTypeName);
-      this.chartDataAccomnt = data.map(item => item.TongDoanhThu);
-      this.chartDataFuel = data.map(item => item.TongNhienLieu);
+      this.chartDataAccomnt = data.map(item => item.TotalAmount);
+      this.chartDataFuel = data.map(item => item.TotalLiters);
 
       this.revenueChartData = {
         labels: this.chartLabels,
