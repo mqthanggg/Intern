@@ -85,7 +85,6 @@ try:
     while True:
         print("\n📡 MQTT Device Simulator Controller")
         print("1️⃣  Start devices")
-        print("2️⃣  Stop all devices")
         print("0️⃣  Exit")
         choice = input("Select an option: ").strip()
 
@@ -94,8 +93,6 @@ try:
                 start_dispenser(dispenser_id)
             for tank_id in tank_id_list:
                 start_tanks(tank_id)
-        elif choice == "2":
-            stop_all()
         elif choice == "0":
             stop_all()
             print("👋 Bye!")

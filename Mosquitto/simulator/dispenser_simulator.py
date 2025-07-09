@@ -42,7 +42,7 @@ try:
             "state": "IDLE"
         }
         time.sleep(random.randint(1,5))
-        client.publish(topic, json.dumps(payload), qos=1, retain=True)
+        client.publish(topic, json.dumps(payload), retain=True)
         while current_price < selected_price_limit:
             liter = round(liter + 0.032,3)
             current_price = round(fuel_price * liter,0)
@@ -54,7 +54,7 @@ try:
                 "price": current_price,
                 "state": "PUMP"
             }
-            client.publish(topic, json.dumps(payload), qos=1, retain=True)
+            client.publish(topic, json.dumps(payload), retain=True)
 
             time.sleep(0.05)
         time.sleep(2)
@@ -64,7 +64,7 @@ try:
             "state": "RESET"
         }
         time.sleep(1)
-        client.publish(topic, json.dumps(payload), qos=1, retain=True)
+        client.publish(topic, json.dumps(payload), retain=True)
     
 except KeyboardInterrupt:
     client.loop_stop()
