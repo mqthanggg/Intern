@@ -332,6 +332,21 @@ values (1, 'A95', 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 1),
 (1, 'A95', 11.2, 28000, TIMESTAMP(0) '2025-07-04 19:15:00', 4),
 (3, 'DO1', 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 4);
 
+INSERT INTO petro_application.log (dispenser_id, fuel_name, total_liters, total_amount, time, log_type)
+values (1, 'A95', 10.5, 26250, now(), 1),
+(6, 'A95', 8.2, 20500,now(), 1),
+(6, 'E5', 9.0, 22500, now(), 1),
+(6, 'DO1', 15.0, 30000,now(), 2),
+(6, 'E5', 12.5, 28000,now(), 2),
+(7, 'A95', 11.0, 27500, now(), 1),
+(7, 'DO1', 13.0, 29000, now(), 2),
+(7, 'DO1', 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 3),
+(7, 'E5', 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 3),
+(7, 'A95', 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 3),
+(8, 'E5', 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00', 4),
+(8, 'A95', 11.2, 28000, TIMESTAMP(0) '2025-07-04 19:15:00', 4),
+(9, 'DO1', 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 4);
+
 insert into petro_application.shift (shift_type, start_time, end_time) 
 VALUES 
 (1, '06:00:00', '14:00:00'),
@@ -389,7 +404,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 END;
 
 -- -- TRUY VẤN DỮ LIỆU
--- select * from petro_application.log   order by fuel_name ASC -- nhập ký
+-- select * from petro_application.log  where dispenser_id = 6 order by log_type ASC -- nhập ký
 -- select * from petro_application.station  -- trạm xăng
 -- select * from petro_application.tank      -- bể chứa
 -- select * from petro_application.user  -- Tài khoản
@@ -398,14 +413,20 @@ END;
 -- select * from  petro_application.shift
 -- select * from  petro_application.assignment
 
--- SELECT 
---     fuel_name, 
---     SUM(total_liters) AS "tổng nhiên liệu"
--- FROM petro_application.log
--- WHERE "time"::date = CURRENT_DATE
--- 	AND TO_CHAR("time", 'HH24:MI:SS') >= '14:00:00'
---   	AND TO_CHAR("time", 'HH24:MI:SS') <= '15:00:00'
--- GROUP BY fuel_name
--- ORDER BY fuel_name
--- --------------------------------------------------------------
+
+
+
+select log.*, dispenser.station_id from petro_application.log 
+JOIN 
+    petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+JOIN 
+    petro_application.station ON station.station_id = dispenser.station_id
+where dispenser.station_id = 2
+and log."time"::date = CURRENT_DATE 
+and	(
+      (CURRENT_TIME >= TIME '06:00:00' AND CURRENT_TIME < TIME '14:00:00' AND log."time"::time BETWEEN TIME '06:00:00' AND TIME '14:00:00') OR
+      (CURRENT_TIME >= TIME '14:00:00' AND CURRENT_TIME < TIME '22:00:00' AND log."time"::time BETWEEN TIME '14:00:00' AND TIME '22:00:00') OR
+      (CURRENT_TIME >= TIME '22:00:00' AND CURRENT_TIME < TIME '06:00:00' AND log."time"::time BETWEEN TIME '22:00:00' AND TIME '06:00:00')
+    )
+----------------------------------------------------------------
 

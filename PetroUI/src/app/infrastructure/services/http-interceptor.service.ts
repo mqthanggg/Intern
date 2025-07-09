@@ -20,7 +20,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req).pipe(
       catchError((err: HttpErrorResponse) => {
         if (
-          err.headers.get('www-authenticate')?.split(',')[1].match(/The token expired at '([^']+)'/)?.[1] &&
+          console.error(err.headers),
+          err.headers?.get('www-authenticate')?.split(',')[1].match(/The token expired at '([^']+)'/)?.[1] &&
           req.url.split('/').at(-1) !== 'refresh'
         ) {        
           return http.post(`${environment.serverURI}/refresh`,{

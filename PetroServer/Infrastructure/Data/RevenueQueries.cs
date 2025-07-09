@@ -47,7 +47,7 @@ public static class RevenueQueries
 
     public static readonly string SumFuelbyType = $@"
         SELECT 
-            log_type,
+            log_type AS LogType,
             SUM(total_amount) AS TongDoanhThu,
             SUM(total_liters) AS TongNhienLieu
         FROM 

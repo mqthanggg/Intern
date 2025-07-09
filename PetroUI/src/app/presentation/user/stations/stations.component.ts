@@ -23,8 +23,8 @@ export class StationsComponent implements OnInit{
       this.isStationLoading = true
       this.titleService.updateTitle("Stations")
       this.http.get(environment.serverURI + '/stations',{observe: "response"}).pipe(
-        mergeMap((res) => of(res).pipe(delay(1000))),//Simulating delay
-        catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),//Simulating delay
+        mergeMap((res) => of(res).pipe(delay(1000))),  //Simulating delay
+        catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),  //Simulating delay
         finalize(() => {
           this.isStationLoading = false
         })).subscribe({
@@ -35,6 +35,6 @@ export class StationsComponent implements OnInit{
             
           }
         })
-    },0)
+    }, 0)
   }
 }

@@ -1,3 +1,6 @@
+using System.Net.WebSockets;
+using System.Text.Json;
+
 public static class PublicController
 {
     public static WebApplication MapPublicController(this WebApplication app)
@@ -15,12 +18,14 @@ public static class PublicController
         app.MapGet("Total/total_revenue", GetSumRevenue);
         app.MapGet("Total/total_revenue_by_name/{id}", GetSumRevenueByName);
         app.MapGet("Total/total_revenue_by_type/{id}", GetSumRevenueByType);
+        app.MapGet("ws-description/Total/total_revenue_by_type/{id}", GetTotalRevenueListHttp);
 
         app.MapPost("login", Login);
-        app.MapPost("refresh", RefreshJWT);        
+        app.MapPost("refresh", RefreshJWT);
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
-        app.MapPut("log/update", UpdateLogTime);                  
+        app.MapPut("log/update", UpdateLogTime);
+
         return app;
     }
 
@@ -32,7 +37,7 @@ public static class PublicController
         if (result == 0)
         {
             return Results.NotFound("Không tìm thấy bản ghi hoặc không cập nhật được.");
-        }   
+        }
         return TypedResults.Ok("Cập nhật thành công");
     }
 
@@ -49,6 +54,46 @@ public static class PublicController
             return Results.NotFound();
         }
         return TypedResults.Ok(result);
+    }
+
+    [HttpGet("ws-description/Total/total_revenue_by_type/{id}")]
+    [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public static async Task<IResult> GetTotalRevenueListHttp(
+        [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository)
+    {
+        var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
+
+        if (result == null || !result.Any())
+        {
+            return Results.NotFound();
+        }
+
+        return TypedResults.Ok(result);
+    }
+
+    public static async Task GetSumRevenueByTypeWS(HttpContext context, [FromRoute] int id, [FromServices] IRevenueRepository revenueRepository,
+         [FromServices] ILogger<object> logger)
+    {
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation("WebSocket request received for stationId: " + id);
+        try
+        {
+            var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
+            var json = JsonSerializer.Serialize(result);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            var receiveBuffer = new byte[1024 * 4];
+            while (socket.State == WebSocketState.Open)
+            {
+                await socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "WebSocket error in sum-revenue-by-type.");
+        }
     }
 
     [Authorize]
@@ -105,7 +150,7 @@ public static class PublicController
     )]
     public static async Task<IResult> GetStaffs(IStaffRepository StaffRepository)
     {
-       try
+        try
         {
             var res = await StaffRepository.GetAllStaffResponse();
             return TypedResults.Ok(res);
@@ -154,7 +199,7 @@ public static class PublicController
             return Results.NotFound();
         return TypedResults.Ok(res);
     }
-   
+
     [Authorize]
     [ProducesResponseType(400)]
     [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
@@ -206,7 +251,7 @@ public static class PublicController
             res
         );
     }
- 
+
     [Authorize]
     [ProducesResponseType(typeof(List<TankResponse>), 200)]
     [Produces("application/json")]
@@ -234,7 +279,7 @@ public static class PublicController
             jWKs.GetJWKs()
       );
     }
-   
+
     [ProducesResponseType(typeof(LoginResponse), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -330,7 +375,7 @@ public static class PublicController
             return TypedResults.Ok();
         return TypedResults.NotFound();
     }
-   
+
     [Authorize]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
@@ -355,7 +400,7 @@ public static class PublicController
             return TypedResults.Ok();
         return TypedResults.NotFound();
     }
-   
+
     [Authorize]
     [ProducesResponseType(400)]
     [ProducesResponseType(typeof(List<StationResponse>), 200)]
@@ -427,5 +472,5 @@ public static class PublicController
         }
 
         return TypedResults.Ok();
-    }    
+    }
 }

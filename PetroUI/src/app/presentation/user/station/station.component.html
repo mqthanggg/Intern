@@ -38,14 +38,23 @@
                 }
             </div>
         </div>
-        <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl">
+        <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[30%] w-xl max-w-3xl ml-1">
             <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dữ liệu trong ca</div>
-            <div style="width: 300px; height: 250px;">
-                <canvas baseChart 
-                    [data]="{ labels: pieChartLabels, datasets: [{ data: pieChartData }] }"
-                    [type]="pieChartType" 
-                    [options]="pieChartOptions">
-                </canvas>
+            <div class="flex pb-2.5">
+                <div style="width: 250px; height: 210px; margin-left: 35px;">
+                    <h3>Biểu đồ thống kê doanh thu</h3>
+                    <canvas baseChart  style="margin-bottom: 3px;"
+                        [data]="revenueChartData"
+                        [type]="'pie'">
+                    </canvas>
+                </div>
+                <div style="width: 250px; height: 210px; margin-left: 20px;">
+                    <h3>Biểu đồ thống kê nhiên liệu</h3>
+                    <canvas baseChart style="margin-bottom: 3px;"
+                        [data]="fuelChartData"
+                        [type]="'pie'">
+                    </canvas>   
+                </div>
             </div>
         </div>
     </div>
@@ -77,7 +86,7 @@
                             <td class="pl-5">
                                 <div class="w-full !bg-gray-500 rounded-md h-full z-10">
                                     <div class="!bg-green-500 h-full rounded-md text-center text-white duration-200"
-                                        [style.width]="_temp_statusList[$index].toString() + '%'">
+                                        [style.width]="_temp_statusList[$index]?.toString() + '%'">
                                         {{_temp_statusList[$index]}}%</div>
                                 </div>
                             </td>

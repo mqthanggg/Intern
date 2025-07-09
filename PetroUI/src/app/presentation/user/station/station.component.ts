@@ -10,9 +10,10 @@ import { TankRecord } from './tank-record';
 import { NgClass } from '@angular/common';
 import { LogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
-import { SumRevenueByNameResponse } from './sum-revenue.model';
 import { ChartData, ChartOptions, ChartConfiguration } from 'chart.js';
-import { WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
+
+
 @Component({
   selector: 'app-station',
   standalone: true,
@@ -20,6 +21,8 @@ import { WebSocketSubject } from 'rxjs/webSocket';
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css'] // ✅ sửa từ styleUrl → styleUrls
 })
+
+
 export class StationComponent implements OnInit {
   @Input() id: number = -1;
   stationName: string = "";
@@ -31,11 +34,6 @@ export class StationComponent implements OnInit {
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
-  private socket!: WebSocketSubject<any>;
-
-  public pieChartLabels: string[] = [] // ["A95", "E5", "DO"];
-  public pieChartData: number[] = [] // [300, 200, 100];
-
   public pieChartType: any = 'pie';
   public pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
@@ -45,6 +43,14 @@ export class StationComponent implements OnInit {
       }
     }
   }
+
+  socket!: WebSocket;
+  chartLabels: string[] = [];
+  chartDataAccomnt: number[] = [];
+  chartDataFuel: number[] = [];
+  revenueChartData: any;
+  fuelChartData: any;
+
 
   constructor(
     private http: HttpClient,
@@ -110,16 +116,92 @@ export class StationComponent implements OnInit {
           console.error('Lỗi log:', err);
         }
       });
-      //=======================================
-      this.socket = new WebSocketSubject('ws://localhost:5170/ws/Total/total_revenue_by_name/' + this.id);
-      this.socket.subscribe({
-        next: (data) => {
-          this.pieChartLabels = data.fuelName;
-          this.pieChartData = data.TongDoanhThu;
-        },
-        error: err => console.error('WebSocket error:', err),
-        complete: () => console.log('WebSocket closed'),
-      });
+
+      // ✅ Load sum revenue by log type
+      // this.isLogLoading = true;
+      // console.log();
+      
+      // this.http.get(environment.serverURI + `/Total/total_revenue_by_type/${this.id}`, { observe: "response" }).pipe(
+      //   mergeMap((res) => of(res).pipe(delay(1000))),
+      //   catchError((err) => of(err).pipe(delay(1000), mergeMap(() => throwError(() => err)))),
+      //   finalize(() => {
+      //     this.isDispenserLoading = false;
+      //   })
+      // ).subscribe({
+      //   next: (res: HttpResponse<any>) => {
+      //     console.log("Danh sách LogType:", res.body);
+      //               console.log("this.id", this.id);
+      //     this.sumbylogList = res.body;
+      //     this.sumbylogList.forEach((value, index) => {
+      //       console.log(`sumbylogSocket`, this.sumbylogSocket);
+      //       this.sumbylogSocket[value.logType] = webSocket<SumRevenueByLogResponse>(
+      //         environment.wsServerURI + `/ws/Total/1`
+      //       );  
+      //       this.sumbylogSocket[value.logType].subscribe({
+      //         next: (res: SumRevenueByLogResponse) => {
+      //           this.pieChartLabels[index] = res.logType;
+      //           this.pieChartData[index] = res.tongDoanhThu;
+      //         },
+      //         error: (err) => {
+      //           console.error(`Error at LogType ${value.logType}: ${err}`);
+      //         }
+      //       });
+      //     });
+      //   },
+      //   error: (err: HttpErrorResponse) => {
+      //     console.error("Lỗi khi load danh sách LogType:", err);
+      //   }
+      // });
+   //   const stationId = 1;
+      const url = environment.wsServerURI + `/ws/total_revenue_by_type/${this.id}`;
+      this.socket = new WebSocket(url);
+
+      this.socket.onmessage = (event) => {
+        const data: { 
+          LogTypeName: string; 
+          TongDoanhThu: number,
+          TongNhienLieu: number
+        }[] = JSON.parse(event.data);
+        console.log("WebSocket readyState:", this.socket.readyState);
+        console.log("Received data:", data);
+
+        this.chartLabels = data.map(item => item.LogTypeName);
+        this.chartDataAccomnt = data.map(item => item.TongDoanhThu);
+        this.chartDataFuel = data.map(item => item.TongNhienLieu);
+
+        this.revenueChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataAccomnt,
+           // label: 'VNĐ',
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+
+        this.fuelChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataFuel,
+           // label: 'liters',
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      };
+      this.socket.onerror = (err) => console.error('WebSocket error:', err);
+
+
     }, 0);
   }
 
