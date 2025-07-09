@@ -243,9 +243,13 @@ public static class PublicController{
 
         return TypedResults.Ok();
     }
-    //ws/dispenser/id
-    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, IMqttService mqttService, ILogger<object> logger){
-        if (context.WebSockets.IsWebSocketRequest){
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for devices",
+        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
+    )]
+    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, IMqttService mqttService, ILogger<object> logger, IJWTService jWTService){
+        if (context.WebSockets.IsWebSocketRequest && jWTService.Verify(token)){
             var socket = await context.WebSockets.AcceptWebSocketAsync();
             mqttService.AddSocket($"{device}:{id}",socket);
             var buffer = new byte[1024 * 4];
