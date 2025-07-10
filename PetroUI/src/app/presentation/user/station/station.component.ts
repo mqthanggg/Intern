@@ -10,7 +10,7 @@ import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
 import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
-import { ChartData, ChartOptions, ChartConfiguration } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 
 
 @Component({
