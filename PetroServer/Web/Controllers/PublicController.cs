@@ -16,9 +16,9 @@ public static class PublicController
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
         app.MapGet("total/totalrevenue", GetSumRevenue);
-        app.MapGet("total/totalrevenuebyname/{id}", GetSumRevenueByName);
-        app.MapGet("total/totalrevenuebytype/{id}", GetSumRevenueByType);
-        app.MapGet("ws-description/total/totalrevenuebytype/{id}", GetTotalRevenueListHttp);
+        app.MapGet("total/name/{id}", GetSumRevenueByName);
+        app.MapGet("total/type/{id}", GetSumRevenueByType);
+        app.MapGet("ws/total/type/{id}", GetTotalRevenueListHttp);
 
         app.MapPost("login", Login);
         app.MapPost("refresh", RefreshJWT);
@@ -42,7 +42,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [HttpGet("sumrevenuebytype/{id}")]
+    [HttpGet("sumrevenuetype/{id}")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetSumRevenueByType([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
@@ -97,7 +97,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [HttpGet("sumrevenuebyname/{id}")]
+    [HttpGet("sumrevenuename/{id}")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public static async Task<IResult> GetSumRevenueByName([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
