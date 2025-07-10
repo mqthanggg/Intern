@@ -10,9 +10,9 @@ public static class PublicController
         app.MapGet("tank/station/{id}", GetTankByStationId);
         app.MapGet(".well-known/jwks.json", GetJWKs);
         app.MapGet("stations", GetStations);
-        app.MapGet("Staff/{id}", GetStaffByStaffId);
-        app.MapGet("Staffs", GetStaffs);
-        app.MapGet("Shifts", GetShift);
+        app.MapGet("staff/{id}", GetStaffByStaffId);
+        app.MapGet("staffs", GetStaffs);
+        app.MapGet("shifts", GetShift);
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
         app.MapGet("total/totalrevenue", GetSumRevenue);
