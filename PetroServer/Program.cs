@@ -11,15 +11,6 @@ builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AddServices();
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -30,12 +21,17 @@ var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
     app.UseRouting();
-    app.UseCors();
+    app.UseCors( policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
     if (app.Environment.IsDevelopment()){
         IdentityModelEventSource.ShowPII = true; 
         app.Swagger();
         app.MapSignup();
     }
+    app.MapReport();
     app.UseMiddlewares();
     app.MapPublicController();
     app.Run();

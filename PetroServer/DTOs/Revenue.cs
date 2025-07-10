@@ -2,7 +2,6 @@
 public class SumRevenueResponse
 {
     public required string ShiftNow { get; set; } = "";
-     public required string FuelName { get; set; } = "";
     public decimal? TotalAmount { get; set; } = -1;
     public decimal? TotalLiters { get; set; } = -1;
 }

@@ -15,19 +15,60 @@ public static class PublicController
         app.MapGet("shifts", GetShift);
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
-        app.MapGet("total/totalrevenue", GetSumRevenue);
-        app.MapGet("total/name/{id}", GetSumRevenueByName);
-        app.MapGet("total/type/{id}", GetSumRevenueByType);
-        app.MapGet("ws/total/type/{id}", GetTotalRevenueListHttp);
 
         app.MapPost("login", Login);
+        app.MapPut("registerAccount", RegisterAccount);
         app.MapPost("refresh", RefreshJWT);
+        
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
         app.MapPut("log/update", UpdateLogTime);
-        app.Map("ws/{device}/{id}",GetWS);
+       
+       
         return app;
     }
+    [Authorize]
+    [HttpPut("Register")]
+    private static async Task<IResult> RegisterAccount([FromBody] RegisterRequest body, IHasher hasher, IUserRepository userRepository)
+    {
+        // Kiểm tra đầu vào
+        if (string.IsNullOrWhiteSpace(body.Username) || string.IsNullOrWhiteSpace(body.Password))
+            return TypedResults.BadRequest(new ErrorResponse { Why = "Thiếu Username hoặc Password" });
+        var padding = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+        var (hashedPassword, _) = hasher.Hash(new { }, body.Password + padding);
+        var tokenPadding = Convert.ToBase64String(RandomNumberGenerator.GetBytes(12));
+        var (hashedRefreshToken, _) = hasher.Hash(new { }, Guid.NewGuid().ToString() + tokenPadding);
+        var user = new User
+        {
+            Username = body.Username,
+            Password = hashedPassword,
+            Padding = padding,
+            RefreshToken = hashedRefreshToken,
+            TokenPadding = tokenPadding,
+            TokenExpiredTime = DateTime.UtcNow.AddDays(7),
+            CreatedBy = body.Username,
+            LastModifiedBy = body.Username
+        };
+
+        try
+        {
+            int rows = await userRepository.InsertAsync(user);
+            if (rows == 0)
+                return TypedResults.BadRequest(new ErrorResponse { Why = "Không thể thêm người dùng" });
+
+            return Results.Created($"/users/{body.Username}", new { message = "Thêm thành công", user.Username });
+        }
+        catch (PostgresException e) when (e.SqlState == "23505")
+        {
+            return Results.Conflict(new ErrorResponse { Why = "Username đã tồn tại" });
+        }
+        catch (Exception ex)
+        {
+            return TypedResults.NotFound();
+        }
+    }
+
+
 
     [Authorize]
     [HttpPut("update")]
@@ -41,90 +82,7 @@ public static class PublicController
         return TypedResults.Ok("Cập nhật thành công");
     }
 
-    [Authorize]
-    [HttpGet("sumrevenuetype/{id}")]
-    [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static async Task<IResult> GetSumRevenueByType([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
-    {
-        var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
 
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
-        return TypedResults.Ok(result);
-    }
-
-    [HttpGet("ws/total/type/{id}")]
-    [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static async Task<IResult> GetTotalRevenueListHttp(
-        [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository)
-    {
-        var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
-
-        if (result == null || !result.Any())
-        {
-            return Results.NotFound();
-        }
-
-        return TypedResults.Ok(result);
-    }
-
-    public static async Task GetSumRevenueByTypeWS(HttpContext context, [FromRoute] int id, [FromServices] IRevenueRepository revenueRepository,
-         [FromServices] ILogger<object> logger)
-    {
-        var socket = await context.WebSockets.AcceptWebSocketAsync();
-        logger.LogInformation("WebSocket request received for stationId: " + id);
-        try
-        {
-            var result = await revenueRepository.GetTotalRevenueByTypeAsync(new GetIdRevenue { StationId = id });
-            var json = JsonSerializer.Serialize(result);
-            var buffer = System.Text.Encoding.UTF8.GetBytes(json);
-            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-            var receiveBuffer = new byte[1024 * 4];
-            while (socket.State == WebSocketState.Open)
-            {
-                await socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "WebSocket error in sum-revenue-by-type.");
-        }
-    }
-
-    [Authorize]
-    [HttpGet("sumrevenuename/{id}")]
-    [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static async Task<IResult> GetSumRevenueByName([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
-    {
-        var result = await revenueRepository.GetTotalRevenueByNameAsync(new GetIdRevenue { StationId = id });
-
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
-        return TypedResults.Ok(result);
-    }
-
-    [Authorize]
-    [HttpGet("sumrevenue")]
-    [ProducesResponseType(typeof(SumRevenueResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public static async Task<IResult> GetSumRevenue([FromServices] IRevenueRepository revenueRepository)
-    {
-        var result = await revenueRepository.GetTotalRevenueAsync();
-
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
-        return TypedResults.Ok(result);
-    }
 
     [Authorize]
     [ProducesResponseType(typeof(List<StaffResponse>), 200)]
@@ -321,13 +279,10 @@ public static class PublicController
                     {
                         if (e.SqlState == "23505")
                         {
-                            /*
-                                Example constraint name: user_<column>_key
-                            */
                             Regex regex = new Regex(@"user_(\w+)_key");
                             Match match = regex.Match(e.ConstraintName ?? "");
                             string column = match.Groups[1].Value;
-                            if (column == "token_padding")//Rare
+                            if (column == "token_padding")
                                 continue;
                             return TypedResults.InternalServerError(new ErrorResponse { Why = column });
                         }
@@ -353,7 +308,6 @@ public static class PublicController
         }
     }
 
-    [Authorize]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
     [SwaggerOperation(
@@ -469,33 +423,9 @@ public static class PublicController
             {
                 return TypedResults.Unauthorized();
             }
+
+            return TypedResults.Ok();
         }
 
-        return TypedResults.Ok();
     }
-
-    [SwaggerOperation(
-        Summary = "Obtain web socket for devices",
-        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
-    )]
-    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, IMqttService mqttService, ILogger<object> logger, IJWTService jWTService){
-        if (context.WebSockets.IsWebSocketRequest && jWTService.Verify(token)){
-            var socket = await context.WebSockets.AcceptWebSocketAsync();
-            mqttService.AddSocket($"{device}:{id}",socket);
-            var buffer = new byte[1024 * 4];
-            try
-            {
-                while(socket.State == WebSocketState.Open){
-                    await socket.ReceiveAsync(buffer, CancellationToken.None);
-                }
-            }
-            catch (WebSocketException e)
-            {
-                Console.WriteLine($"Websocket closed, reason: {e.Message}");
-            }
-            finally{
-                mqttService.RemoveSocket($"{device}:{id}", socket);
-            }
-        }
-    }   
 }
