@@ -1,8 +1,8 @@
 public class Revenue : Entity
 {
-    public string? BuoiHienTai { get; set; } = null;
-    public decimal? TongDoanhThu { get; set; } = null;
-    public decimal? TongNhienLieu { get; set; } = null;
+    public string? shiftnow { get; set; } = null;
+    public decimal? TotalAmount { get; set; } = null;
+    public decimal? TotalLiters { get; set; } = null;
 }
 public class GetIdRevenue
 {
@@ -11,8 +11,8 @@ public class GetIdRevenue
 public class RevenueByName : Entity
 {
     public string? FuelName { get; set; } = null;
-    public decimal? TongDoanhThu { get; set; } = null;
-    public decimal? TongNhienLieu { get; set; } = null;
+    public decimal? TotalAmount { get; set; } = null;
+    public decimal? TotalLiter { get; set; } = null;
 }
 
 public class RevenueByType : Entity
@@ -27,11 +27,12 @@ public class RevenueByType : Entity
                 1 => "Bán lẻ",
                 2 => "Công nợ",
                 3 => "Khuyến mãi",
-                4 => "Trả trước"
+                4 => "Trả trước",
+                _ => "Không xác định"
             };
         }
     }
-    public decimal? TongDoanhThu { get; set; } = null;
-    public decimal? TongNhienLieu { get; set; } = null;
+    public decimal? TotalAmount { get; set; } = null;
+    public decimal? TotalLiters { get; set; } = null;
 
 }

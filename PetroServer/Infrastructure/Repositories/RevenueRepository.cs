@@ -17,7 +17,7 @@ public class RevenueRepository : IRevenueRepository
         await using (var connection = dbRead.CreateConnection())
         {
             var result = await connection.QueryFirstOrDefaultAsync<SumRevenueResponse>(RevenueQueries.SumRevenue);
-            result.TongDoanhThu ??= 0;
+            result.TotalAmount ??= 0;
             return result;
         }
     }

@@ -8,9 +8,9 @@ public static class RevenueQueries
                 WHEN CURRENT_TIME >= TIME '06:00:00' AND CURRENT_TIME < TIME '14:00:00' THEN 'Sáng'
                 WHEN CURRENT_TIME >= TIME '14:00:00' AND CURRENT_TIME < TIME '22:00:00' THEN 'Chiều'
                 ELSE 'Đêm'
-            END AS BuoiHienTai,
-            SUM(total_amount) AS TongDoanhThu,
-            SUM(total_liters) AS TongNhienLieu
+            END AS ShiftNow,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
         FROM 
             {Schema}.log
         WHERE
@@ -25,7 +25,7 @@ public static class RevenueQueries
     public static readonly string SumFuelbyName = $@"
         SELECT 
             fuel_name AS FuelName,
-            SUM(total_amount) AS TongDoanhThu,
+            SUM(total_amount) AS TotalAmount,
             SUM(total_liters) AS TongNhienLieu
         FROM 
             {Schema}.log
@@ -48,7 +48,7 @@ public static class RevenueQueries
     public static readonly string SumFuelbyType = $@"
         SELECT 
             log_type AS LogType,
-            SUM(total_amount) AS TongDoanhThu,
+            SUM(total_amount) AS TotalAmount,
             SUM(total_liters) AS TongNhienLieu
         FROM 
             {Schema}.log
