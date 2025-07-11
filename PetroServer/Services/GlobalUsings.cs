@@ -10,3 +10,5 @@ global using System.Security.Authentication;
 global using System.Security.Cryptography.X509Certificates;
 global using MQTTnet;
 global using System.Buffers;
+global using LogUpdate;
+global using System.Text.Json;

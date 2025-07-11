@@ -1,5 +1,3 @@
-using LogUpdate;
-using System.Text.Json;
 namespace LogUpdate{
     public enum DispenserState{
         IDLE,

@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 public static class ReportController
 {
     public static WebApplication MapReport(this WebApplication app)
