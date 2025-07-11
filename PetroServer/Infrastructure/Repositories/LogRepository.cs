@@ -2,16 +2,21 @@ public class LogRepository : ILogRepository
 {
     private readonly IDbWriteConnection dbWrite;
     private readonly IDbReadConnection dbRead;
+    private readonly IUsernameService username;
     public LogRepository(
         IDbWriteConnection dbWriteConnection,
-        IDbReadConnection dbReadConnection
+        IDbReadConnection dbReadConnection,
+        IUsernameService usernameService
     )
     {
         dbWrite = dbWriteConnection;
         dbRead = dbReadConnection;
+        username = usernameService;
     }
     public async Task<int> InsertAsync(Log entity)
     {
+        entity.CreatedBy ??= username.GetUsername();
+        entity.LastModifiedBy ??= username.GetUsername();
         await using (var connection = dbWrite.CreateConnection())
         {
             int affectedRows = await connection.ExecuteAsync(LogQuery.InsertLog, entity);
@@ -20,6 +25,7 @@ public class LogRepository : ILogRepository
     }
     public async Task<int> UpdateAsync(Log entity)
     {
+        entity.LastModifiedBy ??= username.GetUsername();
         await using (var connection = dbWrite.CreateConnection())
         {
             int affectedRows = await connection.ExecuteAsync(LogQuery.UpdateLog, entity);

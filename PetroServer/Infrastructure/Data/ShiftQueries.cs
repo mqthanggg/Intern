@@ -25,11 +25,19 @@ public static class ShiftQuery
         INSERT INTO {Schema}.shift(
             shift_type,
             start_time,
-            end_time
+            end_time,
+            created_by,
+            created_date,
+            last_modified_by,
+            last_modified_date
         ) VALUES (
             @ShiftName,
             @StartTime,
-            @EndTime
+            @EndTime,
+            @CreatedBy,
+            now(),
+            @LastModifiedBy,
+            now()
         )
     ";
     public static readonly string UpdateShift = $@"
@@ -37,7 +45,9 @@ public static class ShiftQuery
         SET
             shift_type =  @ShiftName,
             start_time = @StartTime,
-            end_time = @EndTime
+            end_time = @EndTime,
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = now()
         WHERE
             shift_id = @ShiftId
     ";
