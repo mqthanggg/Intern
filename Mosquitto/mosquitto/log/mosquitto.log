@@ -1,0 +1,601 @@
+1752197631: mosquitto version 2.0.21 starting
+1752197631: Config loaded from /mosquitto/config/mosquitto.conf.
+1752197631: Warning: File /mosquitto/config/passwd has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 /mosquitto/config/passwd`.
+1752197631: Opening ipv4 listen socket on port 8883.
+1752197631: Opening ipv6 listen socket on port 8883.
+1752197631: mosquitto version 2.0.21 running
+1752197774: New connection from 172.17.0.1:41378 on port 8883.
+1752197775: New client connected from 172.17.0.1:41378 as 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (p5, c1, k15, u'mqthanggg').
+1752197775: No will message specified.
+1752197775: Sending CONNACK to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (0, 0)
+1752197775: Received SUBSCRIBE from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197775: 	devices/# (QoS 0)
+1752197775: 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 0 devices/#
+1752197775: Sending SUBACK to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/3', ... (51 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/20', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/12', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/19', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/30', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/23', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/13', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/10', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/22', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/7', ... (44 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/26', ... (43 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/17', ... (51 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/21', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/6', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/16', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/1', ... (47 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/27', ... (49 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/15', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/14', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/2', ... (48 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/24', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/8', ... (44 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1752197775: Sending PUBLISH to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 (d0, q0, r1, m0, 'devices/dispenser/25', ... (50 bytes))
+1752197789: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197789: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197805: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197805: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197820: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197820: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197835: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197835: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197850: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197850: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197866: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197866: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197880: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197880: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197896: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197896: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197910: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197910: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197926: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197926: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197941: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197941: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197956: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197956: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197971: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197971: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197985: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752197985: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198001: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198001: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198016: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198016: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198031: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198031: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198046: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198046: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198062: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198062: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198076: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198076: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198092: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198092: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198106: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198106: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198122: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198122: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198137: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198137: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198153: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198153: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198167: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198167: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198183: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198183: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198198: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198198: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198214: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198214: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198228: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198228: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198244: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198244: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198258: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198258: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198273: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198273: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198289: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198289: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198303: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198303: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198319: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198319: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198334: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198334: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198350: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198350: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198364: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198364: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198380: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198380: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198395: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198395: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198411: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198411: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198425: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198425: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198441: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198441: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198455: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198455: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198471: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198471: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198485: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198485: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198501: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198501: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198516: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198516: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198530: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198530: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198546: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198546: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198560: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198560: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198576: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198576: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198590: Received PINGREQ from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198590: Sending PINGRESP to 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198594: Received DISCONNECT from 5999b07f-b2f9-4fe4-8621-4422f8cb7c44
+1752198594: Client 5999b07f-b2f9-4fe4-8621-4422f8cb7c44 disconnected.
+1752199433: Saving in-memory database to /mosquitto/data/mosquitto.db.
+1752199449: New connection from 172.17.0.1:40134 on port 8883.
+1752199449: New client connected from 172.17.0.1:40134 as c5f33570-f311-450d-90d0-aa7cb4a3f247 (p5, c1, k15, u'mqthanggg').
+1752199449: No will message specified.
+1752199449: Sending CONNACK to c5f33570-f311-450d-90d0-aa7cb4a3f247 (0, 0)
+1752199449: Received SUBSCRIBE from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199449: 	devices/# (QoS 0)
+1752199449: c5f33570-f311-450d-90d0-aa7cb4a3f247 0 devices/#
+1752199449: Sending SUBACK to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/3', ... (51 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/20', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/12', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/19', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/30', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/23', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/13', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/10', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/22', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/7', ... (44 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/26', ... (43 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/17', ... (51 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/21', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/6', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/16', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/1', ... (47 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/27', ... (49 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/15', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/14', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/2', ... (48 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/24', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/8', ... (44 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1752199449: Sending PUBLISH to c5f33570-f311-450d-90d0-aa7cb4a3f247 (d0, q0, r1, m0, 'devices/dispenser/25', ... (50 bytes))
+1752199465: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199465: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199480: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199480: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199494: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199494: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199510: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199510: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199524: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199524: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199540: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199540: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199555: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199555: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199571: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199571: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199585: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199585: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199602: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199602: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199616: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199616: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199632: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199632: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199646: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199646: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199662: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199662: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199677: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199677: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199691: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199691: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199707: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199707: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199721: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199721: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199737: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199737: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199751: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199751: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199768: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199768: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199782: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199782: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199798: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199798: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199812: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199812: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199829: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199829: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199843: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199843: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199859: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199859: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199873: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199873: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199889: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199889: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199903: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199903: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199918: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199918: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199934: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199934: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199948: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199948: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199964: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199964: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199978: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199978: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199994: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752199994: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200009: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200009: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200025: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200025: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200039: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200039: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200055: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200055: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200069: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200069: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200085: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200085: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200100: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200100: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200116: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200116: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200130: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200130: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200144: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200144: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200160: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200160: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200174: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200174: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200190: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200190: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200204: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200204: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200221: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200221: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200235: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200235: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200251: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200251: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200265: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200265: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200281: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200281: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200295: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200295: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200312: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200312: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200326: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200326: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200342: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200342: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200356: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200356: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200370: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200370: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200386: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200386: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200401: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200401: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200417: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200417: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200431: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200431: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200447: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200447: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200461: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200461: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200477: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200477: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200491: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200491: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200507: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200507: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200522: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200522: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200538: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200538: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200552: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200552: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200568: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200568: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200583: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200583: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200597: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200597: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200613: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200613: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200627: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200627: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200643: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200643: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200657: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200657: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200673: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200673: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200688: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200688: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200704: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200704: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200718: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200718: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200734: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200734: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200749: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200749: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200765: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200765: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200779: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200779: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200795: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200795: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200809: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200809: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200824: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200824: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200840: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200840: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200854: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200854: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200870: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200870: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200884: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200884: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200900: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200900: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200915: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200915: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200931: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200931: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200945: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200945: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200961: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200961: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200976: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200976: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200992: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752200992: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201006: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201006: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201022: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201022: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201036: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201036: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201051: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201051: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201067: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201067: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201081: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201081: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201097: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201097: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201112: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201112: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201128: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201128: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201142: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201142: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201158: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201158: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201173: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201173: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201188: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201188: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201203: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201203: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201219: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201219: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201233: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201233: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201234: Saving in-memory database to /mosquitto/data/mosquitto.db.
+1752201248: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201248: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201263: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201263: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201278: Received PINGREQ from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201278: Sending PINGRESP to c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201291: Received DISCONNECT from c5f33570-f311-450d-90d0-aa7cb4a3f247
+1752201291: Client c5f33570-f311-450d-90d0-aa7cb4a3f247 disconnected.
+1752202303: New connection from 172.17.0.1:33544 on port 8883.
+1752202303: New client connected from 172.17.0.1:33544 as a31066dc-ae8e-442f-84c0-a3eedae8300c (p5, c1, k15, u'mqthanggg').
+1752202303: No will message specified.
+1752202303: Sending CONNACK to a31066dc-ae8e-442f-84c0-a3eedae8300c (0, 0)
+1752202303: Received SUBSCRIBE from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202303: 	devices/# (QoS 0)
+1752202303: a31066dc-ae8e-442f-84c0-a3eedae8300c 0 devices/#
+1752202303: Sending SUBACK to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/3', ... (51 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/20', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/12', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/19', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/30', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/23', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/13', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/10', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/22', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/7', ... (44 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/26', ... (43 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/17', ... (51 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/21', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/6', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/16', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/1', ... (47 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/27', ... (49 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/15', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/14', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/2', ... (48 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/24', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/8', ... (44 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1752202303: Sending PUBLISH to a31066dc-ae8e-442f-84c0-a3eedae8300c (d0, q0, r1, m0, 'devices/dispenser/25', ... (50 bytes))
+1752202319: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202319: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202333: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202333: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202349: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202349: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202364: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202364: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202380: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202380: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202394: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202394: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202408: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202408: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202425: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202425: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202439: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202439: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202455: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202455: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202470: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202470: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202486: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202486: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202500: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202500: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202516: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202516: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202531: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202531: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202547: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202547: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202561: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752202561: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c

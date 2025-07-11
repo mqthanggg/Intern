@@ -12,7 +12,6 @@ import { LogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 
-
 @Component({
   selector: 'app-station',
   standalone: true,
@@ -50,7 +49,6 @@ export class StationComponent implements OnInit, OnDestroy{
   revenueChartData: any;
   fuelChartData: any;
 
-
   constructor(
     private http: HttpClient,
     private titleServer: TitleService,
@@ -65,10 +63,11 @@ export class StationComponent implements OnInit, OnDestroy{
     setTimeout(() => {
       this.titleServer.updateTitle(this.stationName)
     }, 0);
-    // ✅ Load sum revenue by log type
-    const url = environment.wsServerURI + `/ws/total_revenue_by_type/${this.id}`;
-    this.socket = new WebSocket(url);
 
+    // ✅ Load sum revenue by log type
+    const url = environment.wsServerURI + `/ws/shift/type/${this.id}`;
+    console.log('WebSocket URL:', url);
+    this.socket = new WebSocket(url);
     this.socket.onmessage = (event) => {
       const data: { 
         LogTypeName: string; 
@@ -86,22 +85,6 @@ export class StationComponent implements OnInit, OnDestroy{
         labels: this.chartLabels,
         datasets: [{
           data: this.chartDataAccomnt,
-         // label: 'VNĐ',
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#4BC0C0',
-            '#9966FF'
-          ]
-        }]
-      };
-
-      this.fuelChartData = {
-        labels: this.chartLabels,
-        datasets: [{
-          data: this.chartDataFuel,
-         // label: 'liters',
           backgroundColor: [
             '#FF6384',
             '#36A2EB',
@@ -112,6 +95,36 @@ export class StationComponent implements OnInit, OnDestroy{
         }]
       };
     };
+
+    // ✅ Load sum revenue by fuel name
+    // const url1 = environment.wsServerURI + `/ws/shift/name/${this.id}`;
+    // console.log('WebSocket URL:', url1);
+    this.socket = new WebSocket(environment.wsServerURI + `/ws/shift/name/${this.id}`);
+    this.socket.onmessage = (event) => {
+      const data: { 
+        FuelName: string; 
+        TotalLiters: number
+      }[] = JSON.parse(event.data);
+      console.log("WebSocket readyState:", this.socket.readyState);
+      console.log("Received data:", data);
+
+      this.chartLabels = data.map(item => item.FuelName);
+      this.chartDataFuel = data.map(item => item.TotalLiters);
+      this.fuelChartData = {
+        labels: this.chartLabels,
+        datasets: [{
+          data: this.chartDataFuel,
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF'
+          ]
+        }]
+      };
+    };
+
     this.socket.onerror = (err) => console.error('WebSocket error:', err);
 
     this.isDispenserLoading = true
@@ -172,6 +185,7 @@ export class StationComponent implements OnInit, OnDestroy{
     })
     window.onbeforeunload = () => this.ngOnDestroy()
   }
+
   ngOnDestroy(): void {
     console.log("Calling ngOnDestroy");
     

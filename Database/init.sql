@@ -301,6 +301,7 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name) VAL
 (12, 26, 4, 401), (12, 27, 1, 402), (12, 28, 2, 403), (12, 29, 3, 404), (12, 30, 4, 405);
 
 INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time) VALUES
+(3, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00'),
 (1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00'),
 (1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00'),
 (1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
