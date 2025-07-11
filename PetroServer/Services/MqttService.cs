@@ -1,9 +1,22 @@
+using LogUpdate;
+
 public class MqttService : IMqttService{
+    private class WSDispenserRecord{
+        public float liter {get; set;}
+        public int price {get; set;}
+        public DispenserState state{get; set;}
+        public int payment {get; set;}
+    }
     public ConcurrentDictionary<string, List<WebSocket>> connections;
     private readonly ConcurrentDictionary<string, ArraySegment<byte>> _retainMessages;
     private readonly IMqttClient _client;
     private readonly MqttClientOptions _options;
-    public MqttService(){
+    private readonly ILogUpdateService _logUpdate;
+    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1,1);
+    public MqttService(
+        ILogUpdateService logUpdate
+    ){
+        _logUpdate = logUpdate;
         var mqttFactory = new MqttClientFactory();
         _client = mqttFactory.CreateMqttClient();
         _options = new MqttClientOptionsBuilder().
@@ -56,17 +69,17 @@ public class MqttService : IMqttService{
         connections.AddOrUpdate(channel, [webSocket],(key, list) => {
             lock(list){
                 list.Add(webSocket);
-                if (_retainMessages.TryGetValue(channel,out var _)){
-                    _ = webSocket.SendAsync(
-                        _retainMessages[channel],
-                        WebSocketMessageType.Text,
-                        true,
-                        CancellationToken.None
-                    );
-                }
             }
             return list;
         });
+        if (_retainMessages.TryGetValue(channel,out var _)){
+            _ = webSocket.SendAsync(
+                _retainMessages[channel],
+                WebSocketMessageType.Text,
+                true,
+                CancellationToken.None
+            );
+        }
     }
     public void RemoveSocket(string channel, WebSocket webSocket){
         var list = connections[channel];
@@ -86,6 +99,9 @@ public class MqttService : IMqttService{
         string channel = $"{matchDevice}:{matchId}";
         if (ApplicationMessage.Retain)
             _retainMessages[channel] = segment;
+        else if(matchDevice == "dispenser"){
+            _ = _logUpdate.SegmentProcessAsync(matchId, ApplicationMessage.Payload);
+        }
         foreach(var kvp in connections){
             string device = kvp.Key.Split(":")[0];
             int id = Convert.ToInt32(kvp.Key.Split(":")[1]);

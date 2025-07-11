@@ -27,12 +27,20 @@ public static class AssignmentQuery{
             shift_id,
             staff_id,
             station_id,
-            work_date
+            work_date,
+            created_by,
+            created_date,
+            last_modified_by,
+            last_modified_date
         ) VALUES (
             @ShiftId,
             @StaffId,
             @StationId,
-            @WorkDate
+            @WorkDate,
+            @CreatedBy,
+            now(),
+            @LastModifiedBy,
+            now()
         )
     ";
     public static readonly string UpdateAssignment = $@"
@@ -41,7 +49,9 @@ public static class AssignmentQuery{
             shift_id = @ShiftId,
             staff_id = @StaffId,
             station_id = @StationId,
-            work_date = @WorkDate
+            work_date = @WorkDate,
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = now()
         WHERE
             assignment_id = @AssignmentId
     ";

@@ -39,20 +39,20 @@ try:
         payload = {
             "liter": 0.00,
             "price": 0,
-            "state": "IDLE"
+            "state": 0
         }
         time.sleep(random.randint(1,5))
         client.publish(topic, json.dumps(payload), retain=True)
         while current_price < selected_price_limit:
             liter = round(liter + 0.032,3)
-            current_price = round(fuel_price * liter,0)
+            current_price = int(round(fuel_price * liter,0))
             if current_price > selected_price_limit:
                 current_price = selected_price_limit
                 liter = round(current_price / fuel_price,3)
             payload = {
                 "liter": liter,
                 "price": current_price,
-                "state": "PUMP"
+                "state": 1
             }
             client.publish(topic, json.dumps(payload), retain=True)
 
@@ -61,7 +61,8 @@ try:
         payload = {
             "liter": 0.00,
             "price": 0,
-            "state": "RESET"
+            "state": 2,
+            "payment": random.randint(1,4)
         }
         time.sleep(1)
         client.publish(topic, json.dumps(payload), retain=True)
