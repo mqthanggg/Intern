@@ -4,6 +4,7 @@ public static class UserQuery{
         INSERT INTO {Schema}.user(
             username, 
             password, 
+            role,
             padding, 
             refresh_token, 
             token_padding,
@@ -15,6 +16,7 @@ public static class UserQuery{
         ) VALUES (
             @Username, 
             @Password, 
+            @Role,
             @Padding,
             @RefreshToken,
             @TokenPadding,
@@ -29,6 +31,7 @@ public static class UserQuery{
         SELECT 
             user_id, 
             username, 
+            role,
             password, 
             padding 
         FROM {Schema}.user
@@ -37,6 +40,7 @@ public static class UserQuery{
         SELECT
             user_id, 
             username, 
+            role,
             password, 
             padding 
         FROM {Schema}.user
@@ -63,6 +67,7 @@ public static class UserQuery{
         SELECT
             user_id, 
             username, 
+            role,
             password, 
             padding 
         FROM {Schema}.user

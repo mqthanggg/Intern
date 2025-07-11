@@ -599,3 +599,79 @@ To fix this, use `chmod 0700 /mosquitto/config/passwd`.
 1752202547: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
 1752202561: Received PINGREQ from a31066dc-ae8e-442f-84c0-a3eedae8300c
 1752202561: Sending PINGRESP to a31066dc-ae8e-442f-84c0-a3eedae8300c
+1752209227: mosquitto version 2.0.21 starting
+1752209227: Config loaded from /mosquitto/config/mosquitto.conf.
+1752209227: Warning: File /mosquitto/config/passwd has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 /mosquitto/config/passwd`.
+1752209227: Opening ipv4 listen socket on port 8883.
+1752209227: Opening ipv6 listen socket on port 8883.
+1752209227: mosquitto version 2.0.21 running
+1752209227: New connection from 172.17.0.1:44840 on port 8883.
+1752209227: New client connected from 172.17.0.1:44840 as mqtt-explorer-de5849f2 (p2, c1, k60, u'mqthanggg').
+1752209227: No will message specified.
+1752209227: Sending CONNACK to mqtt-explorer-de5849f2 (0, 0)
+1752209227: Received SUBSCRIBE from mqtt-explorer-de5849f2
+1752209227: 	# (QoS 0)
+1752209227: mqtt-explorer-de5849f2 0 #
+1752209227: Sending SUBACK to mqtt-explorer-de5849f2
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/28', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/11', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/5', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/26', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/10', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/19', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/22', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/15', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/9', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/3', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/27', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/18', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/8', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/29', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/7', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/4', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/16', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/14', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/20', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/2', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/25', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/17', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/12', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/1', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/21', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/23', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/24', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/6', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/30', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/tank/13', ... (24 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/3', ... (51 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/20', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/12', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/19', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/30', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/23', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/13', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/10', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/22', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/7', ... (44 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/26', ... (43 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/17', ... (51 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/21', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/29', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/6', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/16', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/1', ... (47 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/5', ... (51 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/27', ... (49 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/15', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/9', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/14', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/2', ... (48 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/4', ... (44 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/24', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/28', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/8', ... (44 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/18', ... (49 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/11', ... (51 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'devices/dispenser/25', ... (50 bytes))
+1752209227: Sending PUBLISH to mqtt-explorer-de5849f2 (d0, q0, r1, m0, 'test', ... (2 bytes))
