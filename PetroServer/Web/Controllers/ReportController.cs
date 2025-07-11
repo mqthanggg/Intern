@@ -4,7 +4,7 @@ public static class ReportController
 {
     public static WebApplication MapReport(this WebApplication app)
     {
-        app.MapGet("/report", GetSumRevenue);
+        //   app.MapGet("/report", GetSumRevenue);
         app.MapGet("shift/type/{id}", GetSumRevenueByType);
         app.MapGet("shift/name/{id}", GetSumRevenueByName);
         app.MapGet("day/type/{id}", GetSumRevenueDayByType);
@@ -14,66 +14,15 @@ public static class ReportController
         app.MapGet("year/type/{id}", GetSumRevenueYearByType);
         app.MapGet("year/name/{id}", GetSumRevenueYearByName);
 
-        app.Map("ws/type/{id}", GetSumRevenueByTypeWS);
-        app.Map("ws/name/{id}", GetSumRevenueByNameWS);
+        app.Map("ws/revenue", GetSumRevenue);
+        app.Map("ws/shift/type/{id}", GetSumRevenueShiftByTypeWS);
+        app.Map("ws/shift/name/{id}", GetSumRevenueShiftByNameWS);
         app.Map("ws/{device}/{id}", GetWS);
         return app;
     }
 
-    // [HttpGet("revenue-ws")]
-    // public static async Task GetRevenueWebSocket(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
-    // {
-    //     if (context.WebSockets.IsWebSocketRequest)
-    //     {
-    //         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-
-    //         // Lấy dữ liệu doanh thu hiện tại từ repository
-    //         var revenue = await revenueRepository.GetTotalRevenueAsync();
-    //         string message = revenue != null ? revenue.ToString() : "0";
-
-    //         var buffer = System.Text.Encoding.UTF8.GetBytes(message);
-    //         var segment = new ArraySegment<byte>(buffer);
-
-    //         // Gửi doanh thu ngay khi client kết nối
-    //         await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-
-    //         // Lắng nghe client (nếu cần)
-    //         var receiveBuffer = new byte[1024 * 4];
-    //         while (webSocket.State == WebSocketState.Open)
-    //         {
-    //             var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-
-    //             if (result.MessageType == WebSocketMessageType.Close)
-    //             {
-    //                 await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
-    //             }
-    //         }
-    //     }
-    //     else
-    //     {
-    //         context.Response.StatusCode = 400;
-    //     }
-    // }
-    // //===========================================================
-    //======================== HTTP ==============================
-    [HttpGet("sumrevenue")]
-    [ProducesResponseType(typeof(SumRevenueResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Report total revenue",
-        Description = "Total revenue statistics for the current shift"
-    )]
-    public static async Task<IResult> GetSumRevenue([FromServices] IRevenueRepository revenueRepository)
-    {
-        var result = await revenueRepository.GetTotalRevenueAsync();
-
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
-        return TypedResults.Ok(result);
-    }
-
+    //===========================================================
+    //======================== HTTP =============================
     [Authorize]
     [HttpGet("sumrevenuetypeshift/{id}")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
@@ -225,7 +174,8 @@ public static class ReportController
         }
         return TypedResults.Ok(result);
     }
-
+    // ==============================================================
+    // ============================= WS =============================
     [SwaggerOperation(
        Summary = "Obtain web socket for devices",
        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
@@ -254,8 +204,45 @@ public static class ReportController
             }
         }
     }
-    
-    public static async Task GetSumRevenueByTypeWS(HttpContext context,
+    public static async Task GetSumRevenue(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueAsync();
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TypedResults.NotFound(ex);
+        }
+    }
+    public static async Task GetSumRevenueShiftByTypeWS(HttpContext context,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,
         [FromServices] ILogger<object> logger)
@@ -299,9 +286,9 @@ public static class ReportController
         }
     }
 
-    public static async Task GetSumRevenueByNameWS(HttpContext context, 
-    [FromRoute] int id, 
-    [FromServices] IRevenueRepository revenueRepository, 
+    public static async Task GetSumRevenueShiftByNameWS(HttpContext context,
+    [FromRoute] int id,
+    [FromServices] IRevenueRepository revenueRepository,
     [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -318,6 +305,92 @@ public static class ReportController
             while (socket.State == WebSocketState.Open)
             {
                 var result = await revenueRepository.GetTotalRevenueByNameShiftAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueDayByNameWS(HttpContext context,
+    [FromRoute] int id,
+    [FromServices] IRevenueRepository revenueRepository,
+    [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByNameDayAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueDayByTypeWS(HttpContext context,
+    [FromRoute] int id,
+    [FromServices] IRevenueRepository revenueRepository,
+    [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByTypeDayAsync(new GetIdRevenue { StationId = id });
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {

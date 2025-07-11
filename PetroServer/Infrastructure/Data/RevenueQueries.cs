@@ -3,23 +3,7 @@ public static class RevenueQueries
 {
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SumRevenue = $@"     
-        SELECT 
-            CASE
-                WHEN CURRENT_TIME >= TIME '06:00:00' AND CURRENT_TIME < TIME '14:00:00' THEN 'Sáng'
-                WHEN CURRENT_TIME >= TIME '14:00:00' AND CURRENT_TIME < TIME '22:00:00' THEN 'Chiều'
-                ELSE 'Đêm'
-            END AS ShiftNow,
-            SUM(total_amount) AS TotalAmount,
-            SUM(total_liters) AS TotalLiters
-        FROM 
-            {Schema}.log
-        WHERE
-            time::date = CURRENT_DATE
-            AND (
-                (CURRENT_TIME >= TIME '06:00:00' AND CURRENT_TIME < TIME '14:00:00' AND time::time BETWEEN TIME '06:00:00' AND TIME '14:00:00') OR
-                (CURRENT_TIME >= TIME '14:00:00' AND CURRENT_TIME < TIME '22:00:00' AND time::time BETWEEN TIME '14:00:00' AND TIME '22:00:00') OR
-                (CURRENT_TIME >= TIME '22:00:00' AND CURRENT_TIME < TIME '06:00:00' AND time::time BETWEEN TIME '22:00:00' AND TIME '06:00:00')
-            )
+        SELECT SUM(total_amount) AS TotalAmount, SUM(total_liters) AS TotalLiters FROM {Schema}.log
     ";
 
   // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).

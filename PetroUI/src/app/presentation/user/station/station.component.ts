@@ -65,7 +65,7 @@ export class StationComponent implements OnInit, OnDestroy{
     }, 0);
 
     // ✅ Load sum revenue by log type
-    const url = environment.wsServerURI + `/ws/type/${this.id}`;
+    const url = environment.wsServerURI + `/ws/shift/type/${this.id}`;
     console.log('WebSocket URL:', url);
     this.socket = new WebSocket(url);
     this.socket.onmessage = (event) => {
@@ -97,9 +97,9 @@ export class StationComponent implements OnInit, OnDestroy{
     };
 
     // ✅ Load sum revenue by fuel name
-    // const url1 = environment.wsServerURI + `/ws/name/${this.id}`;
+    // const url1 = environment.wsServerURI + `/ws/shift/name/${this.id}`;
     // console.log('WebSocket URL:', url1);
-    this.socket = new WebSocket(environment.wsServerURI + `/ws/name/${this.id}`);
+    this.socket = new WebSocket(environment.wsServerURI + `/ws/shift/name/${this.id}`);
     this.socket.onmessage = (event) => {
       const data: { 
         FuelName: string; 
