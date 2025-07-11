@@ -161,6 +161,8 @@ CREATE TABLE IF NOT EXISTS petro_application.user
     user_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
     username character varying(15) NOT NULL UNIQUE,
     password character(84) NOT NULL,
+    role integer NOT NULL,
+    CHECK (role in (1,2)),
     padding character(24) NOT NULL UNIQUE,
     refresh_token character(84) UNIQUE,
     token_padding character(24) UNIQUE,
@@ -173,7 +175,7 @@ CREATE TABLE IF NOT EXISTS petro_application.user
 );
 
 COMMENT ON TABLE petro_application."user"
-    IS 'Table for storing user''s credentials.';
+    IS 'Table for storing user''s credentials. Role: 1 -> user, 2 -> administrator';
 
 DROP TABLE IF EXISTS petro_application.log CASCADE;
 
@@ -264,129 +266,129 @@ ALTER TABLE IF EXISTS petro_application.log
     ON DELETE NO ACTION
     NOT VALID;
 
-INSERT INTO petro_application.station (name, address) VALUES
-('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City'),
-('PV Oil Station 2', '456 Cach Mang Thang 8, Ward 5, District 3, Ho Chi Minh City'),
-('Saigon Petro Station 3', '789 Tran Hung Dao, Ward 6, District 5, Ho Chi Minh City'),
-('COMECO Station 4', '101 Le Van Luong, Tan Phong Ward, District 7, Ho Chi Minh City'),
-('Mipec Station 5', '234 Vo Van Tan, Ward 11, District 10, Ho Chi Minh City'),
-('Petrolimex Station 6', '567 Xa Lo Ha Noi, An Phu Ward, District 2, Ho Chi Minh City'),
-('PV Oil Station 7', '890 Hoang Dieu, Ward 9, District 4, Ho Chi Minh City'),
-('Saigon Petro Station 8', '321 Pham Van Dong, Linh Trung Ward, Thu Duc City, Ho Chi Minh City'),
-('COMECO Station 9', '654 Phan Van Tri, Ward 11, Go Vap District, Ho Chi Minh City'),
-('Mipec Station 10', '987 Ba Hom, Binh Tri Dong Ward, Binh Tan District, Ho Chi Minh City'),
-('Delete station', 'example address'),
-('Update station', 'example address');
+INSERT INTO petro_application.station (name, address, created_by, last_modified_by) VALUES
+('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City', 'admin', 'admin'),
+('PV Oil Station 2', '456 Cach Mang Thang 8, Ward 5, District 3, Ho Chi Minh City', 'admin', 'admin'),
+('Saigon Petro Station 3', '789 Tran Hung Dao, Ward 6, District 5, Ho Chi Minh City', 'admin', 'admin'),
+('COMECO Station 4', '101 Le Van Luong, Tan Phong Ward, District 7, Ho Chi Minh City', 'admin', 'admin'),
+('Mipec Station 5', '234 Vo Van Tan, Ward 11, District 10, Ho Chi Minh City', 'admin', 'admin'),
+('Petrolimex Station 6', '567 Xa Lo Ha Noi, An Phu Ward, District 2, Ho Chi Minh City', 'admin', 'admin'),
+('PV Oil Station 7', '890 Hoang Dieu, Ward 9, District 4, Ho Chi Minh City', 'admin', 'admin'),
+('Saigon Petro Station 8', '321 Pham Van Dong, Linh Trung Ward, Thu Duc City, Ho Chi Minh City', 'admin', 'admin'),
+('COMECO Station 9', '654 Phan Van Tri, Ward 11, Go Vap District, Ho Chi Minh City', 'admin', 'admin'),
+('Mipec Station 10', '987 Ba Hom, Binh Tri Dong Ward, Binh Tan District, Ho Chi Minh City', 'admin', 'admin'),
+('Delete station', 'example address', 'admin', 'admin'),
+('Update station', 'example address', 'admin', 'admin');
 
-INSERT INTO petro_application.fuel (short_name, long_name, price) VALUES
-('A95', 'RON 95-I', 25000),
-('E5', 'E5 RON 92-II', 23000),
-('DO1', 'Diesel Oil-I', 20000),
-('DO5', 'Diesel Oil-V', 19000);
+INSERT INTO petro_application.fuel (short_name, long_name, price,created_by, last_modified_by) VALUES
+('A95', 'RON 95-I', 25000, 'admin', 'admin'),
+('E5', 'E5 RON 92-II', 23000, 'admin', 'admin'),
+('DO1', 'Diesel Oil-I', 20000, 'admin', 'admin'),
+('DO5', 'Diesel Oil-V', 19000, 'admin', 'admin');
 
-INSERT INTO petro_application.tank (fuel_id, station_id, name, max_volume) VALUES
-(1, 1, 101, 5000), (2, 1, 102, 4000), (3, 1, 103, 6000), (4, 1, 104, 5500), (1, 1, 105, 7000),
-(2, 2, 201, 5000), (3, 2, 202, 7500), (4, 2, 203, 6800), (1, 2, 204, 6000), (2, 2, 205, 4500),
-(3, 3, 301, 7000), (4, 3, 302, 7200), (1, 3, 303, 8000), (2, 3, 304, 5500), (3, 3, 305, 6200),
-(4, 4, 401, 7700), (1, 4, 402, 5200), (2, 4, 403, 4100), (3, 4, 404, 6300), (4, 4, 405, 5600),
-(4, 11, 401, 7700), (1, 11, 402, 5200), (2, 11, 403, 4100), (3, 11, 404, 6300), (4, 11, 405, 5600),
-(4, 12, 401, 7700), (1, 12, 402, 5200), (2, 12, 403, 4100), (3, 12, 404, 6300), (4, 12, 405, 5600);
+INSERT INTO petro_application.tank (fuel_id, station_id, name, max_volume, created_by, last_modified_by) VALUES
+(1, 1, 101, 5000, 'admin', 'admin'), (2, 1, 102, 4000, 'admin', 'admin'), (3, 1, 103, 6000, 'admin', 'admin'), (4, 1, 104, 5500, 'admin', 'admin'), (1, 1, 105, 7000, 'admin', 'admin'),
+(2, 2, 201, 5000, 'admin', 'admin'), (3, 2, 202, 7500, 'admin', 'admin'), (4, 2, 203, 6800, 'admin', 'admin'), (1, 2, 204, 6000, 'admin', 'admin'), (2, 2, 205, 4500, 'admin', 'admin'),
+(3, 3, 301, 7000, 'admin', 'admin'), (4, 3, 302, 7200, 'admin', 'admin'), (1, 3, 303, 8000, 'admin', 'admin'), (2, 3, 304, 5500, 'admin', 'admin'), (3, 3, 305, 6200, 'admin', 'admin'),
+(4, 4, 401, 7700, 'admin', 'admin'), (1, 4, 402, 5200, 'admin', 'admin'), (2, 4, 403, 4100, 'admin', 'admin'), (3, 4, 404, 6300, 'admin', 'admin'), (4, 4, 405, 5600, 'admin', 'admin'),
+(4, 11, 401, 7700, 'admin', 'admin'), (1, 11, 402, 5200, 'admin', 'admin'), (2, 11, 403, 4100, 'admin', 'admin'), (3, 11, 404, 6300, 'admin', 'admin'), (4, 11, 405, 5600, 'admin', 'admin'),
+(4, 12, 401, 7700, 'admin', 'admin'), (1, 12, 402, 5200, 'admin', 'admin'), (2, 12, 403, 4100, 'admin', 'admin'), (3, 12, 404, 6300, 'admin', 'admin'), (4, 12, 405, 5600, 'admin', 'admin');
 
-INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name) VALUES
-(1, 1, 1, 101), (1, 2, 2, 102), (1, 3, 3, 103), (1, 4, 4, 104), (1, 5, 1, 105),
-(2, 6, 2, 201), (2, 7, 3, 202), (2, 8, 4, 203), (2, 9, 1, 204), (2, 10, 2, 205),
-(3, 11, 3, 301), (3, 12, 4, 302), (3, 13, 1, 303), (3, 14, 2, 304), (3, 15, 3, 305),
-(4, 16, 4, 401), (4, 17, 1, 402), (4, 18, 2, 403), (4, 19, 3, 404), (4, 20, 4, 405),
-(11, 21, 4, 401), (11, 22, 1, 402), (11, 23, 2, 403), (11, 24, 3, 404), (11, 25, 4, 405),
-(12, 26, 4, 401), (12, 27, 1, 402), (12, 28, 2, 403), (12, 29, 3, 404), (12, 30, 4, 405);
+INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name, created_by, last_modified_by) VALUES
+(1, 1, 1, 101, 'admin', 'admin'), (1, 2, 2, 102, 'admin', 'admin'), (1, 3, 3, 103, 'admin', 'admin'), (1, 4, 4, 104, 'admin', 'admin'), (1, 5, 1, 105, 'admin', 'admin'),
+(2, 6, 2, 201, 'admin', 'admin'), (2, 7, 3, 202, 'admin', 'admin'), (2, 8, 4, 203, 'admin', 'admin'), (2, 9, 1, 204, 'admin', 'admin'), (2, 10, 2, 205, 'admin', 'admin'),
+(3, 11, 3, 301, 'admin', 'admin'), (3, 12, 4, 302, 'admin', 'admin'), (3, 13, 1, 303, 'admin', 'admin'), (3, 14, 2, 304, 'admin', 'admin'), (3, 15, 3, 305, 'admin', 'admin'),
+(4, 16, 4, 401, 'admin', 'admin'), (4, 17, 1, 402, 'admin', 'admin'), (4, 18, 2, 403, 'admin', 'admin'), (4, 19, 3, 404, 'admin', 'admin'), (4, 20, 4, 405, 'admin', 'admin'),
+(11, 21, 4, 401, 'admin', 'admin'), (11, 22, 1, 402, 'admin', 'admin'), (11, 23, 2, 403, 'admin', 'admin'), (11, 24, 3, 404, 'admin', 'admin'), (11, 25, 4, 405, 'admin', 'admin'),
+(12, 26, 4, 401, 'admin', 'admin'), (12, 27, 1, 402, 'admin', 'admin'), (12, 28, 2, 403, 'admin', 'admin'), (12, 29, 3, 404, 'admin', 'admin'), (12, 30, 4, 405, 'admin', 'admin');
 
-INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time) VALUES
-(3, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00'),
-(1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00'),
-(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00'),
-(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
-(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:12:00'),
-(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
-(1, 'A95', 3, 12.0, 30000, TIMESTAMP(0) '2025-07-04 15:00:00'),
-(2, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
-(2, 'E5', 1, 9.5, 21850, TIMESTAMP(0) '2025-07-04 08:35:00'),
-(2, 'E5', 2, 7.8, 17940, TIMESTAMP(0) '2025-07-04 08:50:00'),
-(2, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-07-04 15:05:00'),
-(2, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
-(3, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-07-04 08:40:00'),
-(3, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-07-04 08:55:00'),
-(3, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-07-04 08:10:00'),
-(3, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
-(4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-07-04 08:45:00'),
-(4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-07-04 08:00:00'),
-(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-07-04 08:15:00'),
-(5, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
-(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
-(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
-(5, 'A95', 3, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
+INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time, created_by, last_modified_by) VALUES
+(3, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00', 'admin', 'admin'),
+(1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00', 'admin', 'admin'),
+(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00', 'admin', 'admin'),
+(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:12:00', 'admin', 'admin'),
+(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
+(1, 'A95', 3, 12.0, 30000, TIMESTAMP(0) '2025-07-04 15:00:00', 'admin', 'admin'),
+(2, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
+(2, 'E5', 1, 9.5, 21850, TIMESTAMP(0) '2025-07-04 08:35:00', 'admin', 'admin'),
+(2, 'E5', 2, 7.8, 17940, TIMESTAMP(0) '2025-07-04 08:50:00', 'admin', 'admin'),
+(2, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-07-04 15:05:00', 'admin', 'admin'),
+(2, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
+(3, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-07-04 08:40:00', 'admin', 'admin'),
+(3, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-07-04 08:55:00', 'admin', 'admin'),
+(3, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-07-04 08:10:00', 'admin', 'admin'),
+(3, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
+(4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-07-04 08:45:00', 'admin', 'admin'),
+(4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-07-04 08:00:00', 'admin', 'admin'),
+(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-07-04 08:15:00', 'admin', 'admin'),
+(5, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+(5, 'A95', 3, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
 
-(6, 'A95', 2, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00'),
-(6, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
-(6, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
-(6, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00'),
-(6, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
-(7, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 18:50:00'),
-(7, 'E5', 1, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00'),
-(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00'),
-(7, 'E5', 1, 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00'),
-(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00'),
-(8, 'DO1', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
-(8, 'DO1', 2, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
-(8, 'DO1', 2, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
-(9, 'D05', 2, 10.5, 26250, now()),
-(9, 'D05', 2, 8.2, 20500,now()),
-(9, 'D05', 2, 11.0, 27500, now()),
-(9, 'D05', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00'),
-(9, 'D05', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00'),
-(11, 'A95', 1, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00'),
-(11, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 08:05:00'),
-(11, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00'),
-(11, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 11:10:00'),
-(11, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00'),
-(12, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 05:45:00'),
-(12, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 05:50:00'),
-(12, 'E5', 4, 14.0, 31000, TIMESTAMP(0) '2025-07-04 05:30:00'),
-(12, 'E5', 3, 9.5, 23000, TIMESTAMP(0) '2025-07-04 04:30:00'),
-(13, 'DO1', 3, 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00'),
-(13, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00'),
-(13, 'DO1',2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00'),
-(14, 'DO1', 4, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00');
+(6, 'A95', 2, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 'admin', 'admin'),
+(6, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
+(6, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
+(6, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+(6, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
+(7, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 18:50:00', 'admin', 'admin'),
+(7, 'E5', 1, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
+(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 'admin', 'admin'),
+(7, 'E5', 1, 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00', 'admin', 'admin'),
+(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 'admin', 'admin'),
+(8, 'DO1', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
+(8, 'DO1', 2, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
+(8, 'DO1', 2, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
+(9, 'D05', 2, 10.5, 26250, now(),'admin', 'admin'),
+(9, 'D05', 2, 8.2, 20500,now(),'admin', 'admin'),
+(9, 'D05', 2, 11.0, 27500, now(),'admin', 'admin'),
+(9, 'D05', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 'admin', 'admin'),
+(9, 'D05', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00', 'admin', 'admin'),
+(11, 'A95', 1, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 'admin', 'admin'),
+(11, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 08:05:00', 'admin', 'admin'),
+(11, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
+(11, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 11:10:00', 'admin', 'admin'),
+(11, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
+(12, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 05:45:00', 'admin', 'admin'),
+(12, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 05:50:00', 'admin', 'admin'),
+(12, 'E5', 4, 14.0, 31000, TIMESTAMP(0) '2025-07-04 05:30:00', 'admin', 'admin'),
+(12, 'E5', 3, 9.5, 23000, TIMESTAMP(0) '2025-07-04 04:30:00', 'admin', 'admin'),
+(13, 'DO1', 3, 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 'admin', 'admin'),
+(13, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
+(13, 'DO1',2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
+(14, 'DO1', 4, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin');
 
-insert into petro_application.shift (shift_type, start_time, end_time) 
+insert into petro_application.shift (shift_type, start_time, end_time, created_by, last_modified_by) 
 VALUES 
-(1, '06:00:00', '14:00:00'),
-(2, '14:00:00', '22:00:00'),
-(3, '22:00:00', '06:00:00');
+(1, '06:00:00', '14:00:00','admin', 'admin'),
+(2, '14:00:00', '22:00:00','admin', 'admin'),
+(3, '22:00:00', '06:00:00','admin', 'admin');
 
-insert into petro_application.staff (staff_name, date_birth, phone, address, email) 
+insert into petro_application.staff (staff_name, date_birth, phone, address, email, created_by, last_modified_by) 
 values 
-('Nguyễn Yến Linh', '2004-01-01', '0331231588', '102 Nguyễn Quý Anh', 'yenlinh@gmail.com'), 
-('Nguyễn Văn An', '1990-05-15', '0901234567', '123 Lê Duẩn, Quận 1, TP.HCM', 'annguyen@gmail.com'),
-('Trần Thị Bích', '1988-09-20', '0912345678', '456 Nguyễn Trãi, Quận 5, TP.HCM', 'bichtran@gmail.com'),
-('Lê Hoàng Nam', '1995-12-10', '0923456789', '789 Cách Mạng Tháng 8, Quận 3, TP.HCM', 'namle@gmail.com'),
-('Phạm Minh Châu', '1992-07-25', '0934567890', '12 Hai Bà Trưng, Quận 1, TP.HCM', 'chaupham@gmail.com'),
-('Võ Thanh Tùng', '1985-03-05', '0945678901', '345 Phan Đình Phùng, Phú Nhuận, TP.HCM', 'tungvo@gmail.com');
+('Nguyễn Yến Linh', '2004-01-01', '0331231588', '102 Nguyễn Quý Anh', 'yenlinh@gmail.com','admin', 'admin'), 
+('Nguyễn Văn An', '1990-05-15', '0901234567', '123 Lê Duẩn, Quận 1, TP.HCM', 'annguyen@gmail.com','admin', 'admin'),
+('Trần Thị Bích', '1988-09-20', '0912345678', '456 Nguyễn Trãi, Quận 5, TP.HCM', 'bichtran@gmail.com','admin', 'admin'),
+('Lê Hoàng Nam', '1995-12-10', '0923456789', '789 Cách Mạng Tháng 8, Quận 3, TP.HCM', 'namle@gmail.com','admin', 'admin'),
+('Phạm Minh Châu', '1992-07-25', '0934567890', '12 Hai Bà Trưng, Quận 1, TP.HCM', 'chaupham@gmail.com','admin', 'admin'),
+('Võ Thanh Tùng', '1985-03-05', '0945678901', '345 Phan Đình Phùng, Phú Nhuận, TP.HCM', 'tungvo@gmail.com','admin', 'admin');
 
-insert into petro_application.assignment (shift_id, staff_id, station_id, work_date) values
-(1, 1, 1, '2015-07-02'),
-(2, 3, 1, '2025-07-05'),
-(3, 2, 1, '2025-07-05'),
-(1, 3, 1, '2025-07-05'),
-(2, 3, 1, '2025-07-06'),
-(3, 5, 1, '2025-07-06'),
-(3, 5, 1, '2025-07-06'),
-(3, 5, 2, '2025-07-06'),
-(3, 5, 1, '2025-07-07'),
-(3, 5, 1, '2025-07-07'),
-(3, 5, 1, '2025-07-07'),
-(3, 5, 1, '2025-07-07'),
-(3, 5, 1, '2025-07-07'),
-(3, 5, 2, '2025-07-07');
+insert into petro_application.assignment (shift_id, staff_id, station_id, work_date, created_by, last_modified_by) values
+(1, 1, 1, '2015-07-02', 'admin', 'admin'),
+(2, 3, 1, '2025-07-05', 'admin', 'admin'),
+(3, 2, 1, '2025-07-05', 'admin', 'admin'),
+(1, 3, 1, '2025-07-05', 'admin', 'admin'),
+(2, 3, 1, '2025-07-06', 'admin', 'admin'),
+(3, 5, 1, '2025-07-06', 'admin', 'admin'),
+(3, 5, 1, '2025-07-06', 'admin', 'admin'),
+(3, 5, 2, '2025-07-06', 'admin', 'admin'),
+(3, 5, 1, '2025-07-07', 'admin', 'admin'),
+(3, 5, 1, '2025-07-07', 'admin', 'admin'),
+(3, 5, 1, '2025-07-07', 'admin', 'admin'),
+(3, 5, 1, '2025-07-07', 'admin', 'admin'),
+(3, 5, 1, '2025-07-07', 'admin', 'admin'),
+(3, 5, 2, '2025-07-07', 'admin', 'admin');
 
 DO $$ 
 BEGIN 

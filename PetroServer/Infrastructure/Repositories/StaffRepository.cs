@@ -10,13 +10,13 @@ public class StaffRepository : IStaffRepository
         dbWrite = dbWriteConnection;
         dbRead = dbReadConnection;
     }
-    public async Task<IReadOnlyList<StaffResponse>> GetStaffById(Staff entity){
+    public async Task<StaffResponse> GetStaffByIdAsync(Staff entity){
         await using (var connection = dbRead.CreateConnection()) {
-            List<StaffResponse> Staff = (await connection.QueryAsync<StaffResponse>(StaffQuery.SelectStaffById,entity)).ToList();
-            return Staff;
+            StaffResponse staff = await connection.QuerySingleAsync<StaffResponse>(StaffQuery.SelectStaffById,entity);
+            return staff;
         }
     }
-    public async Task<IReadOnlyList<StaffResponse>> GetAllStaffResponse()
+    public async Task<IReadOnlyList<StaffResponse>> GetAllStaffResponseAsync()
     {
         await using (var connection = dbRead.CreateConnection())
         {

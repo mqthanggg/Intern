@@ -4,22 +4,46 @@ public static class DevelopmentController{
         return app;
     }
     [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResponse),500)]
     [SwaggerOperation(
         Summary = "Signup a development account.",
-        Description = "Signup a development account with username, password are set to mqthanggg, admin123 (for development only)."
+        Description = @"Signup development accounts.
+        - User: 
+        + mqthanggg, admin123
+        + linh, admin123
+        - Administrator:
+        + admin, admin123"
     )]
     public static async Task<IResult> SignupAccount(IHasher hasher, IUserRepository userRepository){
         while (true){
-            (string hashedPassword, string padding) = hasher.Hash(new object{},"admin123");
-            int affectedRows;
             try{
-                affectedRows = await userRepository.InsertAsync(new User{
-                Username = "mqthanggg",
-                Password = hashedPassword,
-                Padding = padding,
-                CreatedBy = "mqthanggg",
-                LastModifiedBy = "mqthanggg"
-            });
+                (string hashedPassword, string padding) = hasher.Hash(new object{},"admin123");
+                _ = await userRepository.InsertAsync(new User{
+                    Username = "mqthanggg",
+                    Password = hashedPassword,
+                    Role = 1,
+                    Padding = padding,
+                    CreatedBy = "server",
+                    LastModifiedBy = "server"
+                });
+                (hashedPassword, padding) = hasher.Hash(new object{},"admin123");
+                _ = await userRepository.InsertAsync(new User{
+                    Username = "linh",
+                    Password = hashedPassword,
+                    Role = 1,
+                    Padding = padding,
+                    CreatedBy = "server",
+                    LastModifiedBy = "server"
+                });
+                (hashedPassword, padding) = hasher.Hash(new object{},"admin123");
+                _ = await userRepository.InsertAsync(new User{
+                    Username = "admin",
+                    Password = hashedPassword,
+                    Role = 2,
+                    Padding = padding,
+                    CreatedBy = "server",
+                    LastModifiedBy = "server"
+                });
             }
             catch (PostgresException e){
                 if (e.SqlState == "23505"){
@@ -31,9 +55,9 @@ public static class DevelopmentController{
                     string column = match.Groups[1].Value;
                     if (column == "padding")//Rare
                         continue;
-                    return TypedResults.InternalServerError(new {why = column});
+                    return TypedResults.InternalServerError(new ErrorResponse{Why = column});
                 }
-                return TypedResults.InternalServerError(new {why = e.Message});
+                return TypedResults.InternalServerError(new ErrorResponse{Why = e.Message});
             }
             break;
         }

@@ -1,6 +1,3 @@
-using System.Net.WebSockets;
-using System.Text.Json;
-
 public static class PublicController
 {
     public static WebApplication MapPublicController(this WebApplication app)
@@ -17,7 +14,7 @@ public static class PublicController
         app.MapGet("assignments", GetAssignment);
 
         app.MapPost("login", Login);
-        app.MapPut("registerAccount", RegisterAccount);
+        app.MapPost("register", RegisterAccount);
         app.MapPost("refresh", RefreshJWT);
         
         app.MapDelete("station/{id}", DeleteStationFromId);
@@ -28,23 +25,31 @@ public static class PublicController
         return app;
     }
     [Authorize]
-    [HttpPut("Register")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(typeof(ErrorResponse),400)]
+    [ProducesResponseType(typeof(ErrorResponse),404)]
+    [ProducesResponseType(409)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Register account",
+        Description = "Register an account from the given username and password"
+    )]
     private static async Task<IResult> RegisterAccount([FromBody] RegisterRequest body, IHasher hasher, IUserRepository userRepository)
     {
-        // Kiểm tra đầu vào
-        if (string.IsNullOrWhiteSpace(body.Username) || string.IsNullOrWhiteSpace(body.Password))
-            return TypedResults.BadRequest(new ErrorResponse { Why = "Thiếu Username hoặc Password" });
-        var padding = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-        var (hashedPassword, _) = hasher.Hash(new { }, body.Password + padding);
-        var tokenPadding = Convert.ToBase64String(RandomNumberGenerator.GetBytes(12));
-        var (hashedRefreshToken, _) = hasher.Hash(new { }, Guid.NewGuid().ToString() + tokenPadding);
+        if (
+            string.IsNullOrWhiteSpace(body.Username) || 
+            string.IsNullOrWhiteSpace(body.Password)
+        )
+            return TypedResults.BadRequest(new ErrorResponse { Why = "Missing username or password" });
+        var (HashedPassword, PasswordPadding) = hasher.Hash(new { }, body.Password);
+        var (HashedRefreshToken, RefreshTokenPadding) = hasher.Hash(new { }, Guid.NewGuid().ToString());
         var user = new User
         {
             Username = body.Username,
-            Password = hashedPassword,
-            Padding = padding,
-            RefreshToken = hashedRefreshToken,
-            TokenPadding = tokenPadding,
+            Password = HashedPassword,
+            Padding = PasswordPadding,
+            RefreshToken = HashedRefreshToken,
+            TokenPadding = RefreshTokenPadding,
             TokenExpiredTime = DateTime.UtcNow.AddDays(7),
             CreatedBy = body.Username,
             LastModifiedBy = body.Username
@@ -54,15 +59,15 @@ public static class PublicController
         {
             int rows = await userRepository.InsertAsync(user);
             if (rows == 0)
-                return TypedResults.BadRequest(new ErrorResponse { Why = "Không thể thêm người dùng" });
+                return TypedResults.BadRequest(new ErrorResponse { Why = "Could not insert user" });
 
-            return Results.Created($"/users/{body.Username}", new { message = "Thêm thành công", user.Username });
+            return Results.Created();
         }
         catch (PostgresException e) when (e.SqlState == "23505")
         {
-            return Results.Conflict(new ErrorResponse { Why = "Username đã tồn tại" });
+            return Results.Conflict();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return TypedResults.NotFound();
         }
@@ -71,29 +76,35 @@ public static class PublicController
 
 
     [Authorize]
-    [HttpPut("update")]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(200)]
+    [SwaggerOperation(
+        Summary = "Update log's time.",
+        Description = "Update log's time."
+    )]
     public static async Task<IResult> UpdateLogTime([FromBody] LogResponse entity, [FromServices] ILogRepository logRepository)
     {
         var result = await logRepository.UpdateLogTimeAsync(entity);
         if (result == 0)
         {
-            return Results.NotFound("Không tìm thấy bản ghi hoặc không cập nhật được.");
+            return Results.NotFound();
         }
-        return TypedResults.Ok("Cập nhật thành công");
+        return TypedResults.Ok();
     }
 
 
 
     [Authorize]
-    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
+    [ProducesResponseType(typeof(StaffResponse), 200)]
+    [ProducesResponseType(404)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Get staff by ID",
-        Description = "Returns staff information by ID with JWT token"
+        Description = "Returns staff information by ID"
     )]
     public static async Task<IResult> GetStaffByStaffId([FromRoute] int id, IStaffRepository StaffRepository)
     {
-        var res = await StaffRepository.GetStaffById(new Staff { StaffId = id });
+        var res = await StaffRepository.GetStaffByIdAsync(new Staff { StaffId = id });
         if (res == null)
             return Results.NotFound();
         return TypedResults.Ok(res);
@@ -101,6 +112,7 @@ public static class PublicController
 
     [Authorize]
     [ProducesResponseType(typeof(List<StaffResponse>), 200)]
+    [ProducesResponseType(500)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Get all staffs",
@@ -110,18 +122,17 @@ public static class PublicController
     {
         try
         {
-            var res = await StaffRepository.GetAllStaffResponse();
+            var res = await StaffRepository.GetAllStaffResponseAsync();
             return TypedResults.Ok(res);
         }
-        catch (PostgresException e)
+        catch (PostgresException)
         {
-            Console.WriteLine(e.Message);
             return TypedResults.InternalServerError();
         }
     }
 
     [Authorize]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -135,9 +146,8 @@ public static class PublicController
             var res = await shiftRepository.GetAllShiftResponseAsync();
             return TypedResults.Ok(res);
         }
-        catch (PostgresException e)
+        catch (PostgresException)
         {
-            Console.WriteLine(e.Message);
             return TypedResults.InternalServerError();
         }
     }
@@ -159,7 +169,7 @@ public static class PublicController
     }
 
     [Authorize]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -173,9 +183,8 @@ public static class PublicController
             var res = await AssignmentRepository.GetAllAssignmentResponseAsync();
             return TypedResults.Ok(res);
         }
-        catch (PostgresException e)
+        catch (PostgresException)
         {
-            Console.WriteLine(e.Message);
             return TypedResults.InternalServerError();
         }
     }
@@ -254,13 +263,7 @@ public static class PublicController
             var user = await userRepository.GetUserByUsernameAsync(new User { Username = body.Username });
             if (hasher.Verify(user, body.Password + user.Padding, user.Password!))
             {
-                string randomRefreshToken;
-                using (var _rng = RandomNumberGenerator.Create())
-                {
-                    byte[] randomBytes = new byte[16];
-                    _rng.GetBytes(randomBytes);
-                    randomRefreshToken = Convert.ToBase64String(randomBytes);
-                }
+                string randomRefreshToken = Guid.NewGuid().ToString();
                 int res;
                 while (true)
                 {
@@ -275,17 +278,16 @@ public static class PublicController
                             LastModifiedBy = body.Username,
                         });
                     }
-                    catch (PostgresException e)
+                    catch (PostgresException e) when (e.SqlState == "23505")
                     {
-                        if (e.SqlState == "23505")
-                        {
-                            Regex regex = new Regex(@"user_(\w+)_key");
-                            Match match = regex.Match(e.ConstraintName ?? "");
-                            string column = match.Groups[1].Value;
-                            if (column == "token_padding")
-                                continue;
-                            return TypedResults.InternalServerError(new ErrorResponse { Why = column });
-                        }
+                        Regex regex = new Regex(@"user_(\w+)_key");
+                        Match match = regex.Match(e.ConstraintName ?? "");
+                        string column = match.Groups[1].Value;
+                        if (column == "token_padding")
+                            continue;
+                        return TypedResults.InternalServerError(new ErrorResponse { Why = column });
+                    }
+                    catch (PostgresException e){
                         return TypedResults.InternalServerError(new ErrorResponse { Why = e.Message });
                     }
                     break;
