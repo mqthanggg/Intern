@@ -1,9 +1,11 @@
 public class StationRepository : IStationRepository{
     private readonly IDbWriteConnection dbWrite;
     private readonly IDbReadConnection dbRead;
-    public StationRepository(IDbWriteConnection dbWriteConnection, IDbReadConnection dbReadConnection){
+    private readonly IUsernameService username;
+    public StationRepository(IDbWriteConnection dbWriteConnection, IDbReadConnection dbReadConnection, IUsernameService usernameService){
         dbWrite = dbWriteConnection;
         dbRead = dbReadConnection;
+        username = usernameService;
     }
 
     public async Task<IReadOnlyList<StationResponse>> GetAllStationResponseAsync(){
@@ -14,12 +16,15 @@ public class StationRepository : IStationRepository{
     }
 
     public async Task<int> InsertAsync(Station entity){
+        entity.CreatedBy ??= username.GetUsername();
+        entity.LastModifiedBy ??= username.GetUsername();
         await using (var connection = dbWrite.CreateConnection()){
             int affectedRows = await connection.ExecuteAsync(StationQuery.InsertStation,entity);
             return affectedRows;
         }
     }
     public async Task<int> UpdateAsync(Station entity){
+        entity.LastModifiedBy ??= username.GetUsername();
         await using (var connection = dbWrite.CreateConnection()){
             int affectedRows = await connection.ExecuteAsync(StationQuery.UpdateStation,entity);
             return affectedRows;

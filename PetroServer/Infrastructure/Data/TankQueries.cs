@@ -34,9 +34,9 @@ public static class TankQuery{
             @Name,
             @MaxVolume,
             @CreatedBy,
-            @CreatedDate,
+            now(),
             @LastModifiedBy,
-            @LastModifiedDate
+            now()
         )
     ";
     public static readonly string UpdateTank = $@"
@@ -45,7 +45,7 @@ public static class TankQuery{
             name = @Name,
             max_volume = @MaxVolume,
             last_modified_by = @LastModifiedBy,
-            last_modified_date = @LastModifiedDate
+            last_modified_date = now()
         WHERE
             tank_id = @TankId
     ";

@@ -385,12 +385,10 @@ public static class PublicController
     )]
     public static async Task<IResult> UpdateStationFromId([FromRoute] int id, [FromBody] StationUpdateRequest body, HttpContext httpContext, IStationRepository stationRepository, IJWTService jWTService)
     {
-        string bearer = httpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
-        string username = jWTService.GetClaims(bearer).First(e => e.Type == ClaimTypes.Name).Value;
         int res;
         try
         {
-            res = await stationRepository.UpdateAsync(new Station { StationId = id, Name = body.Name, Address = body.Address, LastModifiedBy = username });
+            res = await stationRepository.UpdateAsync(new Station { StationId = id, Name = body.Name, Address = body.Address});
         }
         catch (PostgresException)
         {

@@ -33,4 +33,10 @@ public class DispenserRepository : IDispenserRepository{
             return dispensers;
         }
     }
+    public async Task<int> GetDispenserFuelIdAsync(Dispenser entity){
+        await using (var connection = dbRead.CreateConnection()){
+            Dispenser dispenser = await connection.QuerySingleAsync<Dispenser>(DispenserQuery.SelectDispenserFuelId,entity);
+            return dispenser.FuelId ?? 0;
+        }
+    }
 }

@@ -30,9 +30,9 @@ public static class RevenueQueries
         FROM 
             {Schema}.log
         JOIN 
-            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+            {Schema}.dispenser ON log.dispenser_id = dispenser.dispenser_id
         JOIN 
-            petro_application.station ON station.station_id = dispenser.station_id
+            {Schema}.station ON station.station_id = dispenser.station_id
         WHERE
             time::date = CURRENT_DATE
             AND (
@@ -53,9 +53,9 @@ public static class RevenueQueries
         FROM 
             {Schema}.log
         JOIN 
-            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+            {Schema}.dispenser ON log.dispenser_id = dispenser.dispenser_id
         JOIN 
-            petro_application.station ON station.station_id = dispenser.station_id
+            {Schema}.station ON station.station_id = dispenser.station_id
         WHERE
             time::date = CURRENT_DATE
             AND (

@@ -24,6 +24,14 @@ public static class DispenserQuery{
         ORDER BY
             dp.dispenser_id
     ";
+    public static readonly string SelectDispenserFuelId = $@"
+        SELECT 
+            dispenser_id,
+            fuel_id
+        FROM {Schema}.dispenser
+        WHERE
+            dispenser_id = @DispenserId
+    ";
     public static readonly string SelectDispenserById = $@"
         SELECT 
             dispenser_id,
@@ -48,9 +56,9 @@ public static class DispenserQuery{
             @FuelId,
             @Name,
             @CreatedBy,
-            @CreatedDate,
+            now(),
             @LastModifiedBy,
-            @LastModifiedDate
+            now()
         )
     ";
     public static readonly string UpdateDispenser = $@"
@@ -58,7 +66,7 @@ public static class DispenserQuery{
         SET
             name = @Name,
             last_modified_by = @LastModifiedBy,
-            last_modified_date = @LastModifiedDate
+            last_modified_date = now()
         WHERE
             dispenser_id = @DispenserId
     ";

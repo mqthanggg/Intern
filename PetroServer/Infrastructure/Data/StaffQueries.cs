@@ -31,13 +31,21 @@ public static class StaffQuery
             date_birth,
             phone,
             address,
-            email
+            email,
+            created_by,
+            created_date,
+            last_modified_by,
+            last_modified_date
         ) VALUES (
             @StaffName,
             @DateBirth,
             @Phone,
             @Address,
-            @Email
+            @Email,
+            @CreatedBy,
+            now(),
+            @LastModifiedBy,
+            now()
         )
     ";
     public static readonly string UpdateStaff = $@"
@@ -47,7 +55,9 @@ public static class StaffQuery
             date_birth = @DateBirth,
             phone =  @Phone,
             address = @Address,
-            email = @Email
+            email = @Email,
+            last_modified_by = @LastModifiedBy, 
+            last_modified_date = now() 
         WHERE
             staff_id = @StaffId
     ";

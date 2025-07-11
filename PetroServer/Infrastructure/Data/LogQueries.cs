@@ -40,12 +40,12 @@ public static class LogQuery
             @FuelName,
             @TotalLiters,
             @TotalAmount,
-            @Time,
+            now(),
             @LogType,
             @CreatedBy,
-            @CreatedDate,
+            now(),
             @LastModifiedBy,
-            @LastModifiedDate
+            now()
         )
     ";
     public static readonly string UpdateLog = $@"
@@ -55,9 +55,9 @@ public static class LogQuery
             total_liters = @TotalLiters,
             total_amount = @TotalAmount,
             time = @Time,
-            log_type=@LogType,            
+            log_type = @LogType,            
             last_modified_by = @LastModifiedBy,
-            last_modified_date = @LastModifiedDate
+            last_modified_date = now()
         WHERE
             log_id = @LogId
     ";
@@ -89,8 +89,11 @@ public static class LogQuery
             log.log_id
     ";
     public static readonly string UpdateLogTime = $@"
-            UPDATE  petro_application.log
-            SET time = date_trunc('day', CURRENT_DATE) + (time::time);
-        ";
+        UPDATE {Schema}.log
+        SET 
+            time = date_trunc('day', CURRENT_DATE) + (time::time),
+            last_modified_by = @LastModifiedBy,
+            last_modified_date = now()
+    ";
 
 }
