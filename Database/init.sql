@@ -8,6 +8,10 @@ ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS ass
 
 ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_station_id_fkey;
 
+ALTER TABLE IF EXISTS petro_application.detailreceipt DROP CONSTRAINT IF EXISTS detailreceipt_receipt_id_fkey ;
+
+ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_supplier_id_fkey;
+
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
@@ -20,24 +24,13 @@ ALTER TABLE IF EXISTS petro_application.tank DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.log DROP CONSTRAINT IF EXISTS None;
 
-DROP TABLE IF EXISTS petro_application.assignment;
+ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS None;
 
-CREATE TABLE IF NOT EXISTS petro_application.assignment
-(
-    assignment_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    shift_id integer NOT NULL,
-    staff_id integer NOT NULL,
-    station_id integer NOT NULL ,
-	work_date date NOT NULL, 
-    created_by character varying(255) DEFAULT now(),
-    created_date timestamp(0) with time zone,
-    last_modified_by character varying(255),
-    last_modified_date timestamp(0) with time zone DEFAULT now(),
-    CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id)
-);
+ALTER TABLE IF EXISTS petro_application.detailreceipt DROP CONSTRAINT IF EXISTS None;
 
-COMMENT ON TABLE petro_application.assignment
-    IS 'for staff '' work schedule in each station';
+ALTER TABLE IF EXISTS petro_application.supplier DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
 
 DROP TABLE IF EXISTS petro_application.shift;
 
@@ -196,6 +189,78 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     PRIMARY KEY (log_id)
 );
 
+DROP TABLE IF EXISTS petro_application.supplier;
+
+CREATE TABLE IF NOT EXISTS petro_application.supplier (
+    supplier_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    supplier_name character varying(30) NOT NULL,
+    phone integer NOT NULL,
+    address character varying(50) NOT NULL,
+    email character varying(50) NOT NULL,
+    created_by character varying(50),
+    created_date time with time zone,
+    last_modified_by character varying(50),
+    last_modified_date time with time zone,
+	 PRIMARY KEY (supplier_id)
+);
+
+COMMENT ON TABLE petro_application.supplier
+    IS 'for supplier''s information';
+	
+DROP TABLE IF EXISTS petro_application.receipt;
+
+CREATE TABLE IF NOT EXISTS petro_application.receipt (
+    receipt_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    receipt_date time with time zone NOT NULL,
+    supplier_id integer NOT NULL,
+    station_id integer NOT NULL,
+    total_amount integer NOT NULL,
+    created_by character varying(30),
+    created_date time with time zone DEFAULT now(),
+    last_modified_by character varying(30),
+    last_modified_date time with time zone DEFAULT now(),
+	PRIMARY KEY (receipt_id)
+);
+
+COMMENT ON TABLE petro_application.receipt
+    IS 'for import receipt information';
+
+DROP TABLE IF EXISTS petro_application.detailreceipt;
+
+CREATE TABLE IF NOT EXISTS petro_application.detailreceipt (
+    receipt_id integer NOT NULL,
+    fuel_id integer NOT NULL,
+    liters_fuel integer NOT NULL,
+    price integer NOT NULL,
+  	created_by character varying(30) DEFAULT now(),
+    created_date timestamp(0) with time zone DEFAULT now(),
+    last_modified_by character varying(30),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+	PRIMARY KEY (receipt_id, fuel_id)
+);
+
+COMMENT ON TABLE petro_application.detailreceipt
+    IS 'the import detail receipt information of each fuel';
+	
+DROP TABLE IF EXISTS petro_application.assignment;
+
+CREATE TABLE IF NOT EXISTS petro_application.assignment
+(
+    assignment_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    shift_id integer NOT NULL,
+    staff_id integer NOT NULL,
+    station_id integer NOT NULL ,
+	work_date date NOT NULL, 
+    created_by character varying(255) DEFAULT now(),
+    created_date timestamp(0) with time zone,
+    last_modified_by character varying(255),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+    CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id)
+);
+
+COMMENT ON TABLE petro_application.assignment
+    IS 'for staff '' work schedule in each station';
+
 COMMENT ON TABLE petro_application.log
     IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
 
@@ -264,6 +329,27 @@ ALTER TABLE IF EXISTS petro_application.log
     REFERENCES petro_application.dispenser (dispenser_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE IF EXISTS petro_application.receipt
+    ADD FOREIGN KEY (supplier_id)
+    REFERENCES petro_application.supplier (supplier_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+ALTER TABLE IF EXISTS petro_application.detailrecepit
+    ADD FOREIGN KEY (station_id)
+    REFERENCES petro_application.station (station_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+ALTER TABLE IF EXISTS petro_application.detailreceipt
+    ADD FOREIGN KEY (fuel_id) 
+	REFERENCES petro_application.fuel(fuel_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
     NOT VALID;
 
 INSERT INTO petro_application.station (name, address, created_by, last_modified_by) VALUES
@@ -390,6 +476,39 @@ insert into petro_application.assignment (shift_id, staff_id, station_id, work_d
 (3, 5, 1, '2025-07-07', 'admin', 'admin'),
 (3, 5, 2, '2025-07-07', 'admin', 'admin');
 
+INSERT INTO petro_application.supplier (supplier_name, phone, address, email, created_by, last_modified_by) VALUES
+('Petrolimex Sài Gòn', 0283822888, '15 Lê Duẩn, Quận 1, TP.HCM', 'contact@petrolimex.com.vn','admin', 'admin'),
+('PV Oil Miền Nam', 0283829898, '35 Nguyễn Huệ, Quận 1, TP.HCM', 'info@pvoil.com.vn','admin', 'admin'),
+('Saigon Petro', 0283827755, '60 Trương Định, Quận 3, TP.HCM', 'sales@saigonpetro.com.vn', 'admin', 'admin'),
+('Nam Sông Hậu Petro', 0292355550, 'Số 2 Trần Hưng Đạo, Ninh Kiều, Cần Thơ', 'cskh@namsonghau.vn','admin', 'admin'),
+('Petro Bình Minh', 0283844660, '105 Lý Thường Kiệt, Tân Bình, TP.HCM', 'support@binhminhpetro.vn','admin', 'admin');
+
+INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_amount, created_by, last_modified_by)
+VALUES
+('2024-07-11 08:30:00-07', 1, 1, 50000000, 'admin', 'admin'),
+('2024-07-11 09:00:00-07', 2, 2, 75000000, 'admin', 'admin'),
+('2024-07-11 10:15:00-07', 3, 1, 62000000, 'admin', 'admin'),
+('2024-07-11 11:45:00-07', 4, 3, 81000000, 'admin', 'admin'),
+('2024-07-11 13:00:00-07', 5, 4, 55000000, 'admin', 'admin'),
+('2024-07-11 14:20:00-07', 1, 5, 70000000, 'admin', 'admin'),
+('2024-07-11 15:35:00-07', 2, 2, 46000000, 'admin', 'admin'),
+('2024-07-11 16:50:00-07', 3, 6, 88000000, 'admin', 'admin'),
+('2024-07-11 18:10:00-07', 4, 3, 93000000, 'admin', 'admin'),
+('2024-07-11 19:25:00-07', 5, 1, 50000000, 'admin', 'admin');
+
+INSERT INTO petro_application.detailreceipt (receipt_id, fuel_id, liters_fuel, price, created_by, last_modified_by)
+VALUES
+(1, 1, 5000, 20000, 'admin', 'admin'),
+(1, 2, 3000, 18000, 'admin', 'admin'),
+(2, 1, 4500, 21000, 'admin', 'admin'),
+(2, 3, 2000, 22000, 'admin', 'admin'),
+(3, 1, 6000, 20500, 'admin', 'admin'),
+(4, 2, 3500, 19000, 'admin', 'admin'),
+(5, 1, 4800, 20000, 'admin', 'admin'),
+(6, 4, 2500, 23000, 'admin', 'admin'),
+(7, 3, 3000, 21500, 'admin', 'admin'),
+(8, 2, 4000, 18500, 'admin', 'admin');
+
 DO $$ 
 BEGIN 
     IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'read_user') THEN 
@@ -404,7 +523,7 @@ END $$;
 
 DROP USER IF EXISTS read_user;
 CREATE USER read_user WITH ENCRYPTED PASSWORD 'read123';
-GRANT USAGE ON SCHEMA petro_application TO read_user;
+GRANT USAGE ON SCHEMA petro_application TO read_user; 
 GRANT SELECT ON ALL TABLES IN SCHEMA petro_application TO read_user;
 
 DROP USER IF EXISTS write_user;
@@ -413,5 +532,6 @@ GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
+
 
 

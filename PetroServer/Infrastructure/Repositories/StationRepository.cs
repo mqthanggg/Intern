@@ -7,7 +7,12 @@ public class StationRepository : IStationRepository{
         dbRead = dbReadConnection;
         username = usernameService;
     }
-
+    public async Task<int> GetSumStationResponseAsync(){
+        await using (var connection = dbRead.CreateConnection()){
+            int count = (await connection.ExecuteScalarAsync<int>(StationQuery.SelectSumStation));
+            return count;
+        }
+    }
     public async Task<IReadOnlyList<StationResponse>> GetAllStationResponseAsync(){
         await using (var connection = dbRead.CreateConnection()){
             List<StationResponse> stations = (await connection.QueryAsync<StationResponse>(StationQuery.SelectStation)).ToList();

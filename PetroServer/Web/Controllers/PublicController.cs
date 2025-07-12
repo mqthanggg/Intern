@@ -73,8 +73,6 @@ public static class PublicController
         }
     }
 
-
-
     [Authorize]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
