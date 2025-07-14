@@ -3,6 +3,7 @@ Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
+builder.Services.AddLogging();
 builder.Services.JSONSetup();
 builder.Services.AuthSetup(env);
 builder.Services.AddEndpointsApiExplorer();
@@ -20,15 +21,14 @@ var healthCheckService = app.Services.GetRequiredService<HealthCheckService>();
 var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
-    app.UseRouting();
-    app.UseCors();
+    
+    app.UseMiddlewares();
     if (app.Environment.IsDevelopment()){
         IdentityModelEventSource.ShowPII = true; 
         app.Swagger();
         app.MapSignup();
     }
     app.MapReport();
-    app.UseMiddlewares();
     app.MapPublicController();
     app.Run();
 }

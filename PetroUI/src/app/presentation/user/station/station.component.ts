@@ -131,9 +131,9 @@ export class StationComponent implements OnInit, OnDestroy{
     this.isTankLoading = true
     this.isLogLoading = true
     forkJoin({
-      dispenser: this.http.get(environment.serverURI+`/dispenser/station/${this.id}`,{observe: "response"}),
-      tank: this.http.get(environment.serverURI+`/tank/station/${this.id}`,{observe: "response"}),
-      log: this.http.get(environment.serverURI+`/log/station/${this.id}`,{observe: "response"})
+      dispenser: this.http.get(environment.serverURI+`/dispenser/station/${this.id}`,{observe: "response", withCredentials: true}),
+      tank: this.http.get(environment.serverURI+`/tank/station/${this.id}`,{observe: "response", withCredentials: true}),
+      log: this.http.get(environment.serverURI+`/log/station/${this.id}`,{observe: "response", withCredentials: true})
     }).
     pipe(
       mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay

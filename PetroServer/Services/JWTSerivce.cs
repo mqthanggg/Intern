@@ -9,10 +9,11 @@ public class JWTService : IJWTService{
         _authority = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY");
         _audience = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE");
     }
-    public string GenerateAccessToken(int userId, string username){
+    public string GenerateAccessToken(int userId, string username, string role){
         var claims = new List<Claim>{
             new Claim(ClaimTypes.Sid, userId.ToString()),
-            new Claim(ClaimTypes.Name, username)
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, role)
         };
         var tokenDescriptor = new JwtSecurityToken(
             issuer: _authority,
@@ -22,12 +23,6 @@ public class JWTService : IJWTService{
             signingCredentials: _creds
         );
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-    }
-    public IReadOnlyList<Claim> GetClaims(string bearer){
-        if (bearer[..7] != "Bearer "){
-            throw new InvalidDataException("Invalid bearer token: must starts with \"Bearer <token>\"");
-        }
-        return new JwtSecurityTokenHandler().ReadJwtToken(bearer[7..]).Claims.ToList();
     }
     public bool Verify(string token){
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();

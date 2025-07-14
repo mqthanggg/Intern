@@ -2,6 +2,11 @@ public static class Auth
 {
     public static IServiceCollection AuthSetup(this IServiceCollection services, IWebHostEnvironment _env)
     {
+        services.AddAntiforgery(op => {
+            op.Cookie.Expiration = TimeSpan.FromDays(7);
+            op.Cookie.MaxAge = TimeSpan.FromDays(7);
+            op.HeaderName = "Xsrf-Header";
+        });
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(op =>
         {
             op.Authority = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY");
@@ -30,7 +35,12 @@ public static class Auth
             op.AddDefaultPolicy(
                 policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders(["WWW-Authenticate"]);
+                    policy.
+                    WithOrigins("http://localhost:4200").
+                    AllowCredentials().
+                    AllowAnyHeader().
+                    AllowAnyMethod().
+                    WithExposedHeaders(["WWW-Authenticate"]);
                 }
             );
         });
