@@ -26,7 +26,8 @@ export class StationDeleteComponent implements OnInit{
   deleteStation(){
     this.isDeleting = true
     this.http.delete(`${environment.serverURI}/station/${this.stationId}`,{
-      observe: 'response'
+      observe: 'response',
+      withCredentials: true
     }).pipe(
       mergeMap((res) => of(res).pipe(delay(1000))),
       catchError((err) => of(err).pipe(

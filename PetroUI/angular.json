@@ -71,7 +71,11 @@
               "buildTarget": "PetroUI:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "sslKey": "certs/client.key",
+            "sslCert": "certs/client.crt"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

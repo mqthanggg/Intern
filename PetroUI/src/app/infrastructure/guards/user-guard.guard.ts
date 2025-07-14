@@ -9,18 +9,5 @@ export const userGuard: CanActivateChildFn | CanActivateFn = (childRoute, state)
   const router = inject(Router)
   if (localStorage.getItem('refresh') == null || localStorage.getItem('jwt') == null)
     return router.parseUrl('login')
-  return http.post(`${environment.serverURI}/refresh`,{
-    token: localStorage.getItem('jwt'),
-    refreshToken: localStorage.getItem('refresh')
-  },{
-    observe: "response"
-  }).pipe(
-    map((value: HttpResponse<any>) => {
-      localStorage.setItem('jwt', value.body.token)
-      return true
-    }),
-    catchError((_: any) => {
-      return of(router.parseUrl(`/login`))
-    })
-  )
+  return true
 };
