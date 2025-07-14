@@ -10,12 +10,14 @@ import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
 import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
-import { ChartConfiguration } from 'chart.js';
+import { Chart, ChartConfiguration } from 'chart.js';
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: 'app-station',
   standalone: true,
-  imports: [NgChartsModule],
+  imports: [NgChartsModule, CommonModule, FormsModule ],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css'] // ✅ sửa từ styleUrl → styleUrls
 })
@@ -32,16 +34,17 @@ export class StationComponent implements OnInit, OnDestroy{
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
-  public pieChartType: any = 'pie';
+  public pieChartType: any = 'pie'; // ✅ Sửa từ 'doughnut' thành 'pie'
   public pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
+    animation: false,
     plugins: {
       legend: {
-        position: 'top',
+        display: true,
+        position: 'bottom' as const,  
       }
     }
-  }
-
+  };
   socket!: WebSocket;
   chartLabels: string[] = [];
   chartDataAccomnt: number[] = [];
@@ -66,7 +69,6 @@ export class StationComponent implements OnInit, OnDestroy{
 
     // ✅ Load sum revenue by log type
     const url = environment.wsServerURI + `/ws/shift/type/${this.id}`;
-    console.log('WebSocket URL:', url);
     this.socket = new WebSocket(url);
     this.socket.onmessage = (event) => {
       const data: { 
@@ -80,7 +82,6 @@ export class StationComponent implements OnInit, OnDestroy{
       this.chartLabels = data.map(item => item.LogTypeName);
       this.chartDataAccomnt = data.map(item => item.TotalAmount);
       this.chartDataFuel = data.map(item => item.TotalLiters);
-
       this.revenueChartData = {
         labels: this.chartLabels,
         datasets: [{
@@ -97,8 +98,6 @@ export class StationComponent implements OnInit, OnDestroy{
     };
 
     // ✅ Load sum revenue by fuel name
-    // const url1 = environment.wsServerURI + `/ws/shift/name/${this.id}`;
-    // console.log('WebSocket URL:', url1);
     this.socket = new WebSocket(environment.wsServerURI + `/ws/shift/name/${this.id}`);
     this.socket.onmessage = (event) => {
       const data: { 
@@ -123,7 +122,7 @@ export class StationComponent implements OnInit, OnDestroy{
           ]
         }]
       };
-    };
+    }; 
 
     this.socket.onerror = (err) => console.error('WebSocket error:', err);
 
@@ -184,16 +183,17 @@ export class StationComponent implements OnInit, OnDestroy{
       }
     })
     window.onbeforeunload = () => this.ngOnDestroy()
+
   }
 
   ngOnDestroy(): void {
-    console.log("Calling ngOnDestroy");
-    
+    console.log("Calling ngOnDestroy");   
       for(const key in this.dispenserSocket){
-        this.dispenserSocket[key].complete()
+        this.dispenserSocket[key].complete() 
       }
       for(const key in this.tankSocket){
         this.tankSocket[key].complete()
       }
   }
 }
+

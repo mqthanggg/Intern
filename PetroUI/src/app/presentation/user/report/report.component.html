@@ -4,14 +4,22 @@
   </header>
 </html>
 <div class="p-6 bg-gray-100 min-h-screen">
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
+    <div class="bg-white p-5 rounded-2xl shadow">
+      <p class="text-sm text-gray-500">Total stations</p>
+      <h2 class="text-2xl font-bold text-blue-400">{{ stationData }} station</h2>
+    </div>
+     <div class="bg-white p-5 rounded-2xl shadow">
+      <p class="text-sm text-gray-500">Total fuel</p>
+      <h2 class="text-2xl font-bold text-blue-400">{{ revenueData.TotalLiters | number:'1.0-3' }} Lít</h2>
+    </div>
     <div class="bg-white p-5 rounded-2xl shadow h-40">
       <p class="text-sm text-gray-500">Total revenue</p>
       <h2 class="text-2xl font-bold text-blue-600">{{ revenueData.TotalAmount | currency:'USD':'symbol':'1.0-2'   }}</h2> 
     </div>
     <div class="bg-white p-5 rounded-2xl shadow">
-      <p class="text-sm text-gray-500">Total fuel</p>
-      <h2 class="text-2xl font-bold text-blue-400">{{ revenueData.TotalLiters | number:'1.0-3' }} Lít</h2>
+      <p class="text-sm text-gray-500">Total profit</p>
+     <h2 class="text-2xl font-bold text-blue-400">$ </h2>
     </div>
   </div>
 

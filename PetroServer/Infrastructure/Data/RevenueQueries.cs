@@ -6,6 +6,21 @@ public static class RevenueQueries
         SELECT SUM(total_amount) AS TotalAmount, SUM(total_liters) AS TotalLiters FROM {Schema}.log
     ";
 
+    public static readonly string SumRevenueByStation = $@"
+        SELECT 
+            station.station_id AS StationId,
+            SUM(log.total_amount) AS TotalAmount,
+            SUM(log.total_liters) AS TotalLiters
+        FROM 
+            {Schema}.log
+        JOIN 
+            {Schema}.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            {Schema}.station ON station.station_id = dispenser.station_id
+        WHERE 
+            station.station_id = @StationId
+        GROUP BY station.station_id
+    ";
   // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).
     public static readonly string SumFuelbyName = $@"
         SELECT 

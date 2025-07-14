@@ -1,6 +1,7 @@
 
 import { Component, OnInit} from '@angular/core';
 import { CurrencyPipe, CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -17,34 +18,43 @@ export class ReportComponent implements OnInit {
     
   }
   revenueData: any = {};
-  socket: WebSocket | undefined;
+  stationData: any = {};
+  revenuesocket: WebSocket | undefined;
+  stationsocket: WebSocket | undefined;
 
   ngOnInit(): void {
-    this.connectWebSocket();
+    this.connectWebsocket();
   }
 
-  connectWebSocket(): void {
-    const url = 'ws://localhost:5170/ws/revenue';
-    this.socket = new WebSocket(url);
-    this.socket.onopen = () => {
-      console.log('WebSocket connected');
-    };
-    this.socket.onmessage = (event) => {
+  connectWebsocket(): void {
+    this.revenuesocket = new WebSocket(environment.wsServerURI + '/ws/revenue');
+    this.stationsocket = new WebSocket(environment.wsServerURI + '/ws/station');
+
+    this.revenuesocket.onopen = () => console.log('Revenue Websocket connected');
+    this.revenuesocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Received data:', data);
+      console.log('Received revenue:', data);
       this.revenueData = data;
     };
-    this.socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+    this.revenuesocket.onerror = (error) => console.error('Revenue Websocket error:', error);
+    this.revenuesocket.onclose = () => console.warn('Revenue Websocket closed');
+
+
+    this.stationsocket.onopen = () => console.log('Station Websocket connected');
+    this.stationsocket.onmessage = (event) => {
+      const SumStation = JSON.parse(event.data);
+      console.log('Total stations:', SumStation);
+      this.stationData = SumStation;
     };
-    this.socket.onclose = () => {
-      console.warn('WebSocket closed');
-    };
+    this.stationsocket.onerror = (error) => console.error('Station Websocket error:', error);
+    this.stationsocket.onclose = () => console.warn('Station Websocket closed');
+
   }
 
   ngOnDestroy(): void {
-    if (this.socket) {
-      this.socket.close();
+    if (this.revenuesocket && this.stationsocket) {
+      this.stationsocket.close();
+      this.revenuesocket.close();
     }
   }
 }

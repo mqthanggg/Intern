@@ -82,8 +82,6 @@ public static class PublicController
         }
     }
 
-
-
     [Authorize]
     [Permission("user")]
     [RequireAntiforgeryToken]

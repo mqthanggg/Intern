@@ -11,8 +11,10 @@ public static class ReportController
         app.MapGet("month/name/{id}", GetSumRevenueMonthByName);
         app.MapGet("year/type/{id}", GetSumRevenueYearByType);
         app.MapGet("year/name/{id}", GetSumRevenueYearByName);
+        app.MapGet("sumstation", GetSumStation);
 
-        app.Map("ws/revenue", GetSumRevenue);
+        app.Map("ws/revenue", GetSumRevenueWS);
+        app.Map("ws/station", GetSumStationWS);
         app.Map("ws/shift/type/{id}", GetSumRevenueShiftByTypeWS);
         app.Map("ws/shift/name/{id}", GetSumRevenueShiftByNameWS);
         app.Map("ws/{device}/{id}", GetWS);
@@ -21,6 +23,26 @@ public static class ReportController
 
     //===========================================================
     //======================== HTTP =============================
+    [Authorize]
+    [HttpGet("sumstation")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report total stations",
+        Description = "Total the number of stations for the current in table station"
+    )]
+    public static async Task<IResult> GetSumStation(IStationRepository stationRepository)
+    {
+        try
+        {
+            var res = await stationRepository.GetSumStationResponseAsync();
+            return TypedResults.Ok("Total stations: " + res);
+        }
+        catch (PostgresException)
+        {
+            return TypedResults.InternalServerError();
+        }
+    }
+
     [Authorize]
     [HttpGet("sumrevenuetypeshift/{id}")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
@@ -202,7 +224,7 @@ public static class ReportController
             }
         }
     }
-    public static async Task GetSumRevenue(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetSumRevenueWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -217,6 +239,44 @@ public static class ReportController
             while (socket.State == WebSocketState.Open)
             {
                 var result = await revenueRepository.GetTotalRevenueAsync();
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TypedResults.NotFound(ex);
+        }
+    }
+    public static async Task GetSumStationWS(HttpContext context, [FromServices] IStationRepository stationRepository)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await stationRepository.GetSumStationResponseAsync();
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {
@@ -413,4 +473,5 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
 }
