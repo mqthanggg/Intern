@@ -4,5 +4,5 @@ public class Receipt : Entity
     public string? ReceiptDate { get; set; } = null;
     public string? SupplierId { get; set; } = null;
     public string? StationId { get; set; } = null;
-    public string? TotalAmount { get; set; } = null;
+    public string? TotalImport { get; set; } = null;
 }

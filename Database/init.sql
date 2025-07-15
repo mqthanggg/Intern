@@ -12,6 +12,8 @@ ALTER TABLE IF EXISTS petro_application.detailreceipt DROP CONSTRAINT IF EXISTS 
 
 ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_supplier_id_fkey;
 
+ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_station_id_fkey;
+
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
@@ -214,7 +216,7 @@ CREATE TABLE IF NOT EXISTS petro_application.receipt (
     receipt_date time with time zone NOT NULL,
     supplier_id integer NOT NULL,
     station_id integer NOT NULL,
-    total_amount integer NOT NULL,
+    total_import integer NOT NULL,
     created_by character varying(30),
     created_date time with time zone DEFAULT now(),
     last_modified_by character varying(30),
@@ -232,6 +234,7 @@ CREATE TABLE IF NOT EXISTS petro_application.detailreceipt (
     fuel_id integer NOT NULL,
     liters_fuel integer NOT NULL,
     price integer NOT NULL,
+	total_amount integer NOT NULL,
   	created_by character varying(30) DEFAULT now(),
     created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(30),
@@ -338,7 +341,7 @@ ALTER TABLE IF EXISTS petro_application.receipt
     ON DELETE CASCADE
     NOT VALID;
 
-ALTER TABLE IF EXISTS petro_application.detailrecepit
+ALTER TABLE IF EXISTS petro_application.receipt
     ADD FOREIGN KEY (station_id)
     REFERENCES petro_application.station (station_id) MATCH SIMPLE
     ON UPDATE CASCADE
@@ -346,6 +349,13 @@ ALTER TABLE IF EXISTS petro_application.detailrecepit
     NOT VALID;
 
 ALTER TABLE IF EXISTS petro_application.detailreceipt
+    ADD FOREIGN KEY (receipt_id)
+    REFERENCES petro_application.receipt (receipt_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+ALTER TABLE IF EXISTS petro_application.detaireceipt
     ADD FOREIGN KEY (fuel_id) 
 	REFERENCES petro_application.fuel(fuel_id) MATCH SIMPLE
     ON UPDATE CASCADE
@@ -389,7 +399,7 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name, cre
 (12, 26, 4, 401, 'admin', 'admin'), (12, 27, 1, 402, 'admin', 'admin'), (12, 28, 2, 403, 'admin', 'admin'), (12, 29, 3, 404, 'admin', 'admin'), (12, 30, 4, 405, 'admin', 'admin');
 
 INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time, created_by, last_modified_by) VALUES
-(3, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00', 'admin', 'admin'),
+(17, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00', 'admin', 'admin'),
 (1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00', 'admin', 'admin'),
 (1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00', 'admin', 'admin'),
 (1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
@@ -483,31 +493,32 @@ INSERT INTO petro_application.supplier (supplier_name, phone, address, email, cr
 ('Nam Sông Hậu Petro', 0292355550, 'Số 2 Trần Hưng Đạo, Ninh Kiều, Cần Thơ', 'cskh@namsonghau.vn','admin', 'admin'),
 ('Petro Bình Minh', 0283844660, '105 Lý Thường Kiệt, Tân Bình, TP.HCM', 'support@binhminhpetro.vn','admin', 'admin');
 
-INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_amount, created_by, last_modified_by)
+INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_import, created_by, last_modified_by)
 VALUES
-('2024-07-11 08:30:00-07', 1, 1, 50000000, 'admin', 'admin'),
-('2024-07-11 09:00:00-07', 2, 2, 75000000, 'admin', 'admin'),
-('2024-07-11 10:15:00-07', 3, 1, 62000000, 'admin', 'admin'),
-('2024-07-11 11:45:00-07', 4, 3, 81000000, 'admin', 'admin'),
-('2024-07-11 13:00:00-07', 5, 4, 55000000, 'admin', 'admin'),
-('2024-07-11 14:20:00-07', 1, 5, 70000000, 'admin', 'admin'),
-('2024-07-11 15:35:00-07', 2, 2, 46000000, 'admin', 'admin'),
-('2024-07-11 16:50:00-07', 3, 6, 88000000, 'admin', 'admin'),
-('2024-07-11 18:10:00-07', 4, 3, 93000000, 'admin', 'admin'),
-('2024-07-11 19:25:00-07', 5, 1, 50000000, 'admin', 'admin');
+('2024-07-11 08:30:00-07', 1, 1, 30000, 'admin', 'admin'),
+('2024-07-11 09:00:00-07', 2, 2, 25000, 'admin', 'admin'),
+('2024-07-11 10:15:00-07', 3, 1, 12000, 'admin', 'admin'),
+('2024-07-11 11:45:00-07', 4, 3, 61000, 'admin', 'admin'),
+('2024-07-11 13:00:00-07', 5, 4, 30000, 'admin', 'admin'),
+('2024-07-11 14:20:00-07', 1, 5, 0, 'admin', 'admin'),
+('2024-07-11 15:35:00-07', 2, 2, 46000, 'admin', 'admin'),
+('2024-07-11 16:50:00-07', 3, 6, 0, 'admin', 'admin'),
+('2024-07-11 18:10:00-07', 4, 3, 12000, 'admin', 'admin'),
+('2024-07-11 19:25:00-07', 5, 1, 20000, 'admin', 'admin');
 
-INSERT INTO petro_application.detailreceipt (receipt_id, fuel_id, liters_fuel, price, created_by, last_modified_by)
-VALUES
-(1, 1, 5000, 20000, 'admin', 'admin'),
-(1, 2, 3000, 18000, 'admin', 'admin'),
-(2, 1, 4500, 21000, 'admin', 'admin'),
-(2, 3, 2000, 22000, 'admin', 'admin'),
-(3, 1, 6000, 20500, 'admin', 'admin'),
-(4, 2, 3500, 19000, 'admin', 'admin'),
-(5, 1, 4800, 20000, 'admin', 'admin'),
-(6, 4, 2500, 23000, 'admin', 'admin'),
-(7, 3, 3000, 21500, 'admin', 'admin'),
-(8, 2, 4000, 18500, 'admin', 'admin');
+INSERT INTO petro_application.detailreceipt (receipt_id, fuel_id, liters_fuel, price, total_amount, created_by, last_modified_by) 
+VALUES 
+(1, 1, 5000, 21000, 105000000, 'admin', 'admin'),
+(1, 2, 3000, 22000, 66000000, 'admin', 'admin'),
+(2, 1, 4000, 21500, 86000000, 'admin', 'admin'),
+(2, 3, 2500, 23000, 57500000, 'admin', 'admin'),
+(3, 2, 3500, 21800, 76300000, 'admin', 'admin'),
+(3, 3, 4000, 22500, 90000000, 'admin', 'admin'),
+(4, 1, 6000, 21200, 12720000, 'admin', 'admin'),
+(4, 2, 2000, 21900, 43800000, 'admin', 'admin'),
+(5, 3, 3000, 22800, 68400000, 'admin', 'admin'),
+(5, 1, 2500, 21000, 52500000, 'admin', 'admin');
+
 
 DO $$ 
 BEGIN 
@@ -532,6 +543,28 @@ GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
+
+
+-- TRUY VẤN DỮ LIỆU
+-- select * from petro_application.log  where dispenser_id = 6 order by log_type ASC -- nhập ký
+-- select * from petro_application.station  -- trạm xăng
+-- select * from petro_application.tank      -- bể chứa
+-- select * from petro_application.user  -- Tài khoản
+-- select * from petro_application.fuel  -- nhiên liệu
+-- select * from petro_application.dispenser -- vòi bơm xăng
+-- select * from  petro_application.shift
+-- select * from  petro_application.assignment
+-- select * from  petro_application.supplier
+-- select * from  petro_application.detailreceipt
+-- select * from  petro_application.receipt
+
+
+
+
+
+
+
+
 
 
 

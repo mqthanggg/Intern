@@ -1,8 +1,16 @@
 public class Revenue : Entity
 {
+    public decimal? TotalLiters { get; set; } = null;
+    public decimal? TotalRevenue { get; set; } = null;
+    public decimal? TotalImport { get; set; } = null;
+    public decimal? TotalProfit { get; set; } = null;
+}
+public class RevenueByShift : Entity
+{
     public string? shiftnow { get; set; } = null;
     public decimal? TotalAmount { get; set; } = null;
     public decimal? TotalLiters { get; set; } = null;
+    public decimal? TotalProfit { get; set; } = null;
 }
 public class GetIdRevenue
 {

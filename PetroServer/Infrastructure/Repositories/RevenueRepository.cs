@@ -17,8 +17,25 @@ public class RevenueRepository : IRevenueRepository
         await using (var connection = dbRead.CreateConnection())
         {
             var result = await connection.QueryFirstOrDefaultAsync<SumRevenueResponse>(RevenueQueries.SumRevenue);
-            result.TotalAmount ??= 0;
             return result;
+        }
+    }
+    
+    public async Task<IReadOnlyList<SumStationResponse>> GetTotalRevenueStationtAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumStationResponse> revenue = (await connection.QueryAsync<SumStationResponse>(RevenueQueries.SumRevenueByStation)).ToList();
+            return revenue;
+        }
+    }
+
+   public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumRevenueBytype)).ToList();
+            return revenue;
         }
     }
 

@@ -3,23 +3,61 @@ public static class RevenueQueries
 {
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SumRevenue = $@"     
-        SELECT SUM(total_amount) AS TotalAmount, SUM(total_liters) AS TotalLiters FROM {Schema}.log
-    ";
-
-    public static readonly string SumRevenueByStation = $@"
+        WITH 
+            total_sales AS (
+                SELECT SUM(l.total_amount) AS total_revenue, SUM(total_liters) AS total_liters
+                FROM {Schema}.log l
+            ),
+            total_purchases AS (
+                SELECT SUM(r.total_import) AS total_import
+                FROM {Schema}.receipt r
+            )
         SELECT 
-            station.station_id AS StationId,
-            SUM(log.total_amount) AS TotalAmount,
-            SUM(log.total_liters) AS TotalLiters
-        FROM 
-            {Schema}.log
-        JOIN 
-            {Schema}.dispenser ON log.dispenser_id = dispenser.dispenser_id
-        JOIN 
-            {Schema}.station ON station.station_id = dispenser.station_id
-        WHERE 
-            station.station_id = @StationId
-        GROUP BY station.station_id
+            COALESCE(ts.total_liters, 0) AS totalLiters,
+            COALESCE(ts.total_revenue, 0) AS TotalRevenue,
+            COALESCE(tp.total_import, 0) AS TotalImport,
+            (COALESCE(ts.total_revenue, 0) - COALESCE(tp.total_import, 0)) AS TotalProfit
+        FROM total_sales ts, total_purchases tp;
+    ";
+    public static readonly string SumRevenueByStation = $@"
+       WITH 
+            total_sales AS (
+                SELECT 
+                    s.station_id, 
+                    SUM(l.total_amount) AS total_revenue,
+                    SUM(l.total_liters) AS total_liters
+                FROM petro_application.station s
+                JOIN petro_application.dispenser d ON d.station_id = s.station_id
+                JOIN petro_application.log l ON l.dispenser_id = d.dispenser_id
+                GROUP BY s.station_id
+            ),
+            total_purchases AS (
+                SELECT 
+                    station_id, 
+                    SUM(total_import) AS total_import
+                FROM petro_application.receipt
+                GROUP BY station_id
+            )
+        SELECT 
+            s.station_id,
+            s.name AS StationName,
+            COALESCE(ts.total_revenue, 0) AS TotalRevenue,
+            COALESCE(ts.total_liters, 0) AS totalLiters,
+            COALESCE(tp.total_import, 0) AS TotalImport,
+            (COALESCE(ts.total_revenue, 0) - COALESCE(tp.total_import, 0)) AS TotalProfit
+        FROM petro_application.station s
+        LEFT JOIN total_sales ts ON s.station_id = ts.station_id
+        LEFT JOIN total_purchases tp ON s.station_id = tp.station_id
+        ORDER BY s.station_id ASC;
+    ";
+    public static readonly string SumRevenueBytype = $@"
+        SELECT 
+            log_type AS LogType,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
+        FROM petro_application.log
+        GROUP BY log_type
+        ORDER BY log_type ASC
     ";
   // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).
     public static readonly string SumFuelbyName = $@"
@@ -44,7 +82,6 @@ public static class RevenueQueries
         GROUP BY fuel_name
         ORDER BY fuel_name
    ";
-
     public static readonly string SumFuelbyType = $@"
         SELECT 
             log_type AS LogType,
@@ -86,7 +123,6 @@ public static class RevenueQueries
         GROUP BY fuel_name
         ORDER BY fuel_name
    ";
-
     public static readonly string SumFuelbyTypeDay = $@"
         SELECT 
             log_type AS LogType,
@@ -122,7 +158,6 @@ public static class RevenueQueries
         GROUP BY fuel_name
         ORDER BY fuel_name
    ";
-
     public static readonly string SumFuelbyTypeMonth = $@"
         SELECT 
             log_type AS LogType,
@@ -159,7 +194,6 @@ public static class RevenueQueries
         GROUP BY fuel_name
         ORDER BY fuel_name
    ";
-
     public static readonly string SumFuelbyTypeYear = $@"
         SELECT 
             log_type AS LogType,

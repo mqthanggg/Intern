@@ -27,9 +27,9 @@ if (report.Status == HealthStatus.Healthy){
         app.Swagger();
         app.MapSignup();
     }
+    app.MapPublicController();
     app.MapReport();
     app.UseMiddlewares();
-    app.MapPublicController();
     app.Run();
 }
 else{

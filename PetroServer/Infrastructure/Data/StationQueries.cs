@@ -1,7 +1,7 @@
 public static class StationQuery{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SelectSumStation = $@"
-      SELECT count(*) AS SumStation from petro_application.station
+       SELECT count(*) AS SumStation from petro_application.station
     ";
     public static readonly string SelectStation = $@"
         SELECT 

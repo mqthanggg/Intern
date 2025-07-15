@@ -34,7 +34,7 @@ export class StationComponent implements OnInit, OnDestroy{
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
-  public pieChartType: any = 'pie'; // ✅ Sửa từ 'doughnut' thành 'pie'
+  public pieChartType: any = 'pie'; 
   public pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
     animation: false,
@@ -47,7 +47,7 @@ export class StationComponent implements OnInit, OnDestroy{
   };
   socket!: WebSocket;
   chartLabels: string[] = [];
-  chartDataAccomnt: number[] = [];
+  chartDataAccomt: number[] = [];
   chartDataFuel: number[] = [];
   revenueChartData: any;
   fuelChartData: any;
@@ -80,12 +80,12 @@ export class StationComponent implements OnInit, OnDestroy{
       console.log("Received data:", data);
 
       this.chartLabels = data.map(item => item.LogTypeName);
-      this.chartDataAccomnt = data.map(item => item.TotalAmount);
+      this.chartDataAccomt = data.map(item => item.TotalAmount);
       this.chartDataFuel = data.map(item => item.TotalLiters);
       this.revenueChartData = {
         labels: this.chartLabels,
         datasets: [{
-          data: this.chartDataAccomnt,
+          data: this.chartDataAccomt,
           backgroundColor: [
             '#FF6384',
             '#36A2EB',
