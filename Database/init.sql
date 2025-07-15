@@ -1,5 +1,9 @@
 BEGIN;
 
+DROP SCHEMA IF EXISTS petro_application;
+
+CREATE SCHEMA petro_application;
+
 SET search_path TO petro_application, public;
 
 ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_shift_id_fkey;

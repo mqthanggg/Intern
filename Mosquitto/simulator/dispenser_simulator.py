@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
-import json, time, random, sys, uuid, psycopg
+import json, time, random, sys, uuid, psycopg, dotenv, os
+dotenv.load_dotenv()
 
 device_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 topic = f"devices/dispenser/{device_id}"
@@ -7,16 +8,16 @@ topic = f"devices/dispenser/{device_id}"
 client = mqtt.Client(client_id=str(uuid.uuid4()), transport="tcp")
 client.username_pw_set("mqthanggg", "admin123")
 client.tls_set(
-    ca_certs="../certs/ca.crt",
-    certfile="../certs/client.crt",
-    keyfile="../certs/client.key"
+    ca_certs="certs/ca.crt",
+    certfile="certs/client.crt",
+    keyfile="certs/client.key"
 )
-client.connect("localhost", 8883)
+client.connect(os.getenv("MOSQUITTO_HOST"), 8883)
 client.loop_start()
 
 fuel_price = 0
 
-with psycopg.connect("host=localhost port=5432 user=read_user password=read123 dbname=Intern") as conn:
+with psycopg.connect(os.getenv("DBREAD_CONNECTION_STRING")) as conn:
     with conn.cursor() as cursor:
         cursor.execute("""
             SELECT 
@@ -42,7 +43,7 @@ try:
             "state": 0
         }
         time.sleep(random.randint(1,5))
-        client.publish(topic, json.dumps(payload), retain=True)
+        client.publish(topic, json.dumps(payload), qos=1, retain=True)
         while current_price < selected_price_limit:
             liter = round(liter + 0.032,3)
             current_price = int(round(fuel_price * liter,0))
@@ -54,7 +55,7 @@ try:
                 "price": current_price,
                 "state": 1
             }
-            client.publish(topic, json.dumps(payload), retain=True)
+            client.publish(topic, json.dumps(payload), qos=1, retain=True)
 
             time.sleep(0.05)
         time.sleep(2)
@@ -65,7 +66,7 @@ try:
             "payment": random.randint(1,4)
         }
         time.sleep(1)
-        client.publish(topic, json.dumps(payload), retain=True)
+        client.publish(topic, json.dumps(payload), qos=1, retain=True)
     
 except KeyboardInterrupt:
     client.loop_stop()

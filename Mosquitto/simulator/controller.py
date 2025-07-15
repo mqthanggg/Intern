@@ -1,12 +1,14 @@
 import subprocess
 import platform
-import sys, psycopg
+import sys, psycopg, dotenv, os
+
+dotenv.load_dotenv()
 
 simulator_processes = {}
 dispenser_id_list = []
 tank_id_list = []
 
-with psycopg.connect("host=localhost port=5432 user=read_user password=read123 dbname=Intern") as conn:
+with psycopg.connect(os.getenv("DBREAD_CONNECTION_STRING")) as conn:
     with conn.cursor() as cursor:
         cursor.execute("""
             SELECT 
@@ -39,8 +41,7 @@ def start_dispenser(device_id):
             shell=False  # 🔒 Explicitly disable shell usage
         )
     else:
-        # Fallback for macOS/Linux — uses gnome-terminal by default
-        proc = subprocess.Popen(["gnome-terminal", "--", "python3", "dispenser_simulator.py", device_id])
+        proc = subprocess.Popen([sys.executable, "dispenser_simulator.py", str(device_id)])
 
     simulator_processes[f"dispenser:{device_id}"] = proc
     print(f"✅ Started dispenser '{device_id}'.")
@@ -57,8 +58,7 @@ def start_tanks(device_id):
             shell=False  # 🔒 Explicitly disable shell usage
         )
     else:
-        # Fallback for macOS/Linux — uses gnome-terminal by default
-        proc = subprocess.Popen(["gnome-terminal", "--", "python3", "tank_simulator.py", device_id])
+        proc = subprocess.Popen([sys.executable, "tank_simulator.py", str(device_id)])
 
     simulator_processes[f"tank:{device_id}"] = proc
     print(f"✅ Started tank '{device_id}'.")
