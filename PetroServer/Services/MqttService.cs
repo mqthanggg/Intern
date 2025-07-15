@@ -10,7 +10,6 @@ public class MqttService : IMqttService{
     private readonly IMqttClient _client;
     private readonly MqttClientOptions _options;
     private readonly ILogUpdateService _logUpdate;
-    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1,1);
     public MqttService(
         ILogUpdateService logUpdate
     ){
@@ -18,7 +17,7 @@ public class MqttService : IMqttService{
         var mqttFactory = new MqttClientFactory();
         _client = mqttFactory.CreateMqttClient();
         _options = new MqttClientOptionsBuilder().
-            WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce).
+            WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce).
             WithTcpServer(Env.GetString("MOSQUITTO_HOST"),Env.GetInt("MOSQUITTO_PORT")).
             WithClientId(Guid.NewGuid().ToString()).
             WithCredentials(Env.GetString("MOSQUITTO_USERNAME"),Env.GetString("MOSQUITTO_PASSWORD")).
