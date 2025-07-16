@@ -327,7 +327,8 @@ public static class PublicController
                     LoginResponse
                     {
                         Token = jwt.GenerateAccessToken(user.UserId!.Value, user.Username!, RoleMapping(user.Role!.Value)),
-                        RefreshToken = randomRefreshToken
+                        RefreshToken = randomRefreshToken,
+                        Role = RoleMapping(user.Role!.Value)
                     });
                 }
             }

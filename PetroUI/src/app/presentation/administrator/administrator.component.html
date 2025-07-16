@@ -1,0 +1,32 @@
+<div class="flex w-screen h-screen bg-gray-200">
+    <div class="duration-300 flex flex-col" [ngClass]="{'w-1/6': isNavExtended,'w-0': !isNavExtended}">
+        <div class="w-full bg-[#2e2e42] px-3 h-20 flex items-center justify-center relative">
+            <div class="text-white font-semibold text-2xl text-center">PMS</div>
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="size-5"><path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29l0-320c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3l0 41.7 0 41.7L459.5 440.6zM256 352l0-96 0-128 0-32c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4l-192 160C4.2 237.5 0 246.5 0 256s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29l0-64z"/></svg> -->
+        </div>
+        <div class="grow w-full space-y-4 border-t-1 border-white bg-[#181824] py-2" [ngClass]="{'*:hidden': !isNavExtended,'px-5': isNavExtended}">
+            <a routerLink="./attendance" class="px-4 py-2 rounded-md hover:bg-[#3a3a49] duration-200 hover:cursor-pointer flex space-x-5 items-center justify-between">
+                <div class="text-xl text-white">Attendance</div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="size-5"><path fill="#ffffff" d="M192 0c-41.8 0-77.4 26.7-90.5 64L64 64C28.7 64 0 92.7 0 128L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64l-37.5 0C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM128 256a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zM80 432c0-44.2 35.8-80 80-80l64 0c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16L96 448c-8.8 0-16-7.2-16-16z"/></svg>
+            </a>
+        </div>
+    </div>
+    <div class="grow">
+        <div class="bg-gradient-to-r sticky from-[#38ce3c] to-[#a1d1a2] flex px-5 h-20 items-center justify-between">
+            <div class="text-white font-semibold text-4xl pl-5">{{title}}</div>
+            @if (isReturnable){
+                <div class="bg-white p-1 rounded-full hover:cursor-pointer hover:-translate-y-1 duration-200 shadow-xl" (click)="navigateBack()">
+                    <img src="turn-back.png" alt="Turn back image" class="size-7">
+                </div>
+            }
+            <div class="bg-[#2e2e42] rounded-r-full absolute z-50 p-1 left-0 hover:cursor-pointer"
+                (click)="isNavExtended = !isNavExtended"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-5 duration-300"
+                    [ngClass]="{'rotate-0':isNavExtended,'rotate-180':!isNavExtended}"
+                ><path class=" fill-white" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>            
+            </div>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+</div>

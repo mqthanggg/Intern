@@ -2,6 +2,8 @@
 import { Component, OnInit} from '@angular/core';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -19,42 +21,31 @@ export class ReportComponent implements OnInit {
   }
   revenueData: any = {};
   stationData: any = {};
-  revenuesocket: WebSocket | undefined;
-  stationsocket: WebSocket | undefined;
+  revenueSocket: WebSocketSubject<any> | undefined;
+  stationSocket: WebSocketSubject<any> | undefined;
 
   ngOnInit(): void {
     this.connectWebsocket();
   }
 
   connectWebsocket(): void {
-    this.revenuesocket = new WebSocket(environment.wsServerURI + '/ws/revenue');
-    this.stationsocket = new WebSocket(environment.wsServerURI + '/ws/station');
-
-    this.revenuesocket.onopen = () => console.log('Revenue Websocket connected');
-    this.revenuesocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('Received revenue:', data);
-      this.revenueData = data;
-    };
-    this.revenuesocket.onerror = (error) => console.error('Revenue Websocket error:', error);
-    this.revenuesocket.onclose = () => console.warn('Revenue Websocket closed');
-
-
-    this.stationsocket.onopen = () => console.log('Station Websocket connected');
-    this.stationsocket.onmessage = (event) => {
-      const SumStation = JSON.parse(event.data);
-      console.log('Total stations:', SumStation);
-      this.stationData = SumStation;
-    };
-    this.stationsocket.onerror = (error) => console.error('Station Websocket error:', error);
-    this.stationsocket.onclose = () => console.warn('Station Websocket closed');
-
+    this.revenueSocket = webSocket(environment.wsServerURI + '/ws/revenue');
+    this.stationSocket = webSocket(environment.wsServerURI + '/ws/station');
+    forkJoin([
+      this.revenueSocket,
+      this.stationSocket
+    ]).subscribe({
+      next: ([revenue,station]) => {
+        this.revenueData = revenue;
+        this.stationData = station;
+      },
+      error: (error) => console.error('Websocket error:', error),
+      complete: () => console.warn('Websocket closed')
+    })
   }
 
   ngOnDestroy(): void {
-    if (this.revenuesocket && this.stationsocket) {
-      this.stationsocket.close();
-      this.revenuesocket.close();
-    }
+    this.stationSocket?.complete();
+    this.revenueSocket?.complete();
   }
 }
