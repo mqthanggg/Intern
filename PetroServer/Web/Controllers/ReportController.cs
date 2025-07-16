@@ -2,7 +2,6 @@ public static class ReportController
 {
     public static WebApplication MapReport(this WebApplication app)
     {
-        //app.MapGet("/report", GetSumRevenue);
         app.MapGet("shift/type/{id}", GetSumRevenueByType);
         app.MapGet("shift/name/{id}", GetSumRevenueByName);
         app.MapGet("day/type/{id}", GetSumRevenueDayByType);
@@ -14,12 +13,18 @@ public static class ReportController
         app.MapGet("sumstation", GetSumStation);
         app.MapGet("sumrevenuestation", GetTotalRevenueStation);
         app.MapGet("sumrevenue", GetSumRevenue);
-        app.MapGet("sumrevenuetype", GetToatalRevenueByType);
-
+        app.MapGet("sumrevenuetype7day", GetTotalRevenueByType7day);
+        app.MapGet("sumrevenuebyname", GetTotalRevenueFullByName);
+        app.MapGet("sumrevenuebytype", GetTotalRevenueFullByType);
+        app.MapGet("sumrevenueday", GetTotalRevenueDay);
+        
         app.Map("ws/revenue", GetSumRevenueWS);
         app.Map("ws/station", GetSumStationWS);
         app.Map("ws/sumrevenue", GetTotalRevenueStationWS);
-        app.Map("ws/type", GetTotalRevenueByTypeWS);
+        app.Map("ws/type", GetTotalRevenueByType7dayWS);
+        app.Map("ws/sumrenuename", GetTotalRevenueByNameWS);
+        app.Map("ws/sumrenuetype", GetTotalRevenueByTypeWS);
+        app.Map("ws/sumrevenueday", GetTotalRevenueDayWS);
         app.Map("ws/shift/type/{id}", GetSumRevenueShiftByTypeWS);
         app.Map("ws/shift/name/{id}", GetSumRevenueShiftByNameWS);
         app.Map("ws/{device}/{id}", GetWS);
@@ -29,18 +34,81 @@ public static class ReportController
     //===========================================================
     //======================== HTTP =============================
     [Authorize]
-    [HttpGet("sumrevenuetype")]
+    [HttpGet("sumrevenueday")]
+    [ProducesResponseType(typeof(List<SumRevenueByDateResponse>), 200)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report total of revenue by day",
+        Description = "Report total of revenue by day"
+    )]
+    public static async Task<IResult> GetTotalRevenueDay(IRevenueRepository revenueRepository)
+    {
+        try
+        {
+            var res = await revenueRepository.GetTotalRevenueByDayAsync();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException)
+        {
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [HttpGet("sumrevenuefullname")]
+    [ProducesResponseType(typeof(List<SumRevenueByNameResponse>), 200)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report total of revenue by name",
+        Description = "Report total of revenue by name"
+    )]
+    public static async Task<IResult> GetTotalRevenueFullByName(IRevenueRepository revenueRepository)
+    {
+        try
+        {
+            var res = await revenueRepository.GetTotalRevenueFullBynameAsync();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException)
+        {
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [HttpGet("sumrevenuefulltype")]
     [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report total of revenue by type",
-        Description = "Report total of revenue by type, such as Ban le, Cong no, Khuyen mai, Tra truoc"
+        Description = "Report total of revenue by type"
     )]
-    public static async Task<IResult> GetToatalRevenueByType(IRevenueRepository revenueRepository)
+    public static async Task<IResult> GetTotalRevenueFullByType(IRevenueRepository revenueRepository)
     {
         try
         {
-            var res = await revenueRepository.GetTotalRevenueByTypeAsync();
+            var res = await revenueRepository.GetTotalRevenueFullByTypeAsync();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException)
+        {
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [HttpGet("sumrevenuetype7days")]
+    [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), 200)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report total of revenue by type",
+        Description = "Report total of revenue in 7 days by type, such as Ban le, Cong no, Khuyen mai, Tra truoc"
+    )]
+    public static async Task<IResult> GetTotalRevenueByType7day(IRevenueRepository revenueRepository)
+    {
+        try
+        {
+            var res = await revenueRepository.GetTotalRevenueByType7dayAsync();
             return TypedResults.Ok(res);
         }
         catch (PostgresException)
@@ -406,7 +474,7 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
-    public static async Task GetTotalRevenueByTypeWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueByType7dayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -420,7 +488,122 @@ public static class ReportController
         {
             while (socket.State == WebSocketState.Open)
             {
-                var result = await revenueRepository.GetTotalRevenueByTypeAsync();
+                var result = await revenueRepository.GetTotalRevenueByType7dayAsync();
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TypedResults.NotFound(ex);
+        }
+    }
+    public static async Task GetTotalRevenueByNameWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueFullBynameAsync();
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TypedResults.NotFound(ex);
+        }
+    }
+     public static async Task GetTotalRevenueByTypeWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueFullByTypeAsync();
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TypedResults.NotFound(ex);
+        }
+    }
+
+     public static async Task GetTotalRevenueDayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByDayAsync();
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {

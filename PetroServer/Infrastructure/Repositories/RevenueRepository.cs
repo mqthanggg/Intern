@@ -29,16 +29,38 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
-   public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeAsync()
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueFullBynameAsync()
     {
         await using (var connection = dbRead.CreateConnection())
         {
-            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumRevenueBytype)).ToList();
+            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumRevenueFullByName)).ToList();
             return revenue;
         }
     }
-
+    public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueFullByTypeAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumRevenueFullByType)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByType7dayAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumRevenueBytype7day)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueByDateResponse>> GetTotalRevenueByDayAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByDateResponse> revenue = (await connection.QueryAsync<SumRevenueByDateResponse>(RevenueQueries.SumRevenueByDay)).ToList();
+            return revenue;
+        }
+    }
     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameShiftAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())

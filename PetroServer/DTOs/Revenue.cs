@@ -7,14 +7,11 @@ public class SumRevenueResponse
     public decimal? TotalProfit { get; set; } = -1;
 }
 
-public class SumStationResponse
+public class SumStationResponse: SumRevenueResponse
 {
     public required int StationId { get; set; } = -1;
     public required string StationName { get; set; } = "";
-    public decimal? TotalLiters { get; set; } = -1;
-    public decimal? TotalRevenue { get; set; } = -1;
-    public decimal? TotalImport { get; set; } = -1;
-    public decimal? TotalProfit { get; set; } = -1;
+   
 }
 
 public class SumRevenueResponseByShift
@@ -51,4 +48,12 @@ public class SumRevenueByTypeResponse
     public decimal? TotalAmount { get; set; } = null;
     public decimal? TotalLiters { get; set; } = null;
 
+}
+
+public class SumRevenueByDateResponse
+{
+    public required string Date { get; set; } = "";
+    public required string StationName { get; set; } = "";
+    public decimal? TotalAmount { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
 }

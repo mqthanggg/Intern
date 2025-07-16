@@ -42,7 +42,7 @@ showPassword: any;
           localStorage.clear()
           localStorage.setItem('jwt',res.body.token);
           localStorage.setItem('refresh',res.body.refreshToken)
-          this.router.navigate(['/user'])
+          this.router.navigate(['/user/home'])
         }
       },
       error: (err: HttpErrorResponse) => {

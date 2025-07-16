@@ -21,9 +21,9 @@ export const routes: Routes = [
         loadChildren: () => import('./presentation/user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModule)
     },
     {
-        path: "",
+        path: "home",
         pathMatch: "full",
-        redirectTo: "/user",
+        redirectTo: "/user/home",
     },
     {
         path: "**",

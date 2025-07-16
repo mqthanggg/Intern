@@ -50,16 +50,49 @@ public static class RevenueQueries
         LEFT JOIN total_purchases tp ON s.station_id = tp.station_id
         ORDER BY s.station_id ASC;
     ";
-    public static readonly string SumRevenueBytype = $@"
+    public static readonly string SumRevenueFullByName = $@"
+        SELECT 
+            fuel_name AS FuelName, 
+            SUM(total_liters) AS TotalLiters,
+            SUM(total_amount) AS TotalAmount
+        FROM petro_application.log
+        GROUP BY fuel_name
+        ORDER BY fuel_name
+    ";
+    public static readonly string SumRevenueFullByType = $@"
+        SELECT 
+            log_type AS LogType, 
+            SUM(total_liters) AS TotalLiters,
+            SUM(total_amount) AS TotalAmount
+        FROM petro_application.log
+        GROUP BY log_type
+        ORDER BY log_type
+    ";
+    public static readonly string SumRevenueBytype7day = $@"
         SELECT 
             log_type AS LogType,
             SUM(total_amount) AS TotalAmount,
             SUM(total_liters) AS TotalLiters
         FROM petro_application.log
+        WHERE ""time""::date >= CURRENT_DATE - INTERVAL '7 days'
         GROUP BY log_type
         ORDER BY log_type ASC
     ";
-  // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).
+    public static readonly string SumRevenueByDay = $@"
+        SELECT 
+            DATE(l.""time"") AS Date,
+            s.name AS StationName,
+            SUM(l.total_amount) AS TotalAmount,
+            SUM(l.total_liters) AS TotalLiters
+        FROM petro_application.log l
+        JOIN petro_application.dispenser d ON d.dispenser_id = l.dispenser_id
+        JOIN petro_application.station s ON s.station_id = d.station_id
+        WHERE l.""time""::date >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY DATE(l.""time""), s.name
+        ORDER BY DATE(l.""time""), s.name;
+    ";
+
+    // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).
     public static readonly string SumFuelbyName = $@"
         SELECT 
             fuel_name AS FuelName,
@@ -176,7 +209,7 @@ public static class RevenueQueries
         ORDER BY log_type
    ";
 
-   // SumRevenue query returns the total revenue AND liters for the current year
+    // SumRevenue query returns the total revenue AND liters for the current year
     public static readonly string SumFuelbyNameYear = $@"
         SELECT 
             fuel_name AS FuelName,

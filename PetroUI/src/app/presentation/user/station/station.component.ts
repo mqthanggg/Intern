@@ -13,6 +13,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { sumRevenueByLogType } from './revenue-record';
 
 @Component({
   selector: 'app-station',
@@ -31,6 +32,8 @@ export class StationComponent implements OnInit, OnDestroy{
   dispenserList: DispenserRecord[] = [];
   dispenserSocket: {[key: string]: WebSocketSubject<WSDispenserRecord>} = {}
   tankSocket: {[key: string]: WebSocketSubject<WSTankRecord>} = {}
+  sumRevenueByLogTypeSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
+  sumRevenueByFuelNameSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
@@ -47,7 +50,7 @@ export class StationComponent implements OnInit, OnDestroy{
   };
   socket!: WebSocket;
   chartLabels: string[] = [];
-  chartDataAccomt: number[] = [];
+  chartDataAccount: number[] = [];
   chartDataFuel: number[] = [];
   revenueChartData: any;
   fuelChartData: any;
@@ -80,12 +83,12 @@ export class StationComponent implements OnInit, OnDestroy{
       console.log("Received data:", data);
 
       this.chartLabels = data.map(item => item.LogTypeName);
-      this.chartDataAccomt = data.map(item => item.TotalAmount);
+      this.chartDataAccount = data.map(item => item.TotalAmount);
       this.chartDataFuel = data.map(item => item.TotalLiters);
       this.revenueChartData = {
         labels: this.chartLabels,
         datasets: [{
-          data: this.chartDataAccomt,
+          data: this.chartDataAccount,
           backgroundColor: [
             '#FF6384',
             '#36A2EB',
@@ -125,11 +128,11 @@ export class StationComponent implements OnInit, OnDestroy{
     }; 
 
     this.socket.onerror = (err) => console.error('WebSocket error:', err);
-
     this.isDispenserLoading = true
     this.isTankLoading = true
     this.isLogLoading = true
     forkJoin({
+      sumRevenueByLogType: webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`),
       dispenser: this.http.get(environment.serverURI +`/dispenser/station/${this.id}`,{observe: "response"}),
       tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`,{observe: "response"}),
       log: this.http.get(environment.serverURI +`/log/station/${this.id}`,{observe: "response"})
@@ -144,6 +147,7 @@ export class StationComponent implements OnInit, OnDestroy{
       })
     ).subscribe({
       next: (res: {
+        sumRevenueByLogType: sumRevenueByLogType[],
         dispenser: HttpResponse<any>,
         tank: HttpResponse<any>,
         log: HttpResponse<any>
@@ -177,23 +181,40 @@ export class StationComponent implements OnInit, OnDestroy{
           })
         })
         this.logList = res.log.body
+        console.log("WebSocket readyState:", this.socket.readyState);
+        console.log("Received data:", res.sumRevenueByLogType);
+        this.chartLabels = res.sumRevenueByLogType.map(item => item.LogTypeName);
+        this.chartDataAccount = res.sumRevenueByLogType.map(item => item.TotalAmount);
+        this.chartDataFuel = res.sumRevenueByLogType.map(item => item.TotalLiters);
+        this.revenueChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataAccount,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
       },
       error: (err: HttpErrorResponse) => {
         console.error(err.message);
       }
     })
     window.onbeforeunload = () => this.ngOnDestroy()
-
   }
 
   ngOnDestroy(): void {
-    console.log("Calling ngOnDestroy");   
-      for(const key in this.dispenserSocket){
-        this.dispenserSocket[key].complete() 
-      }
-      for(const key in this.tankSocket){
-        this.tankSocket[key].complete()
-      }
+    for(const key in this.dispenserSocket){
+      this.dispenserSocket[key].complete() 
+    }
+    for(const key in this.tankSocket){
+      this.tankSocket[key].complete()
+    }
+    this.sumRevenueByLogTypeSocket?.complete()
   }
 }
 

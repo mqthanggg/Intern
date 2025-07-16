@@ -14,9 +14,9 @@ const routes: Routes = [
     loadComponent: () => import('../station/station.component').then(m=>m.StationComponent)
   },
   {
-    path: "report",
-    title: "Report",
-    loadComponent: () => import('../report/report.component').then(m=>m.ReportComponent)
+    path: "home",
+    title: "Home",
+    loadComponent: () => import('../home/home.component').then(m=>m.ReportComponent)
   },
 ]
 

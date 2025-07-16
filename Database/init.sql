@@ -191,6 +191,9 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     PRIMARY KEY (log_id)
 );
 
+COMMENT ON TABLE petro_application.log
+    IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
+
 DROP TABLE IF EXISTS petro_application.supplier;
 
 CREATE TABLE IF NOT EXISTS petro_application.supplier (
@@ -264,8 +267,6 @@ CREATE TABLE IF NOT EXISTS petro_application.assignment
 COMMENT ON TABLE petro_application.assignment
     IS 'for staff '' work schedule in each station';
 
-COMMENT ON TABLE petro_application.log
-    IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
 
 ALTER TABLE IF EXISTS petro_application.assignment
     ADD CONSTRAINT assignment_shift_id_fkey FOREIGN KEY(shift_id)
@@ -436,11 +437,11 @@ INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_lite
 (8, 'DO1', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
 (8, 'DO1', 2, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
 (8, 'DO1', 2, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
-(9, 'D05', 2, 10.5, 26250, now(),'admin', 'admin'),
-(9, 'D05', 2, 8.2, 20500,now(),'admin', 'admin'),
-(9, 'D05', 2, 11.0, 27500, now(),'admin', 'admin'),
-(9, 'D05', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 'admin', 'admin'),
-(9, 'D05', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00', 'admin', 'admin'),
+(9, 'DO5', 2, 10.5, 26250, now(),'admin', 'admin'),
+(9, 'DO5', 2, 8.2, 20500,now(),'admin', 'admin'),
+(9, 'DO5', 2, 11.0, 27500, now(),'admin', 'admin'),
+(9, 'DO5', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 'admin', 'admin'),
+(9, 'DO5', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00', 'admin', 'admin'),
 (11, 'A95', 1, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 'admin', 'admin'),
 (11, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 08:05:00', 'admin', 'admin'),
 (11, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
