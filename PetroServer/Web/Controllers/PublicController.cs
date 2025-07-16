@@ -318,7 +318,7 @@ public static class PublicController
                         new CookieOptions{
                             Path = "/",
                             HttpOnly = false,
-                            SameSite = SameSiteMode.None,
+                            SameSite = SameSiteMode.Strict,
                             Expires = DateTimeOffset.UtcNow.AddDays(7),
                             MaxAge = TimeSpan.FromDays(7)
                         }

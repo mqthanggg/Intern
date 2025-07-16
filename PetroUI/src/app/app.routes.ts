@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { userGuard } from './infrastructure/guards/user-guard.guard';
 import { administratorGuard } from './infrastructure/guards/administrator-guard.guard';
+import { autoRedirection } from './infrastructure/services/auto-redirection.service';
 
 export const routes: Routes = [
     {
@@ -32,7 +33,7 @@ export const routes: Routes = [
     {
         path: "",
         pathMatch: "full",
-        redirectTo: "/user",
+        redirectTo: autoRedirection,
     },
     {
         path: "**",

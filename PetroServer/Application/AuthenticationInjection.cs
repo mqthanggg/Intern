@@ -3,8 +3,6 @@ public static class Auth
     public static IServiceCollection AuthSetup(this IServiceCollection services, IWebHostEnvironment _env)
     {
         services.AddAntiforgery(op => {
-            op.Cookie.Expiration = TimeSpan.FromDays(7);
-            op.Cookie.MaxAge = TimeSpan.FromDays(7);
             op.HeaderName = "Xsrf-Header";
         });
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(op =>
