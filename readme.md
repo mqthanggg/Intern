@@ -1,24 +1,37 @@
-# Gas station management software (outdated, will be updated)
+# Gas station management software
+A simple gas station management system designed for monitoring stations and its related devices such as dispensers, tanks.
 ## Hardware (simulator)
-(empty)
-## Database
-- Using PostgreSQL 17 for the database system.
-### The ERD of the gas station management software
+- Simulators are implemented using Python which automatically publish mock data of dispensers and tanks to the Mosquitto broker.
+### ERD
 ![Screenshot of the software ERD](./Database/erd.png)
-**Supposed that a user can managed all the gas stations, there's no need to establish any relation from the user table to other tables.** <br/> <br/>
-**_Update: The column password of the table user has been changed from **~~varying character(72)~~** to varying character(84) due to BCrypt(intended hash algorithm) is not fully supported in C#, ASP.NET built in PasswordHasher class will be used instead._**
-- There are 2 database users: one for reading operations (SELECT) and one for writing operations (INSERT, DELETE, UPDATE).
-- The database can be hosted on port 5432 with the credentials inside the env file (Database/database.env).
-- The tables can be found on **petro_application** schema, in **Intern** database.
-## Server
-- Using .NET 9 to build a server with minimal APIs.
-- The server can establish 2 connections to the database: one for the *read-only* connection and one for the *write-only* connection.
-- Using JWT with asymmetric keys for authentication. (fixing)
-## UI
-- Will be using Angular for making the UI.
-## Todos
-- Start making the hardware simulator.
-- Finish the database (if needed).
-- Setup all server endpoints.
-- ~~Build an UI~~ Finish the UI. (fixed the login UI)<br/>
+## Database
+- Powered by PostgreSQL 17.
+- Hosted on port 5432.
+- There are 2 database users: 
+    - **Read-only**: granted with SELECT statement 
+    - **Write-only**: granted with INSERT, DELETE, UPDATE, SELECT (whenever required by the UPDATE statement).
+- The data is stored under the **petro_application** schema, inside the **Intern** database.
+## MQTT broker
+- Powered by Mosquitto 2.0.22.
+- Configured with SSL certificate and authentication.
+
+## Backend
+- Using .NET 9 with minimal APIs to deploy.
+- Handles core features such as:
+    - Authentication and authorization:
+        - JWT with asymmetric key signatures.
+        - CSRF (XSRF) protection.
+        - Controllers are protected by RBAC.
+    - Live data sync with broker via MQTT with TLS:
+        - Live data streaming to the client's view.
+        - Automatically inserting payments into the database.
+## Frontend
+- Users can perform _RUD operations on stations.
+- Interactive dashboard for users:
+    - Live dispensers, tanks metrics.
+    - Live transaction logs.
+    - Shift data visualizations.
+- Interactive dashboard for administrators:
+    - Managing staff's attendance.
+    - Managing staff's accounts.
 ...
