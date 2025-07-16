@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, Event, RouterLink, RouterOutlet, RouterEvent, NavigationEnd } from '@angular/router';
 import { TitleService } from '../../infrastructure/services/title.service';
 import { filter } from 'rxjs';
+import { LogoutService } from '../../infrastructure/services/logout.service';
 
 @Component({
   selector: 'app-user',
@@ -15,10 +16,17 @@ export class UserComponent implements OnInit{
   isNavExtended = true;
   isReturnable = false;
   title: string = "";
+  logout: () => Promise<boolean>;
   ngOnInit(): void {
     this.title = "Dashboard"
   }
-  constructor(private titleService: TitleService, private router:Router, private location: Location){
+  constructor(
+    private titleService: TitleService, 
+    private router: Router, 
+    private location: Location,
+    private logoutService: LogoutService
+  ){
+    this.logout = this.logoutService.logout
     this.titleService.title$.subscribe((title: string) => {
       this.title = title
     })
