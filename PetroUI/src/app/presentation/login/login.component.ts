@@ -45,7 +45,8 @@ showPassword: any;
           localStorage.clear()
           localStorage.setItem('jwt',res.body.token);
           localStorage.setItem('refresh',res.body.refreshToken)
-          this.router.navigate(['/user'])
+          localStorage.setItem('role',res.body.role)
+          this.router.navigate([`/${res.body.role}`])
         }
       },
       error: (err: HttpErrorResponse) => {
