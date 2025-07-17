@@ -10,7 +10,7 @@ import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
 import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
-import { Chart, ChartConfiguration } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { sumRevenueByLogType } from './revenue-record';
@@ -20,7 +20,7 @@ import { sumRevenueByLogType } from './revenue-record';
   standalone: true,
   imports: [NgChartsModule, CommonModule, FormsModule ],
   templateUrl: './station.component.html',
-  styleUrls: ['./station.component.css'] // ✅ sửa từ styleUrl → styleUrls
+  styleUrls: ['./station.component.css'] 
 })
 export class StationComponent implements OnInit, OnDestroy{
   @Input() id: number = -1;
@@ -63,6 +63,7 @@ export class StationComponent implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit(): void {
+    
     const snapshot = this.route.snapshot;
     this.stationName = snapshot.queryParams['name'];
     this.stationAddress = snapshot.queryParams['address'];

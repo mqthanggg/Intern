@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ReportStationComponent } from '../home/report-station/report-station.component';
 
 const routes: Routes = [
   {
@@ -16,8 +17,14 @@ const routes: Routes = [
   {
     path: "home",
     title: "Home",
-    loadComponent: () => import('../home/home.component').then(m=>m.ReportComponent)
-  },
+    loadComponent: () => import('../home/home.component').then(m=>m.HomeComponent),
+    },
+  {
+      path: "home/report/:id",
+      title: "Report",
+      component: ReportStationComponent
+    },
+  
 ]
 
 @NgModule({

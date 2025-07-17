@@ -1,10 +1,11 @@
-import { Component, OnInit,ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { NgChartsModule } from 'ng2-charts';
-import { ChartOptions, ChartDataset, ChartData } from 'chart.js';
+import { ChartOptions, ChartDataset, ChartEvent } from 'chart.js';
 import { Router } from '@angular/router';
-
+import { WebSocketService } from './../../../services/web-socket.service';
+import { HomeRoutingModule } from './home-routing-module/home-routing-module.module';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -13,13 +14,16 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     CurrencyPipe,
-    NgChartsModule
+    NgChartsModule,
+    HomeRoutingModule
   ]
 })
 
-export class ReportComponent implements OnInit {
-  @ViewChild(NgChartsModule) chart: NgChartsModule | undefined;
-  constructor(private router: Router) {   }
+export class HomeComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private wsService: WebSocketService
+  ) { }
   revenueData: any = {};
   stationData: any = {};
   barData: any = {};
@@ -27,7 +31,7 @@ export class ReportComponent implements OnInit {
   pieChartAccountData: any = {};
   pieChartLittersData: any = {};
   baryData: any = {};
-
+  stationIdList: number[] = []
   revenuesocket: WebSocket | undefined;
   stationsocket: WebSocket | undefined;
   barsocket: WebSocket | undefined;
@@ -85,12 +89,12 @@ export class ReportComponent implements OnInit {
   chartlineDataAccounts: number[] = [];
 
   public PieBarChartOption: ChartOptions<'pie'> = {
-   responsive: false,
+    responsive: false,
     animation: false,
     plugins: {
       legend: {
         display: true,
-        position: 'bottom' as const,  
+        position: 'bottom' as const,
       }
     }
   };
@@ -100,7 +104,7 @@ export class ReportComponent implements OnInit {
 
   public baryChartOptions: ChartOptions<'bar'> = {
     responsive: false,
-    indexAxis: 'y', 
+    indexAxis: 'y',
     plugins: {
       legend: { display: true },
     },
@@ -111,31 +115,77 @@ export class ReportComponent implements OnInit {
   chartBaryLogName: string[] = [];
   chartBaryDataAccounts: number[] = [];
 
-  onChartClick(event: any) {
-    const activePoint = event?.active?.[0];
-    if (activePoint) {
-      const datasetIndex = activePoint.datasetIndex;
-      const dataset = this.lineChartData.datasets[datasetIndex] as any;
+  onChartClick(event: { event?: ChartEvent, active?: any[] }) {
+    if (event.active && event.active.length > 0) {
+      const chartElement = event.active[0];
+      const dataIndex = chartElement.index;
 
-      const stationId = dataset.stationId;
-      const stationName = dataset.label;
-
-      if (stationId) {
-        this.router.navigate(['./detail', stationId], {
-          queryParams: { name: stationName }
-        });
+      const stationId = this.stationIdList[dataIndex];
+      if (!stationId) {
+        console.error('🚨 stationId is undefined!');
+        return;
       }
+
+      this.router.navigate(['user/home/report',stationId]);
     }
   }
-  //=====
+
+
   ngOnInit(): void {
     this.connectWebsocket();
   }
+  handleBarChartData(event: MessageEvent): void {
+    const rawData = JSON.parse(event.data);
+    console.log('Received revenue and profit:', rawData);
+
+    const filteredData = rawData.filter((item: any) =>
+      item.TotalRevenue > 0 || item.TotalProfit > 0
+    );
+
+    this.barData = filteredData;
+
+    const stations = filteredData.map((item: any) => item.StationName);
+    const revenue = filteredData.map((item: any) => item.TotalRevenue);
+    const profit = filteredData.map((item: any) => item.TotalProfit);
+    this.stationIdList = filteredData.map((item: any) => item.StationId);
+
+    this.barChartData = {
+      labels: stations,
+      datasets: [
+        {
+          label: 'Doanh thu (VNĐ)',
+          data: revenue,
+          backgroundColor: '#42A5F5'
+        },
+        {
+          label: 'Lợi nhuận (VNĐ)',
+          data: profit,
+          backgroundColor: '#66BB6A'
+        }
+      ]
+    };
+  }
 
   connectWebsocket(): void {
+    this.wsService.connect('totalrevenue', environment.wsServerURI + '/ws/revenue'); // sum revenue, fuel, profit
+    this.wsService.connect('totalstation', environment.wsServerURI + '/ws/station'); // sum station in system
+    this.wsService.connect('barChart', environment.wsServerURI + '/ws/sumrevenue'); //  sum revenue and profit
+    this.wsService.connect('lineChart', environment.wsServerURI + '/ws/sumrevenueday');  // sum revenue by day
+    this.wsService.connect('pieChart', environment.wsServerURI + '/ws/sumrenuename');  // sum revenue and litters
+    this.wsService.connect('baryChart', environment.wsServerURI + '/ws/sumrenuetype'); // sum revenue by log type
+
+    this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
+    this.barsocket.onopen = () => console.log('Bar Chart display Websocket connected');
+    this.barsocket.onmessage = (event) => {
+      this.handleBarChartData(event);
+    };
+    this.barsocket.onerror = err => console.error('WebSocket Error', err);
+
+    //===============================================================
     // ✅ Load sum revenue
     this.revenuesocket = new WebSocket(environment.wsServerURI + '/ws/revenue');
     this.revenuesocket.onopen = () => console.log('Revenue Websocket connected');
+
     this.revenuesocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log('Received revenue:', data);
@@ -156,45 +206,49 @@ export class ReportComponent implements OnInit {
     this.stationsocket.onclose = () => console.warn('Station Websocket closed');
 
     // ✅ Load chart bar sum revenue and profit
-    this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
-    this.barsocket.onopen = () => console.log('Bar Chart Websocket connected');
-    this.barsocket.onmessage = (event) => {
-      const rawData = JSON.parse(event.data);
-      console.log('Received revenue:', rawData);
-      const filteredData = rawData.filter((item: any) =>
-        item.TotalRevenue > 0 || item.TotalProfit > 0
-      );
-      this.barData = filteredData;
-      const stations = filteredData.map((item: any) => item.StationName);
-      const revenue = filteredData.map((item: any) => item.TotalRevenue);
-      const profit = filteredData.map((item: any) => item.TotalProfit);
-      this.barChartData = {
-        labels: stations,
-        datasets: [
-          {
-            label: 'Doanh thu (VNĐ)',
-            data: revenue,
-            backgroundColor: '#42A5F5'
-          },
-          {
-            label: 'Lợi nhuận (VNĐ)',
-            data: profit,
-            backgroundColor: '#66BB6A'
-          }
-        ]
-      };
+    // this.wsService.connect('barChart', environment.wsServerURI + '/ws/sumrevenue');
 
-    };
-    this.barsocket.onerror = err => console.error('WebSocket Error', err);
 
-    // ✅ Load chart multi sum revenue name
+    // this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
+    // this.barsocket.onopen = () => console.log('Bar Chart Websocket connected');
+    // this.barsocket.onmessage = (event) => {
+    //   const rawData = JSON.parse(event.data);
+    //   console.log('Received revenue revenue and profit:', rawData);
+    //   const filteredData = rawData.filter((item: any) =>
+    //     item.TotalRevenue > 0 || item.TotalProfit > 0
+    //   );
+    //   this.barData = filteredData;
+    //   const stations = filteredData.map((item: any) => item.StationName);
+    //   const revenue = filteredData.map((item: any) => item.TotalRevenue);
+    //   const profit = filteredData.map((item: any) => item.TotalProfit);
+    //   this.stationIdList = filteredData.map((item: any) => item.StationId);
+    //   this.barChartData = {
+    //     labels: stations,
+    //     datasets: [
+    //       {
+    //         label: 'Doanh thu (VNĐ)',
+    //         data: revenue,
+    //         backgroundColor: '#42A5F5'
+    //       },
+    //       {
+    //         label: 'Lợi nhuận (VNĐ)',
+    //         data: profit,
+    //         backgroundColor: '#66BB6A'
+    //       }
+    //     ],
+    //   };
+
+    // };
+    // this.barsocket.onerror = err => console.error('WebSocket Error', err);
+
+    // ✅ Load 2 chart pie sum revenue name
     this.piecharsocket = new WebSocket(environment.wsServerURI + `/ws/sumrenuename`);
     this.piecharsocket.onmessage = (event) => {
-     const data: {
+      const data: {
         FuelName: string;
         TotalAmount: number,
         TotalLiters: number
-      }[] = JSON.parse(event.data );
+      }[] = JSON.parse(event.data);
       console.log("WebSocket pie :", this.piecharsocket);
       console.log("Received pie:", data);
 
@@ -282,13 +336,13 @@ export class ReportComponent implements OnInit {
     // ✅ Load chart bar sum revenue by type
     this.barycharsocket = new WebSocket(environment.wsServerURI + '/ws/sumrenuetype');
     this.barycharsocket.onmessage = (event) => {
-       const data: {
+      const data: {
         LogTypeName: string;
         TotalAmount: number,
-      }[] = JSON.parse(event.data );
+      }[] = JSON.parse(event.data);
       console.log('Bar y Chart Websocket connected');
       console.log("Received bar y:", data);
-      
+
       this.chartBaryLogName = data.map(item => item.LogTypeName);
       this.chartBaryDataAccounts = data.map(item => item.TotalAmount);
       this.baryData = {
