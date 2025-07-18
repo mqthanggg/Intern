@@ -57,7 +57,7 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://0.0.0.0:5170/health || exit 1"]
       interval: 10s
