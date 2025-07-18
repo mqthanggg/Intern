@@ -3,19 +3,25 @@
     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
       <path d="M3 13h2v-2H3v2zm4 0h14v-2H7v2z" />
     </svg>
-    <h2 class="text-2xl font-semibold text-gray-700">Báo cáo trạm: {{ stationId }}</h2>
+    <h2 class="text-2xl font-semibold text-gray-700">Báo cáo trạm: {{ this.id }}</h2>
   </div>
-  <div *ngIf="loading" class="text-blue-500">Đang tải dữ liệu...</div>
-  <div *ngIf="!loading && reportData">
-    <p><strong>Tên trạm:</strong> {{ reportData.name }}</p>
-    <p><strong>Địa chỉ:</strong> {{ reportData.address }}</p>
-    <!-- Biểu đồ -->
-    <canvas baseChart
-      [data]="lineChartData"
-      [options]="lineChartOptions"
-      [type]="'line'">
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-x-5 gap-3">
+    <div class="bg-white p-5 rounded-2xl shadow">
+      <p class="text-base text-gray-500">Total fuel</p>
+      <h2 class="text-3xl font-bold text-blue-400">{{ TotalLitters }} Lít</h2>
+    </div>
+    <div class="bg-white p-5 rounded-2xl shadow h-40">
+      <p class="text-base text-gray-500">Total revenue</p>
+      <h2 class="text-3xl font-bold text-blue-400">{{ TotalRevenue | currency: 'USD':'symbol':'1.0-2' }}
+      </h2>
+    </div>
+    <div class="bg-white p-5 rounded-2xl shadow">
+      <p class="text-base text-gray-500">Total profit</p>
+      <h2 class="text-3xl font-bold text-blue-400">{{ totalProfit | currency: 'USD':'symbol':'1.0-2' }}</h2>
+    </div>
+  </div>
+  <div>
+    <canvas baseChart *ngIf="barChartData" [data]="barChartData" [type]="'bar'" [options]="barChartOptions" class="w-200">
     </canvas>
   </div>
-
-  <div *ngIf="!loading && !reportData" class="text-red-500">Không tìm thấy dữ liệu.</div>
 </div>

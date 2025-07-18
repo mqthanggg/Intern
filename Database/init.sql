@@ -216,7 +216,7 @@ DROP TABLE IF EXISTS petro_application.receipt;
 
 CREATE TABLE IF NOT EXISTS petro_application.receipt (
     receipt_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    receipt_date time with time zone NOT NULL,
+    receipt_date timestamp(0) without time zone NOT NULL DEFAULT now(),
     supplier_id integer NOT NULL,
     station_id integer NOT NULL,
     total_import integer NOT NULL,
@@ -362,7 +362,6 @@ ALTER TABLE IF EXISTS petro_application.detaireceipt
     ON UPDATE CASCADE
     ON DELETE CASCADE
     NOT VALID;
-
 INSERT INTO petro_application.station (name, address, created_by, last_modified_by) VALUES
 ('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City', 'admin', 'admin'),
 ('PV Oil Station 2', '456 Cach Mang Thang 8, Ward 5, District 3, Ho Chi Minh City', 'admin', 'admin'),
@@ -496,12 +495,12 @@ INSERT INTO petro_application.supplier (supplier_name, phone, address, email, cr
 
 INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_import, created_by, last_modified_by)
 VALUES
-('2024-07-11 08:30:00-07', 1, 1, 30000, 'admin', 'admin'),
-('2024-07-11 09:00:00-07', 2, 2, 25000, 'admin', 'admin'),
-('2024-07-11 10:15:00-07', 3, 1, 12000, 'admin', 'admin'),
-('2024-07-11 11:45:00-07', 4, 3, 61000, 'admin', 'admin'),
-('2024-07-11 13:00:00-07', 5, 4, 30000, 'admin', 'admin'),
-('2024-07-11 14:20:00-07', 1, 5, 0, 'admin', 'admin'),
+('2024-08-01 08:30:00-07', 1, 1, 30000, 'admin', 'admin'),
+('2024-07-12 09:00:00-07', 2, 2, 25000, 'admin', 'admin'),
+('2024-07-10 10:15:00-07', 3, 1, 12000, 'admin', 'admin'),
+('2024-07-08 11:45:00-07', 4, 3, 61000, 'admin', 'admin'),
+('2024-07-07 13:00:00-07', 5, 4, 30000, 'admin', 'admin'),
+('2024-07-09 14:20:00-07', 1, 5, 0, 'admin', 'admin'),
 ('2024-07-11 15:35:00-07', 2, 2, 46000, 'admin', 'admin'),
 ('2024-07-11 16:50:00-07', 3, 6, 0, 'admin', 'admin'),
 ('2024-07-11 18:10:00-07', 4, 3, 12000, 'admin', 'admin'),

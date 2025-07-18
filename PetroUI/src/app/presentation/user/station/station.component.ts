@@ -13,7 +13,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { sumRevenueByLogType } from './revenue-record';
+import { sumRevenueByLogType, sumRevenueByName } from './revenue-record';
 
 @Component({
   selector: 'app-station',
@@ -33,7 +33,7 @@ export class StationComponent implements OnInit, OnDestroy{
   dispenserSocket: {[key: string]: WebSocketSubject<WSDispenserRecord>} = {}
   tankSocket: {[key: string]: WebSocketSubject<WSTankRecord>} = {}
   sumRevenueByLogTypeSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
-  sumRevenueByFuelNameSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
+  sumRevenueByFuelNameSocket: WebSocketSubject<sumRevenueByName[]> | undefined
   tankList: TankRecord[] = [];
   logList: LogRecord[] = [];
   _temp_statusList: number[] = [];
@@ -48,7 +48,6 @@ export class StationComponent implements OnInit, OnDestroy{
       }
     }
   };
-  socket!: WebSocket;
   chartLabels: string[] = [];
   chartDataAccount: number[] = [];
   chartDataFuel: number[] = [];
@@ -71,69 +70,56 @@ export class StationComponent implements OnInit, OnDestroy{
       this.titleServer.updateTitle(this.stationName)
     }, 0);
 
-    // ✅ Load sum revenue by log type
-    const url = environment.wsServerURI + `/ws/shift/type/${this.id}`;
-    this.socket = new WebSocket(url);
-    this.socket.onmessage = (event) => {
-      const data: { 
-        LogTypeName: string; 
-        TotalAmount: number,
-        TotalLiters: number
-      }[] = JSON.parse(event.data);
-      console.log("WebSocket readyState:", this.socket.readyState);
-      console.log("Received data:", data);
-
-      this.chartLabels = data.map(item => item.LogTypeName);
-      this.chartDataAccount = data.map(item => item.TotalAmount);
-      this.chartDataFuel = data.map(item => item.TotalLiters);
-      this.revenueChartData = {
-        labels: this.chartLabels,
-        datasets: [{
-          data: this.chartDataAccount,
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#4BC0C0',
-            '#9966FF'
-          ]
-        }]
-      };
-    };
 
     // ✅ Load sum revenue by fuel name
-    this.socket = new WebSocket(environment.wsServerURI + `/ws/shift/name/${this.id}`);
-    this.socket.onmessage = (event) => {
-      const data: { 
-        FuelName: string; 
-        TotalLiters: number
-      }[] = JSON.parse(event.data);
-      console.log("WebSocket readyState:", this.socket.readyState);
-      console.log("Received data:", data);
+    this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}`)
+    this.sumRevenueByFuelNameSocket.subscribe({
+      next: res => {
+        console.log("Received data:", res);
+        this.chartLabels = res.map(item => item.FuelName);
+        this.chartDataFuel = res.map(item => item.TotalLiters);
+        this.fuelChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataFuel,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      }
+    })
 
-      this.chartLabels = data.map(item => item.FuelName);
-      this.chartDataFuel = data.map(item => item.TotalLiters);
-      this.fuelChartData = {
-        labels: this.chartLabels,
-        datasets: [{
-          data: this.chartDataFuel,
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#4BC0C0',
-            '#9966FF'
-          ]
-        }]
-      };
-    }; 
-
-    this.socket.onerror = (err) => console.error('WebSocket error:', err);
     this.isDispenserLoading = true
     this.isTankLoading = true
     this.isLogLoading = true
+    this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`)
+    this.sumRevenueByLogTypeSocket.subscribe({
+      next: res => {
+        this.chartLabels = res.map(item => item.LogTypeName);
+        this.chartDataAccount = res.map(item => item.TotalAmount);
+        this.chartDataFuel = res.map(item => item.TotalLiters);
+        this.revenueChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataAccount,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      }
+    })
+
     forkJoin({
-      sumRevenueByLogType: webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`),
       dispenser: this.http.get(environment.serverURI +`/dispenser/station/${this.id}`,{observe: "response"}),
       tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`,{observe: "response"}),
       log: this.http.get(environment.serverURI +`/log/station/${this.id}`,{observe: "response"})
@@ -148,7 +134,6 @@ export class StationComponent implements OnInit, OnDestroy{
       })
     ).subscribe({
       next: (res: {
-        sumRevenueByLogType: sumRevenueByLogType[],
         dispenser: HttpResponse<any>,
         tank: HttpResponse<any>,
         log: HttpResponse<any>
@@ -181,25 +166,7 @@ export class StationComponent implements OnInit, OnDestroy{
             }
           })
         })
-        this.logList = res.log.body
-        console.log("WebSocket readyState:", this.socket.readyState);
-        console.log("Received data:", res.sumRevenueByLogType);
-        this.chartLabels = res.sumRevenueByLogType.map(item => item.LogTypeName);
-        this.chartDataAccount = res.sumRevenueByLogType.map(item => item.TotalAmount);
-        this.chartDataFuel = res.sumRevenueByLogType.map(item => item.TotalLiters);
-        this.revenueChartData = {
-          labels: this.chartLabels,
-          datasets: [{
-            data: this.chartDataAccount,
-            backgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#4BC0C0',
-              '#9966FF'
-            ]
-          }]
-        };
+        this.logList = res.log.body        
       },
       error: (err: HttpErrorResponse) => {
         console.error(err.message);
@@ -216,6 +183,7 @@ export class StationComponent implements OnInit, OnDestroy{
       this.tankSocket[key].complete()
     }
     this.sumRevenueByLogTypeSocket?.complete()
+    this.sumRevenueByFuelNameSocket?.complete()
   }
 }
 

@@ -3,3 +3,8 @@ export interface sumRevenueByLogType{
     TotalAmount: number,
     TotalLiters: number
 }
+
+export interface sumRevenueByName{ 
+    FuelName: string; 
+    TotalLiters: number
+}

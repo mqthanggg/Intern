@@ -5,6 +5,15 @@ public class Revenue : Entity
     public decimal? TotalImport { get; set; } = null;
     public decimal? TotalProfit { get; set; } = null;
 }
+public class SumStationRevenue: Entity 
+{
+    public required int StationId { get; set; } = -1;
+    public required string StationName { get; set; } = "";
+    public decimal? TotalLiters { get; set; } = null;
+    public decimal? TotalRevenue { get; set; } = null;
+    public decimal? TotalImport { get; set; } = null;
+    public decimal? TotalProfit { get; set; } = null;
+}
 public class RevenueByShift : Entity
 {
     public string? shiftnow { get; set; } = null;

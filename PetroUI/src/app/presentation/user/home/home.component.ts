@@ -5,7 +5,6 @@ import { NgChartsModule } from 'ng2-charts';
 import { ChartOptions, ChartDataset, ChartEvent } from 'chart.js';
 import { Router } from '@angular/router';
 import { WebSocketService } from './../../../services/web-socket.service';
-import { HomeRoutingModule } from './home-routing-module/home-routing-module.module';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -14,8 +13,7 @@ import { HomeRoutingModule } from './home-routing-module/home-routing-module.mod
   imports: [
     CommonModule,
     CurrencyPipe,
-    NgChartsModule,
-    HomeRoutingModule
+    NgChartsModule
   ]
 })
 
@@ -129,8 +127,7 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['user/home/report',stationId]);
     }
   }
-
-
+  
   ngOnInit(): void {
     this.connectWebsocket();
   }
@@ -167,13 +164,6 @@ export class HomeComponent implements OnInit {
   }
 
   connectWebsocket(): void {
-    this.wsService.connect('totalrevenue', environment.wsServerURI + '/ws/revenue'); // sum revenue, fuel, profit
-    this.wsService.connect('totalstation', environment.wsServerURI + '/ws/station'); // sum station in system
-    this.wsService.connect('barChart', environment.wsServerURI + '/ws/sumrevenue'); //  sum revenue and profit
-    this.wsService.connect('lineChart', environment.wsServerURI + '/ws/sumrevenueday');  // sum revenue by day
-    this.wsService.connect('pieChart', environment.wsServerURI + '/ws/sumrenuename');  // sum revenue and litters
-    this.wsService.connect('baryChart', environment.wsServerURI + '/ws/sumrenuetype'); // sum revenue by log type
-
     this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
     this.barsocket.onopen = () => console.log('Bar Chart display Websocket connected');
     this.barsocket.onmessage = (event) => {
@@ -204,42 +194,6 @@ export class HomeComponent implements OnInit {
     };
     this.stationsocket.onerror = (error) => console.error('Station Websocket error:', error);
     this.stationsocket.onclose = () => console.warn('Station Websocket closed');
-
-    // ✅ Load chart bar sum revenue and profit
-    // this.wsService.connect('barChart', environment.wsServerURI + '/ws/sumrevenue');
-
-
-    // this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
-    // this.barsocket.onopen = () => console.log('Bar Chart Websocket connected');
-    // this.barsocket.onmessage = (event) => {
-    //   const rawData = JSON.parse(event.data);
-    //   console.log('Received revenue revenue and profit:', rawData);
-    //   const filteredData = rawData.filter((item: any) =>
-    //     item.TotalRevenue > 0 || item.TotalProfit > 0
-    //   );
-    //   this.barData = filteredData;
-    //   const stations = filteredData.map((item: any) => item.StationName);
-    //   const revenue = filteredData.map((item: any) => item.TotalRevenue);
-    //   const profit = filteredData.map((item: any) => item.TotalProfit);
-    //   this.stationIdList = filteredData.map((item: any) => item.StationId);
-    //   this.barChartData = {
-    //     labels: stations,
-    //     datasets: [
-    //       {
-    //         label: 'Doanh thu (VNĐ)',
-    //         data: revenue,
-    //         backgroundColor: '#42A5F5'
-    //       },
-    //       {
-    //         label: 'Lợi nhuận (VNĐ)',
-    //         data: profit,
-    //         backgroundColor: '#66BB6A'
-    //       }
-    //     ],
-    //   };
-
-    // };
-    // this.barsocket.onerror = err => console.error('WebSocket Error', err);
 
     // ✅ Load 2 chart pie sum revenue name
     this.piecharsocket = new WebSocket(environment.wsServerURI + `/ws/sumrenuename`);

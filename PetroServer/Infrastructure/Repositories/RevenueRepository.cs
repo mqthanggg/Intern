@@ -12,6 +12,40 @@ public class RevenueRepository : IRevenueRepository
         dbRead = dbReadConnection;
     }
 
+    public async Task<IReadOnlyList<SumStationResponse>> GetTotalRevenueByStationAsync(GetIdRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumStationResponse> revenue = (await connection.QueryAsync<SumStationResponse>(RevenueQueries.SumRevenueStation, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueStationByDateResponse>> GetTotalRevenueStationDayAsync(GetIdRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueStationByDateResponse> revenue = (await connection.QueryAsync<SumRevenueStationByDateResponse>(RevenueQueries.SumRevenueStationDay, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueStationByMonthResponse>> GetTotalRevenueStationMonthAsync(GetIdRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueStationByMonthResponse> revenue = (await connection.QueryAsync<SumRevenueStationByMonthResponse>(RevenueQueries.SumRevenueStationMonth, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueStationByYearResponse>> GetTotalRevenueStationYearAsync(GetIdRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueStationByYearResponse> revenue = (await connection.QueryAsync<SumRevenueStationByYearResponse>(RevenueQueries.SumRevenueStationYear, ren)).ToList();
+            return revenue;
+        }
+    }
+    //======================================================================
+    //======================================================================
     public async Task<SumRevenueResponse> GetTotalRevenueAsync()
     {
         await using (var connection = dbRead.CreateConnection())
@@ -61,6 +95,8 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
+
+
     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameShiftAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
