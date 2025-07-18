@@ -24,15 +24,13 @@ services:
       context: Mosquitto/mosquitto
       dockerfile: Dockerfile
     volumes:
-      - ./config:/Mosquitto/mosquitto/config
-      - ./certs:/Mosquitto/mosquitto/certs
-      - ./data:/Mosquitto/mosquitto/data
-      - ./log:/Mosquitto/mosquitto/log
+      - ./Mosquitto/mosquitto/config:/mosquitto/config
+      - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
   server:
     build:
-      context: ./PetroServer
+      context: PetroServer
       dockerfile: Dockerfile
     networks:
       - petro-network
