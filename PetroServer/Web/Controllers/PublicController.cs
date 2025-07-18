@@ -16,6 +16,7 @@ public static class PublicController
         app.MapPost("login", Login);
         app.MapPost("register", RegisterAccount);
         app.MapPost("refresh", RefreshJWT);
+        app.MapPost("logout",Logout);
 
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
@@ -43,7 +44,11 @@ public static class PublicController
         Summary = "Register account",
         Description = "Register an account from the given username and password"
     )]
-    private static async Task<IResult> RegisterAccount([FromBody] RegisterRequest body, IHasher hasher, IUserRepository userRepository)
+    private static async Task<IResult> RegisterAccount(
+        [FromBody] RegisterRequest body, 
+        [FromServices] IHasher hasher, 
+        [FromServices] IUserRepository userRepository
+    )
     {
         if (
             string.IsNullOrWhiteSpace(body.Username) || 
@@ -91,7 +96,10 @@ public static class PublicController
         Summary = "Update log's time.",
         Description = "Update log's time."
     )]
-    public static async Task<IResult> UpdateLogTime([FromBody] LogResponse entity, [FromServices] ILogRepository logRepository)
+    public static async Task<IResult> UpdateLogTime(
+        [FromBody] LogResponse entity, 
+        [FromServices] ILogRepository logRepository
+    )
     {
         var result = await logRepository.UpdateLogTimeAsync(entity);
         if (result == 0)
@@ -112,7 +120,10 @@ public static class PublicController
         Summary = "Get staff by ID",
         Description = "Returns staff information by ID"
     )]
-    public static async Task<IResult> GetStaffByStaffId([FromRoute] int id, IStaffRepository StaffRepository)
+    public static async Task<IResult> GetStaffByStaffId(
+        [FromRoute] int id, 
+        [FromServices] IStaffRepository StaffRepository
+    )
     {
         var res = await StaffRepository.GetStaffByIdAsync(new Staff { StaffId = id });
         if (res == null)
@@ -129,7 +140,9 @@ public static class PublicController
         Summary = "Get all staffs",
         Description = "Obtain a list of all staffs"
     )]
-    public static async Task<IResult> GetStaffs(IStaffRepository StaffRepository)
+    public static async Task<IResult> GetStaffs(
+        [FromServices] IStaffRepository StaffRepository
+    )
     {
         try
         {
@@ -151,7 +164,9 @@ public static class PublicController
         Summary = "Obtain shifts.",
         Description = "Obtain a list of all shifts."
     )]
-    public static async Task<IResult> GetShift(IShiftRepository shiftRepository)
+    public static async Task<IResult> GetShift(
+        [FromServices] IShiftRepository shiftRepository
+    )
     {
         try
         {
@@ -173,7 +188,10 @@ public static class PublicController
         Summary = "Obtain a shift by id",
         Description = "Obtain a shift by id"
     )]
-    public static async Task<IResult> GetShiftByShiftId([FromRoute] int id, IShiftRepository ShiftRepository)
+    public static async Task<IResult> GetShiftByShiftId(
+        [FromRoute] int id, 
+        [FromServices] IShiftRepository ShiftRepository
+    )
     {
         var res = await ShiftRepository.GetShiftById(new Shift { ShiftId = id });
         if (res == null)
@@ -190,7 +208,9 @@ public static class PublicController
         Summary = "Obtain assignment.",
         Description = "Obtain a list of all Assignments."
     )]
-    public static async Task<IResult> GetAssignment(IAssignmentRepository AssignmentRepository)
+    public static async Task<IResult> GetAssignment(
+        [FromServices] IAssignmentRepository AssignmentRepository
+    )
     {
         try
         {
@@ -211,7 +231,10 @@ public static class PublicController
         Summary = "Retrieve logs by station ID.",
         Description = "Retrieve a list of logs that are related to the dispensers belong to the given station."
     )]
-    public static async Task<IResult> GetLogByStationId([FromRoute] int id, ILogRepository logRepository)
+    public static async Task<IResult> GetLogByStationId(
+        [FromRoute] int id, 
+        [FromServices] ILogRepository logRepository
+    )
     {
         var res = await logRepository.GetLogByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
@@ -227,7 +250,10 @@ public static class PublicController
         Summary = "Retrieve dispensers by station ID.",
         Description = "Retrieve a list of dispensers that belong to the given station."
     )]
-    public static async Task<IResult> GetDispenserByStationId([FromRoute] int id, IDispenserRepository dispenserRepository)
+    public static async Task<IResult> GetDispenserByStationId(
+        [FromRoute] int id, 
+        [FromServices] IDispenserRepository dispenserRepository
+    )
     {
         var res = await dispenserRepository.GetDispensersByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
@@ -243,7 +269,10 @@ public static class PublicController
         Summary = "Retrieve tanks by station ID.",
         Description = "Retrieve a list of tanks that are belong to the given station."
     )]
-    public static async Task<IResult> GetTankByStationId([FromRoute] int id, ITankRepository tankRepository)
+    public static async Task<IResult> GetTankByStationId(
+        [FromRoute] int id, 
+        [FromServices] ITankRepository tankRepository
+    )
     {
         var res = await tankRepository.GetTanksByStationIdAsync(new Station { StationId = id });
         return TypedResults.Ok(
@@ -257,7 +286,9 @@ public static class PublicController
         Summary = "Retrieve JWKs",
         Description = "Retrieve a list of JSON web key."
     )]
-    public static IResult GetJWKs(IJWKsService jWKs)
+    public static IResult GetJWKs(
+        [FromServices] IJWKsService jWKs
+    )
     {
         return TypedResults.Ok(
             jWKs.GetJWKs()
@@ -273,7 +304,13 @@ public static class PublicController
         Summary = "Login",
         Description = "Resolve login request from the client."
     )]
-    public static async Task<IResult> Login(HttpContext context, [FromBody] LoginRequest body, IUserRepository userRepository, IHasher hasher, IJWTService jwt, IAntiforgery antiforgery)
+    public static async Task<IResult> Login(
+        HttpContext context, 
+        [FromBody] LoginRequest body, 
+        [FromServices] IUserRepository userRepository, 
+        [FromServices] IHasher hasher, 
+        [FromServices] IJWTService jwt, 
+        [FromServices] IAntiforgery antiforgery)
     {
         try
         {
@@ -292,6 +329,7 @@ public static class PublicController
                             UserId = user.UserId,
                             RefreshToken = hashed,
                             TokenPadding = padding,
+                            TokenExpiredTime = DateTime.UtcNow.AddDays(7),
                             LastModifiedBy = body.Username,
                         });
                     }
@@ -348,7 +386,10 @@ public static class PublicController
         Summary = "Delete station",
         Description = "Delete a station from a given id."
     )]
-    public static async Task<IResult> DeleteStationFromId([FromRoute] int id, IStationRepository stationRepository)
+    public static async Task<IResult> DeleteStationFromId(
+        [FromRoute] int id, 
+        [FromServices] IStationRepository stationRepository
+    )
     {
         int res;
         try
@@ -373,7 +414,11 @@ public static class PublicController
         Summary = "Update station",
         Description = "Update name, address of a station from a given id."
     )]
-    public static async Task<IResult> UpdateStationFromId([FromRoute] int id, [FromBody] StationUpdateRequest body, IStationRepository stationRepository, IJWTService jWTService)
+    public static async Task<IResult> UpdateStationFromId(
+        [FromRoute] int id, 
+        [FromBody] StationUpdateRequest body, 
+        [FromServices] IStationRepository stationRepository, 
+        [FromServices] IJWTService jWTService)
     {
         int res;
         try
@@ -398,7 +443,9 @@ public static class PublicController
         Summary = "Obtain stations.",
         Description = "Obtain a list of all stations."
     )]
-    public static async Task<IResult> GetStations(IStationRepository stationRepository)
+    public static async Task<IResult> GetStations(
+        [FromServices] IStationRepository stationRepository
+    )
     {
         try
         {
@@ -421,16 +468,19 @@ public static class PublicController
         Summary = "Refresh access token.",
         Description = "Return a new access token if the refresh token is valid and not expired to the user."
     )]
-    public static async Task<IResult> RefreshJWT(ILogger<object> logger, [FromBody] TokenRequest tokenRequest, IUserRepository userRepository, IJWTService jWTService, IHasher hasher)
+    public static async Task<IResult> RefreshJWT(
+        [FromServices] ILogger<object> logger, 
+        [FromBody] TokenRequest tokenRequest, 
+        [FromServices] IUserRepository userRepository, 
+        [FromServices] IJWTService jWTService, 
+        [FromServices] IHasher hasher)
     {
         try
         {
-            var claims = new 
-            JwtSecurityTokenHandler().
+            var claims = new JwtSecurityTokenHandler().
             ReadJwtToken(
-               tokenRequest.Token 
-            ).
-            Claims;
+                tokenRequest.Token 
+            ).Claims;
             int userId = Convert.ToInt32(claims.First(e => e.Type == ClaimTypes.Sid).Value);
             string username = claims.First(e => e.Type == ClaimTypes.Name).Value;
             var user = await userRepository.GetUserTokenAsync(new User
@@ -439,10 +489,14 @@ public static class PublicController
                 Username = username
             });
             if (
+                user.RefreshToken == null || 
+                user.TokenPadding == null ||
+                user.TokenExpiredTime == null ||
                 DateTime.UtcNow.CompareTo(user.TokenExpiredTime) > 0 ||
-                !hasher.Verify(user, tokenRequest.RefreshToken + user.TokenPadding!, user.RefreshToken!)
+                !hasher.Verify(user, tokenRequest.RefreshToken + user.TokenPadding, user.RefreshToken)
             )
                 return TypedResults.Unauthorized();
+            
             return TypedResults.Ok(
                 new TokenResponse
                 {
@@ -456,13 +510,57 @@ public static class PublicController
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.StackTrace);
-            if (ex is PostgresException)
+            if (ex is PostgresException || ex is SecurityTokenMalformedException)
             {
                 return TypedResults.Unauthorized();
             }
             return TypedResults.InternalServerError();
         }
 
+    }
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerOperation(
+        Summary = "Logout user",
+        Description = "Destroy refresh token to invalidate future requests if the user does not sign in again."
+    )]
+    public static async Task<IResult> Logout(
+        HttpContext context,
+        [FromBody] LogOutRequest logOutRequest,
+        [FromServices] IUserRepository userRepository,
+        [FromServices] IJWTService jWTService
+    ){
+        try{
+            if (jWTService.Verify(logOutRequest.Token)){
+                var claims = new JwtSecurityTokenHandler().
+                ReadJwtToken(
+                logOutRequest.Token 
+                ).Claims;
+                var username = claims.First(e => e.Type == ClaimTypes.Name).Value;
+                var userId = Convert.ToInt32(claims.First(e => e.Type == ClaimTypes.Sid).Value);
+                var res = await userRepository.UpdateAsync(
+                    new User{
+                        RefreshToken = null,
+                        TokenPadding = null,
+                        TokenExpiredTime = null,
+                        LastModifiedBy = username,
+                        UserId = userId
+                    }
+                );
+                if (res > 0){
+                    context.Response.Cookies.Delete("XSRF-COOKIE");
+                    return TypedResults.Ok();
+                }
+            }
+            return TypedResults.Unauthorized();
+        }
+        catch(PostgresException){
+            return TypedResults.Unauthorized();
+        }
+        catch(Exception ex){
+            Console.WriteLine($"Why: {ex.Message}");
+            return TypedResults.InternalServerError();
+        }
     }
 }

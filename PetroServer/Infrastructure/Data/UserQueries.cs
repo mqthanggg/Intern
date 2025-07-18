@@ -52,7 +52,7 @@ public static class UserQuery{
         SET
             refresh_token = @RefreshToken,
             token_padding = @TokenPadding,
-            token_expired_time = now() + INTERVAL '7 days',
+            token_expired_time = @TokenExpiredTime,
             last_modified_by = @LastModifiedBy,
             last_modified_date = now()
         WHERE
