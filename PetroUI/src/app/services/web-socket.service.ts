@@ -22,6 +22,9 @@ export class WebSocketService {
       };
     }
   }
+  getSocket(key: string): WebSocket | undefined {
+    return this.sockets[key] || undefined;
+  }
 
   send(key: string, data: any): void {
     if (this.sockets[key]?.readyState === WebSocket.OPEN) {

@@ -3,7 +3,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
       <path d="M3 13h2v-2H3v2zm4 0h14v-2H7v2z" />
     </svg>
-    <h2 class="text-2xl font-semibold text-gray-700">Báo cáo trạm: {{ this.id }}</h2>
+    <h2 class="text-2xl font-semibold text-gray-700">Report station: {{ this.id }}</h2>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-x-5 gap-3">
     <div class="bg-white p-5 rounded-2xl shadow">
@@ -20,8 +20,34 @@
       <h2 class="text-3xl font-bold text-blue-400">{{ totalProfit | currency: 'USD':'symbol':'1.0-2' }}</h2>
     </div>
   </div>
-  <div>
-    <canvas baseChart *ngIf="barChartData" [data]="barChartData" [type]="'bar'" [options]="barChartOptions" class="w-200">
-    </canvas>
+  <h1 class="font-semibold text-center text-xl">Biểu đồ Doanh thu & Lợi nhuận của Trạm theo
+    Thời gian</h1>
+  <div class="flex flex-col items-center justify-center space-y-4">
+    <!-- Dropdown chọn loại biểu đồ -->
+    <div class="w-full flex justify-end pr-4">
+      <select id="chartType"
+        class="border border-gray-300 rounded px-4 py-2 shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
+        [(ngModel)]="selectedChart" (change)="onChartTypeChange()">
+        <option value="day">By day</option>
+        <option value="month">By month</option>
+        <option value="year">By year</option>
+      </select>
+    </div>
+    <!-- Biểu đồ -->
+    <div class="w-full flex justify-center">
+      <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
+        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+      <canvas baseChart *ngIf="selectedChart === 'month' && barChartMonthData" [data]="barChartMonthData" [type]="'bar'"
+        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+      <canvas baseChart *ngIf="selectedChart === 'year' && barChartYearData" [data]="barChartYearData" [type]="'bar'"
+        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+    </div>
   </div>
+  
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelDateData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelMonthData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelYearData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeDateData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeMonthData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeYearData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
 </div>

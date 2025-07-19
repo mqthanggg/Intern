@@ -16,18 +16,18 @@ public static class PublicController
         app.MapPost("login", Login);
         app.MapPost("register", RegisterAccount);
         app.MapPost("refresh", RefreshJWT);
-        
+
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
         app.MapPut("log/update", UpdateLogTime);
-       
-       
+
+        app.Map("ws/log/station/{id}", GetLogByStatioWS);
         return app;
     }
     [Authorize]
     [ProducesResponseType(201)]
-    [ProducesResponseType(typeof(ErrorResponse),400)]
-    [ProducesResponseType(typeof(ErrorResponse),404)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
     [ProducesResponseType(409)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -37,7 +37,7 @@ public static class PublicController
     private static async Task<IResult> RegisterAccount([FromBody] RegisterRequest body, IHasher hasher, IUserRepository userRepository)
     {
         if (
-            string.IsNullOrWhiteSpace(body.Username) || 
+            string.IsNullOrWhiteSpace(body.Username) ||
             string.IsNullOrWhiteSpace(body.Password)
         )
             return TypedResults.BadRequest(new ErrorResponse { Why = "Missing username or password" });
@@ -202,6 +202,52 @@ public static class PublicController
         );
     }
 
+    public static async Task GetLogByStatioWS(HttpContext context,
+        [FromRoute] int id,
+        [FromServices] ILogRepository logRepository,
+        [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await logRepository.GetLogByStationIdAsync(new Station { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+
+
+
     [Authorize]
     [ProducesResponseType(typeof(List<DispenserResponse>), 200)]
     [Produces("application/json")]
@@ -285,7 +331,8 @@ public static class PublicController
                             continue;
                         return TypedResults.InternalServerError(new ErrorResponse { Why = column });
                     }
-                    catch (PostgresException e){
+                    catch (PostgresException e)
+                    {
                         return TypedResults.InternalServerError(new ErrorResponse { Why = e.Message });
                     }
                     break;
@@ -342,7 +389,7 @@ public static class PublicController
         int res;
         try
         {
-            res = await stationRepository.UpdateAsync(new Station { StationId = id, Name = body.Name, Address = body.Address});
+            res = await stationRepository.UpdateAsync(new Station { StationId = id, Name = body.Name, Address = body.Address });
         }
         catch (PostgresException)
         {
@@ -426,4 +473,6 @@ public static class PublicController
         }
 
     }
+
+
 }

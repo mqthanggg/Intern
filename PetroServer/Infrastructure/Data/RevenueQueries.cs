@@ -130,11 +130,11 @@ public static class RevenueQueries
             SELECT DATE(l.""time"") AS ngay
             FROM petro_application.dispenser d
             JOIN petro_application.log l ON l.dispenser_id = d.dispenser_id
-            WHERE d.station_id = 1
+            WHERE d.station_id = @StationId
             UNION
             SELECT DATE(r.receipt_date) AS ngay
             FROM petro_application.receipt r
-            WHERE r.station_id = 1
+            WHERE r.station_id = @StationId
         ),
         total_sales AS (
             SELECT 
@@ -143,7 +143,7 @@ public static class RevenueQueries
                 SUM(l.total_liters) AS total_liters
             FROM petro_application.dispenser d
             JOIN petro_application.log l ON l.dispenser_id = d.dispenser_id
-            WHERE d.station_id = 1
+            WHERE d.station_id = @StationId
             GROUP BY DATE(l.""time"")
         ),
         total_purchases AS (
@@ -151,7 +151,7 @@ public static class RevenueQueries
                 DATE(r.receipt_date) AS ngay,
                 SUM(r.total_import) AS total_import
             FROM petro_application.receipt r
-            WHERE r.station_id = 1
+            WHERE r.station_id = @StationId
             GROUP BY DATE(r.receipt_date)
         )
         SELECT 
@@ -248,6 +248,7 @@ public static class RevenueQueries
         JOIN petro_application.station s ON s.station_id = @StationId
         ORDER By y.nam;
     ";
+
     // SumRevenue query returns the total revenue AND liters for the current shift (morning, afternoon, or night).
     public static readonly string SumFuelbyName = $@"
         SELECT 

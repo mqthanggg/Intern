@@ -164,12 +164,12 @@ export class HomeComponent implements OnInit {
   }
 
   connectWebsocket(): void {
-    this.barsocket = new WebSocket(environment.wsServerURI + '/ws/sumrevenue');
-    this.barsocket.onopen = () => console.log('Bar Chart display Websocket connected');
-    this.barsocket.onmessage = (event) => {
-      this.handleBarChartData(event);
-    };
-    this.barsocket.onerror = err => console.error('WebSocket Error', err);
+    this.wsService.connect('barchar', environment.wsServerURI + '/ws/sumrevenue');
+    this.barsocket = this.wsService.getSocket('barchar');
+    if (this.barsocket) {
+      this.barsocket.onopen = () => console.log('bar char websocket connected');
+      this.barsocket.onmessage = (event) => this.handleBarChartData(event);
+    }
 
     //===============================================================
     // ✅ Load sum revenue
@@ -311,7 +311,7 @@ export class HomeComponent implements OnInit {
       };
 
     };
-    this.barsocket.onerror = err => console.error('WebSocket Error', err);
+    // this.barsocket.onerror = err => console.error('WebSocket Error', err);
   }
 
   ngOnDestroy(): void {

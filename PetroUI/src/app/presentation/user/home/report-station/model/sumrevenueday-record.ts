@@ -13,3 +13,38 @@ export interface WSrevenuestationday{
     revenue:number;
     profit:number;
 }
+
+// ===============================
+export interface revenuefuelday{
+    StationId :number;
+    Date: string;
+    FuelName: string;
+    TotalAmount: number;
+    TotalLiters:number;
+}
+
+export interface WSrevenuefuelday{
+    id: number;
+    date:string;
+    fuelname: string;
+    amount:number;
+    liters:number;
+}
+
+// ===============================
+export interface revenuetypeday{
+    StationId :number;
+    Date: string;
+    logTypeName: string;
+    totalAmount: number;
+    totalLiters:number;
+}
+
+export interface WSrevenuetypeday{
+    id: number;
+    date:string;
+    logname: string;
+    amount:number;
+    liters:number;
+}
+

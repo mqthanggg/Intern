@@ -32,21 +32,29 @@ public static class ReportController
         app.Map("ws/station/{id}", GetSumRevenueByStationWS);
         app.Map("ws/shift/type/{id}", GetSumRevenueShiftByTypeWS);
         app.Map("ws/shift/name/{id}", GetSumRevenueShiftByNameWS);
-        app.Map("ws/station/sumrevenueday/{id}", GetSumRevenueByStationDayWS);
+        app.Map("ws/day/type/{id}", GetSumRevenueDayByTypeWS);
+        app.Map("ws/day/name/{id}", GetSumRevenueDayByNameWS);
+        app.Map("ws/month/type/{id}", GetSumRevenueMonthByTypeWS);
+        app.Map("ws/month/name/{id}", GetSumRevenueMonthByNameWS);
+        app.Map("ws/year/type/{id}", GetSumRevenueYearByTypeWS);
+        app.Map("ws/year/name/{id}", GetSumRevenueYearByNameWS);
+        app.Map("ws/station/revenueday/{id}", GetSumRevenueByStationDayWS);
+        app.Map("ws/station/revenuemonth/{id}", GetSumRevenueByStationMonthWS);
+        app.Map("ws/station/revenueyear/{id}", GetSumRevenueByStationYearWS);
         app.Map("ws/{device}/{id}", GetWS);
         return app;
     }
 
     //===========================================================
     //======================== HTTP =============================
-     [Authorize]
+    [Authorize]
     [HttpGet("sumrevenuebystatioyear/{id}")]
     [ProducesResponseType(typeof(SumRevenueStationByYearResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
-        Summary = "Report revenue with year of each station",
-        Description = "Report total of revenue in each station by year, such as liters, revenue, import, profit"
-    )]
+       Summary = "Report revenue with year of each station",
+       Description = "Report total of revenue in each station by year, such as liters, revenue, import, profit"
+   )]
     public static async Task<IResult> GetSumRevenueByStationYear([FromRoute] int id, [FromServices] IRevenueRepository revenueRepository)
     {
         var result = await revenueRepository.GetTotalRevenueStationYearAsync(new GetIdRevenue { StationId = id });
@@ -114,7 +122,7 @@ public static class ReportController
         }
         return TypedResults.Ok(result);
     }
-    
+
     [Authorize]
     [HttpGet("sumrevenueday")]
     [ProducesResponseType(typeof(List<SumRevenueByDateResponse>), 200)]
@@ -526,6 +534,88 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+    public static async Task GetSumRevenueByStationMonthWS(HttpContext context, [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueStationMonthAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueByStationYearWS(HttpContext context, [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueStationYearAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
     public static async Task GetSumRevenueWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -836,7 +926,6 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
-
     public static async Task GetSumRevenueShiftByNameWS(HttpContext context,
     [FromRoute] int id,
     [FromServices] IRevenueRepository revenueRepository,
@@ -924,6 +1013,92 @@ public static class ReportController
         }
     }
     public static async Task GetSumRevenueDayByTypeWS(HttpContext context,
+  [FromRoute] int id,
+  [FromServices] IRevenueRepository revenueRepository,
+  [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByTypeDayAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueMonthByNameWS(HttpContext context,
+       [FromRoute] int id,
+       [FromServices] IRevenueRepository revenueRepository,
+       [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByNameMonthAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueMonthByTypeWS(HttpContext context,
     [FromRoute] int id,
     [FromServices] IRevenueRepository revenueRepository,
     [FromServices] ILogger<object> logger)
@@ -941,7 +1116,93 @@ public static class ReportController
         {
             while (socket.State == WebSocketState.Open)
             {
-                var result = await revenueRepository.GetTotalRevenueByTypeDayAsync(new GetIdRevenue { StationId = id });
+                var result = await revenueRepository.GetTotalRevenueByTypeMonthAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueYearByNameWS(HttpContext context,
+       [FromRoute] int id,
+       [FromServices] IRevenueRepository revenueRepository,
+       [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByNameYearAsync(new GetIdRevenue { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+    public static async Task GetSumRevenueYearByTypeWS(HttpContext context,
+        [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository,
+        [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTotalRevenueByTypeMonthAsync(new GetIdRevenue { StationId = id });
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {

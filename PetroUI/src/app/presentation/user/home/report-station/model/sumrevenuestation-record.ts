@@ -1,5 +1,6 @@
 export interface revenuestation{
     StationId :number;
+    stationName: string;
     TotalRevenue: number,
     TotalLiters: number,
     TotalProfit:number;
