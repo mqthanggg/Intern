@@ -20,6 +20,7 @@
       <h2 class="text-3xl font-bold text-blue-400">{{ totalProfit | currency: 'USD':'symbol':'1.0-2' }}</h2>
     </div>
   </div>
+  <!-- <button mat-raised-button color="primary" (click)="openDialog()">Mở hộp thoại</button> -->
   <h1 class="font-semibold text-center text-xl">Biểu đồ Doanh thu & Lợi nhuận của Trạm theo
     Thời gian</h1>
   <div class="flex flex-col items-center justify-center space-y-4">
@@ -44,10 +45,11 @@
     </div>
   </div>
   
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelDateData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelMonthData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartFuelYearData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeDateData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeMonthData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
-<!-- <canvas baseChart [type]="'pie'" [data]="pieChartTypeYearData" [options]="PieChartFuelOption" class="w-100"></canvas> -->
+<canvas baseChart [type]="'pie'" [data]="pieChartFuelDateData" [options]="PieChartFuelOption" class="w-100"></canvas>
+<canvas baseChart [type]="'pie'" [data]="pieChartFuelMonthData" [options]="PieChartFuelOption" class="w-100"></canvas>
+<canvas baseChart [type]="'pie'" [data]="pieChartFuelYearData" [options]="PieChartFuelOption" class="w-100"></canvas>
+<canvas baseChart [type]="'pie'" [data]="pieChartTypeDateData" [options]="PieChartFuelOption" class="w-100"></canvas>
+<canvas baseChart [type]="'pie'" [data]="pieChartTypeMonthData" [options]="PieChartFuelOption" class="w-100"></canvas>
+<canvas baseChart [type]="'pie'" [data]="pieChartTypeYearData" [options]="PieChartFuelOption" class="w-100"></canvas>
 </div>
+

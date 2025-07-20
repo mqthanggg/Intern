@@ -13,6 +13,8 @@ import { revenuefuelmonth, revenuestationmonth, revenuetypemonth, WSrevenuefuelm
 import { revenuefuelyear, revenuestationyear, revenuetypeyear, WSrevenuefuelyear, WSrevenuestationyear, WSrevenuetypeyear } from './model/sumrevenueyear-record';
 import { FormsModule } from '@angular/forms';
 import { timeInterval } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+// import { MyDialogComponent } from './my-dialog/my-dialog.component';
 @Component({
     standalone: true,
     selector: 'app-report-station',
@@ -179,8 +181,14 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     Yeartypepie: string[] = [];
     YearTotalAmount: number[] = [];
     pieChartTypeYearData: any = {};
-
+    // openDialog() {
+    //     this.dialog.open(MyDialogComponent, {
+    //         width: '400px',
+    //         disableClose: false
+    //     });
+    // }
     constructor(
+        private dialog: MatDialog,
         private router: Router,
         private http: HttpClient
     ) { }
@@ -358,10 +366,10 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     this.piecharttypedaySocket[value.StationId] = webSocket<WSrevenuetypeday>(environment.wsServerURI + `/ws/day/type/${this.id}?token=${localStorage.getItem('jwt')}`)
                     this.piecharttypedaySocket[value.StationId].subscribe({
                         next: (Datares: WSrevenuetypeday) => {
-                            res[index].logTypeName = Datares.logname
+                            res[index].LogTypeName = Datares.logname
                             res[index].Date = Datares.date
-                            res[index].totalAmount = Datares.amount
-                            res[index].totalLiters = Datares.liters
+                            res[index].TotalAmount = Datares.amount
+                            // res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
                             console.error(`Error at station ${value.StationId}: ${err}`);
@@ -369,9 +377,9 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     })
 
                 })
-                this.DayTypeName = this.revtypeday.map((item) => item.logTypeName);
+                this.DayTypeName = this.revtypeday.map((item) => item.LogTypeName);
                 this.Date = this.revtypeday.map((item) => item.Date);
-                this.DayTotalAmount = this.revtypeday.map((item) => item.totalAmount);
+                this.DayTotalAmount = this.revtypeday.map((item) => item.TotalAmount);
                 this.pieChartTypeDateData = {
                     labels: this.DayTypeName,
                     datasets: [{
@@ -401,19 +409,19 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     this.piecharttypemonthSocket[value.StationId] = webSocket<WSrevenuetypemonth>(environment.wsServerURI + `/ws/month/type/${this.id}?token=${localStorage.getItem('jwt')}`)
                     this.piecharttypemonthSocket[value.StationId].subscribe({
                         next: (Datares: WSrevenuetypemonth) => {
-                            res[index].logTypeName = Datares.name
+                            res[index].LogTypeName = Datares.name
                             res[index].Month = Datares.month
-                            res[index].totalAmount = Datares.amount
-                            res[index].totalLiters = Datares.liters
+                            res[index].TotalAmount = Datares.amount
+                            // res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
                             console.error(`Error at station ${value.StationId}: ${err}`);
                         }
                     })
                 })
-                this.MonthTypeName = this.revtypemonth.map((item) => item.logTypeName);
+                this.MonthTypeName = this.revtypemonth.map((item) => item.LogTypeName);
                 this.Month = this.revtypemonth.map((item) => item.Month);
-                this.MonthTotalAmount = this.revtypemonth.map((item) => item.totalAmount);
+                this.MonthTotalAmount = this.revtypemonth.map((item) => item.TotalAmount);
                 this.pieChartTypeMonthData = {
                     labels: this.MonthTypeName,
                     datasets: [{
@@ -531,12 +539,12 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             next: res => {
                 this.revstationmonth = res
                 console.log('-- Bar Chart month Websocket connected');
-                console.log("month data: ", res)
+                console.log("month data: ", res)                
                 this.revstationday.forEach((value, index) => {
                     this.revstationMonthSocket[value.StationId] = webSocket<WSrevenuestationmonth>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}?token=${localStorage.getItem('jwt')}`)
                     this.revstationMonthSocket[value.StationId].subscribe({
                         next: (Datares: WSrevenuestationmonth) => {
-                            res[index].Month = Datares.Month
+                            // res[index].Month = Datares.Month
                             res[index].TotalRevenue = Datares.revenue
                             res[index].TotalProfit = Datares.profit
                         },
@@ -546,18 +554,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     })
 
                 })
-                // const sortMonth = Array.from(new Set(
-                //     res.map(item => {
-                //         const [year, month] = item.month.split('-');
-                //         return `Tháng ${parseInt(month)}/${year}`;
-                //     })
-                // )).sort();
-                // this.Month = sortMonth.map(month => {
-                //     const date = new Date(month);
-                //     const monthNum = date.getMonth() + 1; 
-                //     const year = date.getFullYear();
-                //     return `Tháng ${monthNum.toString().padStart(2, '0')}/${year}`;
-                // });
                 this.Month = this.revstationmonth.map((item) => item.Month);
                 this.MonthAccount = this.revstationmonth.map((item) => item.TotalRevenue);
                 this.MonthProfit = this.revstationmonth.map((item) => item.TotalProfit);

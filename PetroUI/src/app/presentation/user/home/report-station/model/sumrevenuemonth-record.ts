@@ -35,8 +35,8 @@ export interface WSrevenuefuelmonth{
 export interface revenuetypemonth{
     StationId :number;
     Month: string;
-    logTypeName: string;
-    totalAmount: number;
+    LogTypeName: string;
+    TotalAmount: number;
     totalLiters:number;
 }
 

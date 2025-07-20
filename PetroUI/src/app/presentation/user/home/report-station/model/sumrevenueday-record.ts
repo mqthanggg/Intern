@@ -35,8 +35,8 @@ export interface WSrevenuefuelday{
 export interface revenuetypeday{
     StationId :number;
     Date: string;
-    logTypeName: string;
-    totalAmount: number;
+    LogTypeName: string;
+    TotalAmount: number;
     totalLiters:number;
 }
 
