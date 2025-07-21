@@ -54,7 +54,6 @@ public class RevenueRepository : IRevenueRepository
             return result;
         }
     }
-    
     public async Task<IReadOnlyList<SumStationResponse>> GetTotalRevenueStationtAsync()
     {
         await using (var connection = dbRead.CreateConnection())
@@ -95,8 +94,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
-
     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameShiftAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -105,7 +102,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
     public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeShiftAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -114,7 +110,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
      public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameDayAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())

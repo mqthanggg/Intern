@@ -450,10 +450,13 @@ public static class ReportController
             }
         }
     }
-    public static async Task GetSumRevenueByStationWS(HttpContext context,
-           [FromRoute] int id,
-           [FromServices] IRevenueRepository revenueRepository,
-           [FromServices] ILogger<object> logger)
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for report total of each station",
+        Description = "Return a web socket for total revenue for each station, such as liters, revenue, import, profit"
+    )]
+    public static async Task GetSumRevenueByStationWS(HttpContext context, [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -493,6 +496,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total station by day",
+        Description = "Return a web socket for total station of each stations by day in the system."
+    )]
     public static async Task GetSumRevenueByStationDayWS(HttpContext context, [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
@@ -534,6 +542,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total station by month",
+        Description = "Return a web socket for total station of each stations by month in the system."
+    )]
     public static async Task GetSumRevenueByStationMonthWS(HttpContext context, [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
@@ -575,6 +588,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+      Summary = "Obtain web socket for total station by year",
+      Description = "Return a web socket for total station of each stations by year in the system."
+    )]
     public static async Task GetSumRevenueByStationYearWS(HttpContext context, [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
@@ -616,6 +634,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+       Summary = "Obtain web socket for report revenue with year of each station",
+       Description = "Return a web socket for report total of revenue in each station by year, such as liters, revenue, import, profit"
+   )]
     public static async Task GetSumRevenueWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -654,6 +677,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total stations",
+        Description = "Return a web socket for total the number of stations for the current in table station"
+    )]
     public static async Task GetTotalRevenueStationWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -692,6 +720,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total stations",
+        Description = "Return a web socket for total the number of stations for the current in table station"
+    )]
     public static async Task GetSumStationWS(HttpContext context, [FromServices] IStationRepository stationRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -730,6 +763,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total of revenue by type",
+        Description = "Return a web socket for total of revenue in 7 days by type, such as Ban le, Cong no, Khuyen mai, Tra truoc"
+    )]
     public static async Task GetTotalRevenueByType7dayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -768,6 +806,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total of revenue by name",
+        Description = "Return a web socket for total of revenue by name"
+    )]
     public static async Task GetTotalRevenueByNameWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -806,6 +849,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total of revenue by type",
+        Description = "Return a web socket for total of revenue by type"
+    )]
     public static async Task GetTotalRevenueByTypeWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -845,6 +893,10 @@ public static class ReportController
         }
     }
 
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total of revenue by day",
+        Description = "Return a web socket for total of revenue by day"
+    )]
     public static async Task GetTotalRevenueDayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
@@ -883,6 +935,11 @@ public static class ReportController
             TypedResults.NotFound(ex);
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total type for shift",
+        Description = "Return a web socket for total revenue statistics for the current shift by type"
+    )]
     public static async Task GetSumRevenueShiftByTypeWS(HttpContext context,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,
@@ -926,10 +983,15 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total name for shift",
+        Description = "Return a web socket for total revenue statistics for the current shift by name"
+    )]
     public static async Task GetSumRevenueShiftByNameWS(HttpContext context,
-    [FromRoute] int id,
-    [FromServices] IRevenueRepository revenueRepository,
-    [FromServices] ILogger<object> logger)
+        [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository,
+        [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -969,10 +1031,15 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+         Summary = "Obtain web socket for total name for day",
+         Description = "Return a web socket for total revenue statistics for the current day by name"
+     )]
     public static async Task GetSumRevenueDayByNameWS(HttpContext context,
-    [FromRoute] int id,
-    [FromServices] IRevenueRepository revenueRepository,
-    [FromServices] ILogger<object> logger)
+        [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository,
+        [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1012,10 +1079,15 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+       Summary = "Obtain web socket for total type for day",
+       Description = "Return a web socket for total revenue statistics for the current day by type"
+   )]
     public static async Task GetSumRevenueDayByTypeWS(HttpContext context,
-  [FromRoute] int id,
-  [FromServices] IRevenueRepository revenueRepository,
-  [FromServices] ILogger<object> logger)
+       [FromRoute] int id,
+       [FromServices] IRevenueRepository revenueRepository,
+       [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1055,6 +1127,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total name for month",
+        Description = "Return a web socket for total revenue statistics for the current month by name"
+    )]
     public static async Task GetSumRevenueMonthByNameWS(HttpContext context,
        [FromRoute] int id,
        [FromServices] IRevenueRepository revenueRepository,
@@ -1098,10 +1175,15 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+       Summary = "Obtain web socket for total type for month",
+       Description = "Return a web socket for total revenue statistics for the current month by type"
+   )]
     public static async Task GetSumRevenueMonthByTypeWS(HttpContext context,
-    [FromRoute] int id,
-    [FromServices] IRevenueRepository revenueRepository,
-    [FromServices] ILogger<object> logger)
+        [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository,
+        [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1141,6 +1223,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for total name for year",
+        Description = "Return a web socket for total revenue statistics for the current year by name"
+    )]
     public static async Task GetSumRevenueYearByNameWS(HttpContext context,
        [FromRoute] int id,
        [FromServices] IRevenueRepository revenueRepository,
@@ -1184,6 +1271,11 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
+
+    [SwaggerOperation(
+           Summary = "Obtain web socket for total type for year",
+           Description = "Return a web socket for total revenue statistics for the current year by type"
+       )]
     public static async Task GetSumRevenueYearByTypeWS(HttpContext context,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,

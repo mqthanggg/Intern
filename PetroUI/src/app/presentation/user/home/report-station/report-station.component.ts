@@ -12,9 +12,6 @@ import { ChartDataset, ChartOptions } from 'chart.js';
 import { revenuefuelmonth, revenuestationmonth, revenuetypemonth, WSrevenuefuelmonth, WSrevenuestationmonth, WSrevenuetypemonth } from './model/sumrevenuemonth-record';
 import { revenuefuelyear, revenuestationyear, revenuetypeyear, WSrevenuefuelyear, WSrevenuestationyear, WSrevenuetypeyear } from './model/sumrevenueyear-record';
 import { FormsModule } from '@angular/forms';
-import { timeInterval } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-// import { MyDialogComponent } from './my-dialog/my-dialog.component';
 @Component({
     standalone: true,
     selector: 'app-report-station',
@@ -33,13 +30,34 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     TotalLitters = 0;
     TotalRevenue = 0;
     totalProfit = 0;
-    // Load Bar chart 
+    // Load Bar chart  
+    public barChartOptions: ChartOptions<'bar'> = {
+        responsive: false,
+        animation: {
+            duration: 0
+        },
+        plugins: {
+            legend: { display: true },
+            tooltip: {
+                enabled: false
+            }
+        },
+    };
     revstationDaySocket: { [key: string]: WebSocketSubject<WSrevenuestationday> } = {}
     revenuedaysocket: WebSocketSubject<revenuestationday[]> | undefined;
     revstationday: revenuestationday[] = [];
     Day: string[] = [];
     DayAccount: number[] = [];
     DayProfit: number[] = [];
+    public barChartData: {
+        labels: string[],
+        datasets: ChartDataset<'bar'>[]
+    } = {
+            labels: ['Doanh thu', 'Lợi nhuận'],
+            datasets: [
+                { data: [0, 0], label: 'VNĐ' }
+            ]
+        };
 
     revstationMonthSocket: { [key: string]: WebSocketSubject<WSrevenuestationmonth> } = {}
     revenuemonthsocket: WebSocketSubject<revenuestationmonth[]> | undefined;
@@ -47,6 +65,15 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     Month: string[] = [];
     MonthAccount: number[] = [];
     MonthProfit: number[] = [];
+    public barChartMonthData: {
+        labels: string[],
+        datasets: ChartDataset<'bar'>[]
+    } = {
+            labels: ['Doanh thu', 'Lợi nhuận'],
+            datasets: [
+                { data: [0, 0], label: 'VNĐ' }
+            ]
+        };
 
     revstationYearSocket: { [key: string]: WebSocketSubject<WSrevenuestationyear> } = {}
     revenueyearsocket: WebSocketSubject<revenuestationyear[]> | undefined;
@@ -54,6 +81,15 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     Year: string[] = [];
     YearAccount: number[] = [];
     YearProfit: number[] = [];
+    public barChartYearData: {
+        labels: string[],
+        datasets: ChartDataset<'bar'>[]
+    } = {
+            labels: ['Doanh thu', 'Lợi nhuận'],
+            datasets: [
+                { data: [0, 0], label: 'VNĐ' }
+            ]
+        };
     
     dropdownOpen = false;
     selectedChart: 'day' | 'month' | 'year' = 'day';
@@ -73,53 +109,8 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     toggleDropdown() {
         this.dropdownOpen = !this.dropdownOpen;
     }
-    public barChartOptions: ChartOptions<'bar'> = {
-        responsive: false,
-        animation: {
-            duration: 0
-        },
-        plugins: {
-            legend: { display: true },
-            tooltip: {
-                enabled: false
-            }
-        },
-    };
-    public barChartData: {
-        labels: string[],
-        datasets: ChartDataset<'bar'>[]
-    } = {
-            labels: ['Doanh thu', 'Lợi nhuận'],
-            datasets: [
-                { data: [0, 0], label: 'VNĐ' }
-            ]
-        };
-    public barChartMonthData: {
-        labels: string[],
-        datasets: ChartDataset<'bar'>[]
-    } = {
-            labels: ['Doanh thu', 'Lợi nhuận'],
-            datasets: [
-                { data: [0, 0], label: 'VNĐ' }
-            ]
-        };
-    public barChartYearData: {
-        labels: string[],
-        datasets: ChartDataset<'bar'>[]
-    } = {
-            labels: ['Doanh thu', 'Lợi nhuận'],
-            datasets: [
-                { data: [0, 0], label: 'VNĐ' }
-            ]
-        };
+
     // Load pie totalliters by name chart
-    piechartfueldaySocket: { [key: string]: WebSocketSubject<WSrevenuefuelday> } = {}
-    piechartfueldaysocket: WebSocketSubject<revenuefuelday[]> | undefined;
-    revfuelday: revenuefuelday[] = [];
-    DayFuelName: string[] = [];
-    Date: string[] = [];
-    DayTotalLiters: number[] = [];
-    pieChartFuelDateData: any = {};
     public PieChartFuelOption: ChartOptions<'pie'> = {
         responsive: false,
         animation: false,
@@ -130,7 +121,14 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             }
         }
     };
-
+    piechartfueldaySocket: { [key: string]: WebSocketSubject<WSrevenuefuelday> } = {}
+    piechartfueldaysocket: WebSocketSubject<revenuefuelday[]> | undefined;
+    revfuelday: revenuefuelday[] = [];
+    DayFuelName: string[] = [];
+    Date: string[] = [];
+    DayTotalLiters: number[] = [];
+    pieChartFuelDateData: any = {};
+   
     piechartfuelmonthSocket: { [key: string]: WebSocketSubject<WSrevenuefuelmonth> } = {}
     piechartfuelmonthsocket: WebSocketSubject<revenuefuelmonth[]> | undefined;
     revfuelmonth: revenuefuelmonth[] = [];
@@ -148,13 +146,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     pieChartFuelYearData: any = {};
 
     // Load pie totalamount by logtype chart
-    piecharttypedaySocket: { [key: string]: WebSocketSubject<WSrevenuetypeday> } = {}
-    piecharttypedaysocket: WebSocketSubject<revenuetypeday[]> | undefined;
-    revtypeday: revenuetypeday[] = [];
-    DayTypeName: string[] = [];
-    DateType: string[] = [];
-    DayTotalAmount: number[] = [];
-    pieChartTypeDateData: any = {};
     public PieChartTypeOption: ChartOptions<'pie'> = {
         responsive: false,
         animation: false,
@@ -165,6 +156,13 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             }
         }
     };
+    piecharttypedaySocket: { [key: string]: WebSocketSubject<WSrevenuetypeday> } = {}
+    piecharttypedaysocket: WebSocketSubject<revenuetypeday[]> | undefined;
+    revtypeday: revenuetypeday[] = [];
+    DayTypeName: string[] = [];
+    DateType: string[] = [];
+    DayTotalAmount: number[] = [];
+    pieChartTypeDateData: any = {};
 
     piecharttypemonthSocket: { [key: string]: WebSocketSubject<WSrevenuetypemonth> } = {}
     piecharttypemonthsocket: WebSocketSubject<revenuetypemonth[]> | undefined;
@@ -188,7 +186,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     //     });
     // }
     constructor(
-        private dialog: MatDialog,
         private router: Router,
         private http: HttpClient
     ) { }

@@ -394,19 +394,19 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name, cre
 (12, 26, 4, 401, 'admin', 'admin'), (12, 27, 1, 402, 'admin', 'admin'), (12, 28, 2, 403, 'admin', 'admin'), (12, 29, 3, 404, 'admin', 'admin'), (12, 30, 4, 405, 'admin', 'admin');
 
 INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time, created_by, last_modified_by) VALUES
-(17, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) now() '08:20:00', 'admin', 'admin'),
-(6, 'A95', 1, 10.5, 26250, TIMESTAMP(0) now() '09:30:00', 'admin', 'admin'),
-(6, 'A95', 2, 8.2, 20500, TIMESTAMP(0) now()'14:10:00', 'admin', 'admin'),
-(6, 'A95', 2, 10.5, 26250, TIMESTAMP(0) now() '14:12:00', 'admin', 'admin'),
-(6, 'A95', 2, 8.2, 20500, TIMESTAMP(0) now() '15:30:00', 'admin', 'admin'),
-(6, 'A95', 3, 12.0, 30000, TIMESTAMP(0) now() '15:00:00', 'admin', 'admin'),
-(2, 'E5', 2, 9.0, 22500, TIMESTAMP(0) now() '16:45:00', 'admin', 'admin'),
-(7, 'E5', 1, 9.5, 21850, TIMESTAMP(0) now() '08:35:00', 'admin', 'admin'),
-(7, 'E5', 2, 7.8, 17940, TIMESTAMP(0) now() '08:50:00', 'admin', 'admin'),
-(7, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-06-10 15:05:00', 'admin', 'admin'),
-(7, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2025-06-11 16:45:00', 'admin', 'admin'),
-(8, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-06-12 08:40:00', 'admin', 'admin'),
-(8, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-06-13 08:55:00', 'admin', 'admin'),
+-- (17, 'DO1', 3, 12.0, 30000, CURRENT_DATE + TIME '08:20:00', 'admin', 'admin'),
+-- (6, 'A95', 1, 10.5, 26250,CURRENT_DATE + TIME '09:30:00', 'admin', 'admin'),
+-- (6, 'A95', 2, 8.2, 20500, CURRENT_DATE + TIME '14:10:00', 'admin', 'admin'),
+-- (6, 'A95', 4, 10.5, 26250,  CURRENT_DATE + TIME '14:12:00', 'admin', 'admin'),
+-- (6, 'A95', 4, 8.2, 20500,CURRENT_DATE + TIME '15:30:00', 'admin', 'admin'),
+-- (6, 'A95', 3, 12.0, 30000, CURRENT_DATE + TIME '15:00:00', 'admin', 'admin'),
+-- (2, 'E5', 2, 9.0, 22500, CURRENT_DATE + TIME '16:45:00', 'admin', 'admin'),
+-- (7, 'E5', 1, 9.5, 21850, CURRENT_DATE + TIME '08:35:00', 'admin', 'admin'),
+-- (7, 'E5', 2, 7.8, 17940, CURRENT_DATE + TIME '08:50:00', 'admin', 'admin'),
+-- (7, 'E5', 4, 11.2, 25760, CURRENT_DATE + TIME '15:05:00', 'admin', 'admin'),
+(7, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2024-06-11 16:45:00', 'admin', 'admin'),
+(8, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2024-06-12 08:40:00', 'admin', 'admin'),
+(8, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2024-06-13 08:55:00', 'admin', 'admin'),
 (8, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-06-14 08:10:00', 'admin', 'admin'),
 (8, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-06-15 17:20:00', 'admin', 'admin'),
 (8, 'DO1', 1, 10.1, 24847, TIMESTAMP(0) '2025-07-09 07:27:00', 'admin', 'admin'),
@@ -549,6 +549,8 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
 
+
+select * from petro_application.log 
 
 
 

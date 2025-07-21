@@ -202,6 +202,10 @@ public static class PublicController
         );
     }
 
+    [SwaggerOperation(
+        Summary = "Obtain web socket for logs by station ID.",
+        Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
+    )]
     public static async Task GetLogByStatioWS(HttpContext context,
         [FromRoute] int id,
         [FromServices] ILogRepository logRepository,
@@ -245,8 +249,6 @@ public static class PublicController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
-
-
 
     [Authorize]
     [ProducesResponseType(typeof(List<DispenserResponse>), 200)]
@@ -473,6 +475,4 @@ public static class PublicController
         }
 
     }
-
-
 }

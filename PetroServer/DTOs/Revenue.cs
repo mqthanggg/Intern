@@ -1,8 +1,11 @@
 
-public class SumRevenueResponse
+public class RevenueResponse
 {
     public decimal? TotalLiters { get; set; } = -1;
     public decimal? TotalRevenue { get; set; } = -1;
+}
+public class SumRevenueResponse : RevenueResponse
+{
     public decimal? TotalImport { get; set; } = -1;
     public decimal? TotalProfit { get; set; } = -1;
 }
@@ -11,7 +14,6 @@ public class SumStationResponse: SumRevenueResponse
 {
     public required int StationId { get; set; } = -1;
     public required string StationName { get; set; } = "";
-   
 }
 
 public class SumRevenueResponseByShift
