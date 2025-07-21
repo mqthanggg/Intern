@@ -90,8 +90,6 @@ public static class PublicController
         return TypedResults.Ok();
     }
 
-
-
     [Authorize]
     [ProducesResponseType(typeof(StaffResponse), 200)]
     [ProducesResponseType(404)]

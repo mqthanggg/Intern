@@ -17,10 +17,10 @@
     </div>
     <div class="bg-white p-5 rounded-2xl shadow">
       <p class="text-base text-gray-500">Total profit</p>
-      <h2 class="text-3xl font-bold text-blue-400">{{ totalProfit | currency: 'USD':'symbol':'1.0-2' }}</h2>
+      <h2 class="text-3xl font-bold text-blue-400">{{ TotalProfit | currency: 'USD':'symbol':'1.0-2' }}</h2>
     </div>
   </div>
-  <!-- <button mat-raised-button color="primary" (click)="openDialog()">Mở hộp thoại</button> -->
+  <!-- <button mat-raised-button color="primary"><a [routerLink]="['./report', station.stationId]" [queryParams]="{name: station.name, address: station.address}">Mở hộp thoại</a></button> -->
   <h1 class="font-semibold text-center text-xl">Biểu đồ Doanh thu & Lợi nhuận của Trạm theo
     Thời gian</h1>
   <div class="flex flex-col items-center justify-center space-y-4">
@@ -35,9 +35,9 @@
     </div>
     <div class="w-full flex justify-center">
       <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
-        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+        [options]="barChartOptions" class="w-full max-w-4xl h-80" (chartClick)="onChartClick($event)"></canvas>
       <canvas baseChart *ngIf="selectedChart === 'month' && barChartMonthData" [data]="barChartMonthData" [type]="'bar'"
-        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+        [options]="barChartOptions" class="w-full max-w-4xl h-80" (chartClick)="onChartClick($event)"></canvas>
       <canvas baseChart *ngIf="selectedChart === 'year' && barChartYearData" [data]="barChartYearData" [type]="'bar'"
         [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
     </div>

@@ -117,7 +117,6 @@ export class HomeComponent implements OnInit {
     if (event.active && event.active.length > 0) {
       const chartElement = event.active[0];
       const dataIndex = chartElement.index;
-
       const stationId = this.stationIdList[dataIndex];
       if (!stationId) {
         console.error('🚨 stationId is undefined!');
@@ -172,14 +171,15 @@ export class HomeComponent implements OnInit {
     }
 
     //===============================================================
-    // ✅ Load sum revenue
+    // ✅ Load sum revenue 
     this.revenuesocket = new WebSocket(environment.wsServerURI + '/ws/revenue');
     this.revenuesocket.onopen = () => console.log('Revenue Websocket connected');
-
     this.revenuesocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log('Received revenue:', data);
       this.revenueData = data;
+
+      console.log('--> Received revenue:', this.revenueData);
     };
     this.revenuesocket.onerror = (error) => console.error('Revenue Websocket error:', error);
     this.revenuesocket.onclose = () => console.warn('Revenue Websocket closed');

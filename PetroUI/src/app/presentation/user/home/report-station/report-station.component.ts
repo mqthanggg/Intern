@@ -6,12 +6,15 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
-import { revenuestation, WSrevenuestation } from './model/sumrevenuestation-record';
-import { revenuefuelday, revenuestationday, revenuetypeday, WSrevenuefuelday, WSrevenuestationday, WSrevenuetypeday } from './model/sumrevenueday-record';
-import { ChartDataset, ChartOptions } from 'chart.js';
-import { revenuefuelmonth, revenuestationmonth, revenuetypemonth, WSrevenuefuelmonth, WSrevenuestationmonth, WSrevenuetypemonth } from './model/sumrevenuemonth-record';
-import { revenuefuelyear, revenuestationyear, revenuetypeyear, WSrevenuefuelyear, WSrevenuestationyear, WSrevenuetypeyear } from './model/sumrevenueyear-record';
+import {
+    revenuefuelyear, revenuefuelday, revenuefuelmonth, revenuestation, revenuestationday, revenuestationmonth,
+    revenuestationyear, revenuetypeday, revenuetypemonth, revenuetypeyear, WSrevenuefuelmonth, WSrevenuefuelday,
+    WSrevenuefuelyear, WSrevenuestation, WSrevenuestationday, WSrevenuestationmonth, WSrevenuestationyear,
+    WSrevenuetypeday, WSrevenuetypemonth, WSrevenuetypeyear
+} from './model/sumrevenuestation-record';
+import { ChartDataset, ChartEvent, ChartOptions } from 'chart.js';
 import { FormsModule } from '@angular/forms';
+import { WebSocketService } from '../../../../services/web-socket.service';
 @Component({
     standalone: true,
     selector: 'app-report-station',
@@ -29,7 +32,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     DataProfit: number[] = [];
     TotalLitters = 0;
     TotalRevenue = 0;
-    totalProfit = 0;
+    TotalProfit = 0;
     // Load Bar chart  
     public barChartOptions: ChartOptions<'bar'> = {
         responsive: false,
@@ -44,9 +47,9 @@ export class ReportStationComponent implements OnInit, OnDestroy {
         },
     };
     revstationDaySocket: { [key: string]: WebSocketSubject<WSrevenuestationday> } = {}
-    revenuedaysocket: WebSocketSubject<revenuestationday[]> | undefined;
+    revenuedaysocket: WebSocketSubject<any> | undefined;
     revstationday: revenuestationday[] = [];
-    Day: string[] = [];
+    Date: string[] = [];
     DayAccount: number[] = [];
     DayProfit: number[] = [];
     public barChartData: {
@@ -90,7 +93,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 { data: [0, 0], label: 'VNĐ' }
             ]
         };
-    
+
     dropdownOpen = false;
     selectedChart: 'day' | 'month' | 'year' = 'day';
     onChartTypeChange() {
@@ -110,7 +113,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
         this.dropdownOpen = !this.dropdownOpen;
     }
 
-    // Load pie totalliters by name chart
+    // Load pie totalLiters by name chart
     public PieChartFuelOption: ChartOptions<'pie'> = {
         responsive: false,
         animation: false,
@@ -125,16 +128,16 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     piechartfueldaysocket: WebSocketSubject<revenuefuelday[]> | undefined;
     revfuelday: revenuefuelday[] = [];
     DayFuelName: string[] = [];
-    Date: string[] = [];
-    DayTotalLiters: number[] = [];
+    Day: string[] = [];
+    Daytotalliters: number[] = [];
     pieChartFuelDateData: any = {};
-   
+
     piechartfuelmonthSocket: { [key: string]: WebSocketSubject<WSrevenuefuelmonth> } = {}
     piechartfuelmonthsocket: WebSocketSubject<revenuefuelmonth[]> | undefined;
     revfuelmonth: revenuefuelmonth[] = [];
     MonthFuelName: string[] = [];
     Monthpie: string[] = [];
-    MonthTotalLiters: number[] = [];
+    Monthtotalliters: number[] = [];
     pieChartFuelMonthData: any = {};
 
     piechartfuelyearSocket: { [key: string]: WebSocketSubject<WSrevenuefuelyear> } = {}
@@ -142,10 +145,10 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     revfuelyear: revenuefuelyear[] = [];
     YearFuelName: string[] = [];
     Yearpie: string[] = [];
-    YearTotalLiters: number[] = [];
+    Yeartotalliters: number[] = [];
     pieChartFuelYearData: any = {};
 
-    // Load pie totalamount by logtype chart
+    // Load pie totalAmount by logtype chart
     public PieChartTypeOption: ChartOptions<'pie'> = {
         responsive: false,
         animation: false,
@@ -179,46 +182,87 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     Yeartypepie: string[] = [];
     YearTotalAmount: number[] = [];
     pieChartTypeYearData: any = {};
-    // openDialog() {
-    //     this.dialog.open(MyDialogComponent, {
-    //         width: '400px',
-    //         disableClose: false
-    //     });
-    // }
+    //==========================================
+    piesocket: WebSocket | undefined;
+    stationidList: number[] = []
+    barData: any = {};
+    date: string[] = [];
+    onChartClick(event: { event?: ChartEvent, active?: any[] }) {
+        if (event.active && event.active.length > 0) {
+            const chartElement = event.active[0];
+            const dataIndex = chartElement.index;
+
+            const stationid = this.stationidList[dataIndex];
+            const datatime = this.date[dataIndex]
+            console.log("get date: ", datatime)
+            if (!stationid) {
+                console.error('🚨 stationid is undefined!');
+                return;
+            }
+            this.router.navigate(['user/home/report', stationid]);
+        }
+    }
+
+    handleBarChartData(event: MessageEvent): void {
+        const rawData = JSON.parse(event.data);
+        console.log('-- Received revenue and profit:', rawData);
+
+        const filteredData = rawData.filter((item: any) =>
+            item.totalRevenue > 0 || item.totalProfit > 0
+        );
+        this.loadBarChartDay
+    }
+
     constructor(
         private router: Router,
-        private http: HttpClient
+        private http: HttpClient,
+        private wsService: WebSocketService
     ) { }
 
     ngOnInit(): void {
+        this.wsService.connect('piefuelchar', environment.wsServerURI + `/ws/day/name/${this.id}`);
+        this.piesocket = this.wsService.getSocket('piefuelchar');
+        if (this.piesocket) {
+            this.piesocket.onopen = () => console.log('bar char websocket connected');
+            this.piesocket.onmessage = (event) => this.handleBarChartData(event);
+        }
+
         this.revenuesocket = webSocket<revenuestation[]>(environment.wsServerURI + `/ws/station/${this.id}`)
         this.revenuesocket.subscribe({
             next: res => {
                 this.revstation = res;
                 this.revstation.forEach((value, index) => {
-                    this.revstationSocket[value.StationId] = webSocket<WSrevenuestation>(environment.wsServerURI + `/ws/station/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.revstationSocket[value.StationId].subscribe({
+                    this.revstationSocket[value.stationId] = webSocket<WSrevenuestation>(environment.wsServerURI + `/ws/station/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.revstationSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuestation) => {
-                            this.revstation[index].TotalLiters = Datares.liter
-                            this.revstation[index].TotalRevenue = Datares.revenue
-                            this.revstation[index].TotalProfit = Datares.profit
+                            this.revstation[index].totalLiters = Datares.liter
+                            this.revstation[index].totalRevenue = Datares.revenue
+                            this.revstation[index].totalProfit = Datares.profit
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
                 })
-                this.DataAccount = this.revstation.map((item) => item.TotalRevenue);
+                if (this.revstation == null) {
+                    console.log("??? data bar enity");
+                }
+                this.DataAccount = this.revstation.map((item) => item.totalRevenue);
                 this.TotalRevenue = this.DataAccount.reduce((acc, val) => acc + val, 0);
-                this.DataLitters = this.revstation.map((item) => item.TotalLiters);
+                this.DataLitters = this.revstation.map((item) => item.totalLiters);
                 this.TotalLitters = this.DataLitters.reduce((acc, val) => acc + val, 0);
-                this.DataProfit = this.revstation.map((item) => item.TotalProfit);
-                this.totalProfit = this.DataProfit.reduce((acc, val) => acc + val, 0);
+                this.DataProfit = this.revstation.map((item) => item.totalProfit);
+                this.TotalProfit = this.DataProfit.reduce((acc, val) => acc + val, 0);
+                if (!this.revstation || this.revstation.length === 0) {
+                    console.warn("No data in revstation !!!");
+                    return;
+                }
             },
             error: err => {
                 console.error(err);
             }
         })
+
         this.loadBarChartDay();
         //===========================================
         this.piechartfueldaysocket = webSocket<revenuefuelday[]>(environment.wsServerURI + `/ws/day/name/${this.id}`);
@@ -228,27 +272,27 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Pie Chart date Websocket connected');
                 console.log("date data: ", res)
                 this.revstationday.forEach((value, index) => {
-                    this.piechartfueldaySocket[value.StationId] = webSocket<WSrevenuefuelday>(environment.wsServerURI + `/ws/day/name/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piechartfueldaySocket[value.StationId].subscribe({
+                    this.piechartfueldaySocket[value.stationId] = webSocket<WSrevenuefuelday>(environment.wsServerURI + `/ws/day/name/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.piechartfueldaySocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuefuelday) => {
-                            res[index].FuelName = Datares.fuelname
-                            res[index].Date = Datares.date
-                            res[index].TotalAmount = Datares.amount
-                            res[index].TotalLiters = Datares.liters
+                            res[index].fuelName = Datares.fuelName
+                            res[index].date = Datares.date
+                            res[index].totalAmount = Datares.amount
+                            res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
-                this.DayFuelName = this.revfuelday.map((item) => item.FuelName);
-                this.Date = this.revfuelday.map((item) => item.Date);
-                this.DayTotalLiters = this.revfuelday.map((item) => item.TotalLiters);
+                this.DayFuelName = this.revfuelday.map((item) => item.fuelName);
+                this.Date = this.revfuelday.map((item) => item.date);
+                this.Daytotalliters = this.revfuelday.map((item) => item.totalLiters);
                 this.pieChartFuelDateData = {
                     labels: this.DayFuelName,
                     datasets: [{
-                        data: this.DayTotalLiters,
+                        data: this.Daytotalliters,
                         backgroundColor: [
                             '#FF6384',
                             '#36A2EB',
@@ -275,10 +319,10 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     this.piechartfuelmonthSocket[value.stationId] = webSocket<WSrevenuefuelmonth>(environment.wsServerURI + `/ws/month/name/${this.id}?token=${localStorage.getItem('jwt')}`)
                     this.piechartfuelmonthSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuefuelmonth) => {
-                            res[index].FuelName = Datares.fuelname
-                            res[index].Month = Datares.month
-                            res[index].TotalAmount = Datares.amount
-                            res[index].TotalLiters = Datares.liters
+                            res[index].fuelName = Datares.fuelName
+                            res[index].month = Datares.month
+                            res[index].totalAmount = Datares.amount
+                            res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
                             console.error(`Error at station ${value.stationId}: ${err}`);
@@ -286,13 +330,13 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     })
 
                 })
-                this.MonthFuelName = this.revfuelmonth.map((item) => item.FuelName);
-                this.Monthpie = this.revfuelmonth.map((item) => item.Month);
-                this.MonthTotalLiters = this.revfuelmonth.map((item) => item.TotalLiters);
+                this.MonthFuelName = this.revfuelmonth.map((item) => item.fuelName);
+                this.Monthpie = this.revfuelmonth.map((item) => item.month);
+                this.Monthtotalliters = this.revfuelmonth.map((item) => item.totalLiters);
                 this.pieChartFuelMonthData = {
                     labels: this.MonthFuelName,
                     datasets: [{
-                        data: this.MonthTotalLiters,
+                        data: this.Monthtotalliters,
                         backgroundColor: [
                             '#FF6384',
                             '#36A2EB',
@@ -316,27 +360,27 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Pie Chart year Websocket connected');
                 console.log("year data: ", res)
                 this.revstationyear.forEach((value, index) => {
-                    this.piechartfuelyearSocket[value.StationId] = webSocket<WSrevenuefuelyear>(environment.wsServerURI + `/ws/year/name/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piechartfuelyearSocket[value.StationId].subscribe({
+                    this.piechartfuelyearSocket[value.stationId] = webSocket<WSrevenuefuelyear>(environment.wsServerURI + `/ws/year/name/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.piechartfuelyearSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuefuelyear) => {
-                            res[index].FuelName = Datares.fuelname
-                            res[index].Year = Datares.year
-                            res[index].TotalAmount = Datares.amount
-                            res[index].TotalLiters = Datares.liters
+                            res[index].fuelName = Datares.fuelName
+                            res[index].year = Datares.year
+                            res[index].totalAmount = Datares.amount
+                            res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
-                this.YearFuelName = this.revfuelyear.map((item) => item.FuelName);
-                this.Yearpie = this.revfuelyear.map((item) => item.Year);
-                this.YearTotalLiters = this.revfuelyear.map((item) => item.TotalLiters);
+                this.YearFuelName = this.revfuelyear.map((item) => item.fuelName);
+                this.Yearpie = this.revfuelyear.map((item) => item.year);
+                this.Yeartotalliters = this.revfuelyear.map((item) => item.totalLiters);
                 this.pieChartFuelYearData = {
                     labels: this.YearFuelName,
                     datasets: [{
-                        data: this.YearTotalLiters,
+                        data: this.Yeartotalliters,
                         backgroundColor: [
                             '#FF6384',
                             '#36A2EB',
@@ -360,23 +404,23 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Pie Chart date type Websocket connected');
                 console.log("date type data: ", res)
                 this.revtypeday.forEach((value, index) => {
-                    this.piecharttypedaySocket[value.StationId] = webSocket<WSrevenuetypeday>(environment.wsServerURI + `/ws/day/type/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piecharttypedaySocket[value.StationId].subscribe({
+                    this.piecharttypedaySocket[value.stationId] = webSocket<WSrevenuetypeday>(environment.wsServerURI + `/ws/day/type/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.piecharttypedaySocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuetypeday) => {
-                            res[index].LogTypeName = Datares.logname
-                            res[index].Date = Datares.date
-                            res[index].TotalAmount = Datares.amount
+                            res[index].logTypeName = Datares.logName
+                            res[index].date = Datares.date
+                            res[index].totalAmount = Datares.amount
                             // res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
-                this.DayTypeName = this.revtypeday.map((item) => item.LogTypeName);
-                this.Date = this.revtypeday.map((item) => item.Date);
-                this.DayTotalAmount = this.revtypeday.map((item) => item.TotalAmount);
+                this.DayTypeName = this.revtypeday.map((item) => item.logTypeName);
+                this.Date = this.revtypeday.map((item) => item.date);
+                this.DayTotalAmount = this.revtypeday.map((item) => item.totalAmount);
                 this.pieChartTypeDateData = {
                     labels: this.DayTypeName,
                     datasets: [{
@@ -403,22 +447,22 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Pie Chart month type Websocket connected');
                 console.log("month type data: ", res)
                 this.revtypemonth.forEach((value, index) => {
-                    this.piecharttypemonthSocket[value.StationId] = webSocket<WSrevenuetypemonth>(environment.wsServerURI + `/ws/month/type/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piecharttypemonthSocket[value.StationId].subscribe({
+                    this.piecharttypemonthSocket[value.stationId] = webSocket<WSrevenuetypemonth>(environment.wsServerURI + `/ws/month/type/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.piecharttypemonthSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuetypemonth) => {
-                            res[index].LogTypeName = Datares.name
-                            res[index].Month = Datares.month
-                            res[index].TotalAmount = Datares.amount
+                            res[index].logTypeName = Datares.logName
+                            res[index].month = Datares.month
+                            res[index].totalAmount = Datares.amount
                             // res[index].totalLiters = Datares.liters
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
                 })
-                this.MonthTypeName = this.revtypemonth.map((item) => item.LogTypeName);
-                this.Month = this.revtypemonth.map((item) => item.Month);
-                this.MonthTotalAmount = this.revtypemonth.map((item) => item.TotalAmount);
+                this.MonthTypeName = this.revtypemonth.map((item) => item.logTypeName);
+                this.Month = this.revtypemonth.map((item) => item.month);
+                this.MonthTotalAmount = this.revtypemonth.map((item) => item.totalAmount);
                 this.pieChartTypeMonthData = {
                     labels: this.MonthTypeName,
                     datasets: [{
@@ -446,21 +490,21 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Pie Chart year type Websocket connected');
                 console.log("year type data: ", res)
                 this.revtypeyear.forEach((value, index) => {
-                    this.piecharttypeyearSocket[value.StationId] = webSocket<WSrevenuetypeyear>(environment.wsServerURI + `/ws/year/type/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piecharttypeyearSocket[value.StationId].subscribe({
+                    this.piecharttypeyearSocket[value.stationId] = webSocket<WSrevenuetypeyear>(environment.wsServerURI + `/ws/year/type/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.piecharttypeyearSocket[value.stationId].subscribe({
                         next: Datares => {
-                            res[index].LogTypeName = Datares.name
-                            res[index].Year = Datares.year
-                            res[index].TotalAmount = Datares.amount
+                            res[index].logTypeName = Datares.logName
+                            res[index].year = Datares.year
+                            res[index].totalAmount = Datares.amount
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
                 })
-                this.YearTypeName = this.revtypeyear.map((item) => item.LogTypeName);
-                this.YearTotalAmount = this.revtypeyear.map((item) => item.TotalAmount);
-                this.Year = this.revtypeyear.map((item) => item.Year);
+                this.YearTypeName = this.revtypeyear.map((item) => item.logTypeName);
+                this.YearTotalAmount = this.revtypeyear.map((item) => item.totalAmount);
+                this.Year = this.revtypeyear.map((item) => item.year);
                 this.pieChartTypeYearData = {
                     labels: this.YearTypeName,
                     datasets: [{
@@ -482,33 +526,37 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     }
 
     loadBarChartDay() {
-        this.revenuedaysocket = webSocket<revenuestationday[]>(environment.wsServerURI + `/ws/station/revenueday/${this.id}`)
+        this.revenuedaysocket = webSocket<any>(environment.wsServerURI + `/ws/station/revenueday/${this.id}`)
         this.revenuedaysocket.subscribe({
             next: res => {
                 this.revstationday = res
                 console.log('-- Bar Chart date Websocket connected');
                 console.log("date data: ", res)
                 this.revstationday.forEach((value, index) => {
-                    this.revstationDaySocket[value.StationId] = webSocket<WSrevenuestationday>(environment.wsServerURI + `/ws/station/revenueday/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.revstationDaySocket[value.StationId].subscribe({
+                    this.revstationDaySocket[value.stationId] = webSocket<WSrevenuestationday>(environment.wsServerURI + `/ws/station/revenueday/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.revstationDaySocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuestationday) => {
-                            res[index].StationName = Datares.name
-                            res[index].Date = Datares.date
-                            res[index].TotalRevenue = Datares.revenue
-                            res[index].TotalProfit = Datares.profit
+                            res[index].stationId = Datares.id
+                            res[index].stationName = Datares.name
+                            res[index].date = Datares.date
+                            res[index].totalRevenue = Datares.revenue
+                            res[index].totalProfit = Datares.profit
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
-                const dateSet = new Set<string>();
-                res.forEach(item => dateSet.add(item.Date));
-                const sortedDates = Array.from(dateSet).sort();
-                this.Day = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
-                this.DayAccount = this.revstationday.map((item) => item.TotalRevenue);
-                this.DayProfit = this.revstationday.map((item) => item.TotalProfit);
+                // const dateSet = new Set<string>();
+                // res.forEach(item => dateSet.add(item.date));
+                // const sortedDates = Array.from(dateSet).sort();
+                // this.Day = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
+                this.Date = this.revstationday.map((item) => item.date);
+                console.log(this.Date);
+
+                this.DayAccount = this.revstationday.map((item) => item.totalRevenue);
+                this.DayProfit = this.revstationday.map((item) => item.totalProfit);
                 this.barChartData = {
                     labels: this.Day,
                     datasets: [
@@ -536,27 +584,27 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             next: res => {
                 this.revstationmonth = res
                 console.log('-- Bar Chart month Websocket connected');
-                console.log("month data: ", res)                
+                console.log("month data: ", res)
                 this.revstationday.forEach((value, index) => {
-                    this.revstationMonthSocket[value.StationId] = webSocket<WSrevenuestationmonth>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.revstationMonthSocket[value.StationId].subscribe({
+                    this.revstationMonthSocket[value.stationId] = webSocket<WSrevenuestationmonth>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.revstationMonthSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuestationmonth) => {
-                            // res[index].Month = Datares.Month
-                            res[index].TotalRevenue = Datares.revenue
-                            res[index].TotalProfit = Datares.profit
+                            res[index].month = Datares.month
+                            res[index].totalRevenue = Datares.revenue
+                            res[index].totalProfit = Datares.profit
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
-                this.Month = this.revstationmonth.map((item) => item.Month);
-                this.MonthAccount = this.revstationmonth.map((item) => item.TotalRevenue);
-                this.MonthProfit = this.revstationmonth.map((item) => item.TotalProfit);
-                console.log("dt: ",this.MonthAccount);
+                this.Month = this.revstationmonth.map((item) => item.month);
+                this.MonthAccount = this.revstationmonth.map((item) => item.totalRevenue);
+                this.MonthProfit = this.revstationmonth.map((item) => item.totalProfit);
+                console.log("dt: ", this.MonthAccount);
                 this.barChartMonthData = {
-                    labels:  this.Month,
+                    labels: this.Month,
                     datasets: [
                         {
                             label: 'Doanh thu (VNĐ)',
@@ -584,25 +632,25 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 console.log('Bar Chart year Websocket connected');
                 console.log("year data: ", res)
                 this.revstationday.forEach((value, index) => {
-                    this.revstationYearSocket[value.StationId] = webSocket<WSrevenuestationyear>(environment.wsServerURI + `/ws/station/revenueyear/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.revstationYearSocket[value.StationId].subscribe({
+                    this.revstationYearSocket[value.stationId] = webSocket<WSrevenuestationyear>(environment.wsServerURI + `/ws/station/revenueyear/${this.id}?token=${localStorage.getItem('jwt')}`)
+                    this.revstationYearSocket[value.stationId].subscribe({
                         next: (Datares: WSrevenuestationyear) => {
-                            res[index].Year = Datares.year
-                            res[index].TotalRevenue = Datares.revenue
-                            res[index].TotalProfit = Datares.profit
+                            res[index].year = Datares.year
+                            res[index].totalRevenue = Datares.revenue
+                            res[index].totalProfit = Datares.profit
                         },
                         error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
+                            console.error(`Error at station ${value.stationId}: ${err}`);
                         }
                     })
 
                 })
                 const dateSet = new Set<string>();
-                res.forEach(item => dateSet.add(item.Year));
+                res.forEach(item => dateSet.add(item.year));
                 const sortedDates = Array.from(dateSet).sort();
                 this.Year = sortedDates.map(date => new Date(date).getFullYear().toString());
-                this.YearAccount = this.revstationyear.map((item) => item.TotalRevenue);
-                this.YearProfit = this.revstationyear.map((item) => item.TotalProfit);
+                this.YearAccount = this.revstationyear.map((item) => item.totalRevenue);
+                this.YearProfit = this.revstationyear.map((item) => item.totalProfit);
                 this.barChartYearData = {
                     labels: this.Year,
                     datasets: [
