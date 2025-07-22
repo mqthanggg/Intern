@@ -5,7 +5,6 @@ import { TitleService } from '../../../../infrastructure/services/title.service'
 import { FormControl, UntypedFormGroup } from '@angular/forms';
 import { StaffRecord } from './staff-record';
 import { HttpClient } from '@angular/common/http';
-import { AssignmentRecord } from './assignment-record';
 
 function dayOfDate(year: number, month: number, date: number){
   date += (month < 3 ? year-- : year - 2)
@@ -20,7 +19,6 @@ function dayOfDate(year: number, month: number, date: number){
   styleUrl: './assignment.component.css'
 })
 export class AssignmentComponent implements OnInit{
-  assignmentForm: UntypedFormGroup;
   private routerSnapshot: RouterStateSnapshot;
   monthText = [
     'January',
@@ -46,11 +44,6 @@ export class AssignmentComponent implements OnInit{
     private http: HttpClient
   ){
     this.routerSnapshot = this.router.routerState.snapshot
-    this.assignmentForm = new UntypedFormGroup({
-      morningStaffs: new FormControl<StaffRecord[]>([]),
-      afternoonStaffs: new FormControl<StaffRecord[]>([]),
-      midnightStaffs: new FormControl<StaffRecord[]>([]),
-    })
   }
   ngOnInit(): void {
     if (this.routerSnapshot.root.queryParams['name'] == undefined)

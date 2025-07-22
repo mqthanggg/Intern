@@ -1,7 +1,8 @@
 export interface AssignmentRecord {
     assignmentId: number,
+    shiftType: number,
     staffId: number,
-    shiftId: number,
+    staffName: string,
     stationId: number,
     workDate: string
 }
