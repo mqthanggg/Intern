@@ -4,15 +4,16 @@ public static class AssignmentQuery{
         SELECT 
             a.assignment_id,
             sh.shift_type,
+            st.staff_id,
             st.staff_name,
             a.station_id,
             a.work_date
         FROM {Schema}.assignment as a
         INNER JOIN {Schema}.staff as st
-        INNER JOIN {Schema}.shift as sh
         ON
             a.staff_id = st.staff_id
-        AND
+        INNER JOIN {Schema}.shift as sh
+        ON
             a.shift_id = sh.shift_id
         ORDER BY
             a.assignment_id
@@ -21,20 +22,21 @@ public static class AssignmentQuery{
         SELECT 
             a.assignment_id,
             sh.shift_type,
+            st.staff_id,
             st.staff_name,
             a.station_id,
             a.work_date
         FROM {Schema}.assignment as a
         INNER JOIN {Schema}.staff as st
-        INNER JOIN {Schema}.shift as sh
         ON
             a.staff_id = st.staff_id
-        AND
+        INNER JOIN {Schema}.shift as sh
+        ON
             a.shift_id = sh.shift_id
-        ORDER BY
-            a.assignment_id
         WHERE
             a.assignment_id = @AssignmentId
+        ORDER BY
+            a.assignment_id
     ";
     public static readonly string InsertAssignment = $@"
         INSERT INTO {Schema}.assignment(
@@ -78,19 +80,22 @@ public static class AssignmentQuery{
         SELECT 
             a.assignment_id,
             sh.shift_type,
+            st.staff_id,
             st.staff_name,
             a.station_id,
             a.work_date
         FROM {Schema}.assignment as a
         INNER JOIN {Schema}.staff as st
-        INNER JOIN {Schema}.shift as sh
         ON
             a.staff_id = st.staff_id
-        AND
+        INNER JOIN {Schema}.shift as sh
+        ON
             a.shift_id = sh.shift_id
-        ORDER BY
-            a.assignment_id
         WHERE
             a.station_id = @StationId
+        AND
+            a.work_date = @WorkDate
+        ORDER BY
+            a.assignment_id
     ";
 }

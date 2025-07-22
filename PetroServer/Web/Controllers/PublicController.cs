@@ -12,7 +12,7 @@ public static class PublicController
         app.MapGet("shifts", GetShift);
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
-        app.MapGet("assignments/station/{id}", GetAssignmentByStationId);
+        app.MapPost("assignments/station", GetAssignmentByStationIdAndDate);
 
         app.MapPost("login", Login);
         app.MapPost("register", RegisterAccount);
@@ -623,14 +623,14 @@ public static class PublicController
         Summary = "Obtain assignments by station id.",
         Description = "Obtain a list of all assignments by station id."
     )]
-    public static async Task<IResult> GetAssignmentByStationId(
+    public static async Task<IResult> GetAssignmentByStationIdAndDate(
         [FromServices] IAssignmentRepository AssignmentRepository,
-        [FromRoute] int id
+        [FromBody] AssignmentRequest body
     )
     {
         try
         {
-            var res = await AssignmentRepository.GetAllAssignmentResponseByStationIdAsync(new Assignment{StationId = id});
+            var res = await AssignmentRepository.GetAllAssignmentResponseByStationIdAndDateAsync(new Assignment{StationId = body.StationId,WorkDate = body.WorkDate});
             return TypedResults.Ok(res);
         }
         catch (PostgresException e)

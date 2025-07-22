@@ -5,9 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
 import { FormControl, UntypedFormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
-import { filter, forkJoin, from, map, merge, mergeAll, mergeMap, of, throwError, toArray } from 'rxjs';
+import { forkJoin, map, throwError } from 'rxjs';
 import { AssignmentRecord } from '../assignment-record';
-import { ShiftRecord } from '../shift-record';
 
 @Component({
   selector: 'app-assignment-edit',
@@ -84,48 +83,36 @@ export class AssignmentEditComponent implements OnInit {
             observe: 'response'
           }
         ),
-        this.http.get<AssignmentRecord[]>(
-          environment.serverURI + `/assignments/station/${stationId}`,
+        this.http.post<AssignmentRecord[]>(
+          environment.serverURI + `/assignments/station`,
+          {
+            stationId: stationId,
+            workDate: new Date(this.year,this.month,this.date).toISOString()
+          },
           {
             withCredentials: true,
             observe: 'response'
           }
         )
-      ]).
-      pipe(
-        mergeMap((res) => {
-          this.staffRecords = res[0].body ?? []
-          return from(res[1].body!).pipe(
-            mergeMap(assignment => this.http.get<ShiftRecord>(
-              environment.serverURI + `/shift/${assignment.shiftId}`,
-              {
-                withCredentials: true,
-                observe: 'response'
-              }
-            ).pipe(
-              map(shift => {
-                return {assignment: assignment,shift: shift.body?.shiftType}
-              })
-            ))
-          )
-        }),
-        toArray()
-      ).subscribe({
+      ]).subscribe({
         next: res => {
+          this.staffRecords = res[0].body!
+          console.log(res[1].body!);
+          
           this.assignmentForm.get('morningStaffs')?.setValue(
-            res.filter(
-              res => res.shift == 1
-            ).map(res => res.assignment)
+            res[1].body!.filter(
+              res => res.shiftType == 1
+            )
           )
           this.assignmentForm.get('afternoonStaffs')?.setValue(
-            res.filter(
-              res => res.shift == 2
-            ).map(res => res.assignment)
+            res[1].body!.filter(
+              res => res.shiftType == 2
+            )
           )
           this.assignmentForm.get('midnightStaffs')?.setValue(
-            res.filter(
-              res => res.shift == 3
-            ).map(res => res.assignment)
+            res[1].body!.filter(
+              res => res.shiftType == 3
+            )
           )
         }
       })
