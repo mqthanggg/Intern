@@ -27,6 +27,7 @@ public class JWTService : IJWTService{
     public bool Verify(string token){
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var tokenValidationParameters = new TokenValidationParameters{
+            ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
             ValidIssuer = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
             ValidAudience = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),

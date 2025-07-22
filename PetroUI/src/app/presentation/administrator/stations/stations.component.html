@@ -1,0 +1,20 @@
+<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll">
+    <div class="grid grid-cols-4 gap-x-5 gap-3">
+        @for(station of stationsRecord;track station.stationId){
+            <div class="border rounded-md shadow-xl p-5 space-y-2 bg-[#F5F5F5] flex flex-col justify-between">
+                <div class="flex justify-center">
+                  <img src="gas-station.png" alt="Gas station image" class="size-14 w-24 h-auto text-center">
+                </div>
+                <div class="font-semibold text-2xl">{{station.name}}</div>
+                <div class="italic wrap-break-word h-fit">{{station.address}}</div>
+                <div class="flex justify-between items-center **:items-center mt-4">
+                    <div class="flex justify-between w-full"> 
+                        <a class="bg-purple-500 text-white px-5 py-3 rounded-md shadow-xl hover:cursor-pointer duration-200 hover:bg-purple-300 hover:-translate-y-1 w-fit" [routerLink]="['/administrator/stations/attendance',station.stationId]" [queryParams]="{name: station.name}">Attendance</a>
+                        <a class="bg-orange-500 text-white px-5 py-3 rounded-md shadow-xl hover:cursor-pointer duration-200 hover:bg-orange-300 hover:-translate-y-1 w-fit" [routerLink]="['/administrator/stations/assignment',station.stationId]" [queryParams]="{name: station.name}">Assignment</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<router-outlet></router-outlet>

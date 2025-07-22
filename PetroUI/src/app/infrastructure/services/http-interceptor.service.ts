@@ -19,8 +19,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
     return next(req).pipe(
       catchError((err: HttpErrorResponse) => {
-        console.log(err.headers?.get('www-authenticate'));
-        
         if (
           (
             err.headers?.get('www-authenticate')?.split(',')[1].match(/The token expired at '([^']+)'/)?.[1] ||

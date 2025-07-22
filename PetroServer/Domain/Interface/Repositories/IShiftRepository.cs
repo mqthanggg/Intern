@@ -1,6 +1,6 @@
 public interface IShiftRepository : IRepository<Shift>
 {
     Task<IReadOnlyList<ShiftResponse>> GetAllShiftResponseAsync();
-    Task<IReadOnlyList<ShiftResponse>> GetShiftById(Shift id);
+    Task<ShiftResponse> GetShiftById(Shift id);
 }
 
