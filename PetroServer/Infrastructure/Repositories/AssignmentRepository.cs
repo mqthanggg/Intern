@@ -15,7 +15,12 @@ public class AssignmentRepository : IAssignmentRepository
             return assignments;
         }
     }
-
+    public async Task<IReadOnlyList<AssignmentResponse>> GetAllAssignmentResponseByStationIdAsync(Assignment entity){
+        await using (var connection = dbRead.CreateConnection()){
+            List<AssignmentResponse> assignments = (await connection.QueryAsync<AssignmentResponse>(AssignmentQuery.SelectAssignmentByStationId,entity)).ToList();
+            return assignments;
+        }
+    }
     public async Task<int> InsertAsync(Assignment entity)
     {
         await using (var connection = dbWrite.CreateConnection())

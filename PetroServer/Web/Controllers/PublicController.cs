@@ -12,6 +12,7 @@ public static class PublicController
         app.MapGet("shifts", GetShift);
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
+        app.MapGet("assignments/station/{id}", GetAssignmentByStationId);
 
         app.MapPost("login", Login);
         app.MapPost("register", RegisterAccount);
@@ -182,7 +183,7 @@ public static class PublicController
     [Authorize]
     [Permission("administrator")]
     [ProducesResponseType(400)]
-    [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
+    [ProducesResponseType(typeof(ShiftResponse), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Obtain a shift by id",
@@ -560,6 +561,32 @@ public static class PublicController
         }
         catch(Exception ex){
             Console.WriteLine($"Why: {ex.Message}");
+            return TypedResults.InternalServerError();
+        }
+    }
+
+    [Authorize]
+    [Permission("administrator")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Obtain assignments by station id.",
+        Description = "Obtain a list of all assignments by station id."
+    )]
+    public static async Task<IResult> GetAssignmentByStationId(
+        [FromServices] IAssignmentRepository AssignmentRepository,
+        [FromRoute] int id
+    )
+    {
+        try
+        {
+            var res = await AssignmentRepository.GetAllAssignmentResponseByStationIdAsync(new Assignment{StationId = id});
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException e)
+        {
+            Console.WriteLine($"why: {e.Message}");
             return TypedResults.InternalServerError();
         }
     }
