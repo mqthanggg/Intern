@@ -4,6 +4,7 @@ import { ReportStationComponent } from '../home/report-station/report-station.co
 import { HomeComponent } from '../home/home.component';
 import { StationComponent } from '../station/station.component';
 import { StationsComponent } from '../stations/stations.component';
+import { ReportComponent } from '../home/report-station/my-dialog/my-dialog.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
       path: "home/report/:id",
       title: "Report",
       component: ReportStationComponent
+    },
+{
+      path: "home/report/station/:id",
+      title: "Report-Station",
+      component: ReportComponent
     },
   
 ]

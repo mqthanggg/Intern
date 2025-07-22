@@ -49,7 +49,7 @@ public class SumRevenueByTypeResponse
     }
     public decimal? TotalAmount { get; set; } = null;
     public decimal? TotalLiters { get; set; } = null;
-
+    // public string? Month { get; set; } = null;
 }
 
 public class SumRevenueByDateResponse

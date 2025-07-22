@@ -1,29 +1,30 @@
 export interface revenuestation {
-    stationId: number;
-    stationName: string;
-    totalRevenue: number,
-    totalLiters: number,
-    totalProfit: number;
+    StationId: number;
+    StationName: string;
+    TotalRevenue: number,
+    TotalLiters: number,
+    TotalProfit: number;
 }
 
+
 export interface WSrevenuestation {
-    id: number;
-    name: string;
-    revenue: number;
-    profit: number;
-    liter: number;
+    StationId: number;
+    StationName: string;
+    TotalRevenue: number,
+    TotalLiters: number,
+    TotalProfit: number;
 }
 
 export interface revenuestationday extends revenuestation {
-    date: string;
+    Date: string;
 }
 
 export interface WSrevenuestationday extends WSrevenuestation {
-    date: string;
+    Date: string;
 }
 
 export interface revenuestationmonth extends revenuestation {
-    month: string;
+    Month: string;
 }
 
 export interface WSrevenuestationmonth extends WSrevenuestation {
@@ -31,7 +32,7 @@ export interface WSrevenuestationmonth extends WSrevenuestation {
 }
 
 export interface revenuestationyear extends revenuestation {
-    year: string;
+    Year: string;
 }
 
 export interface WSrevenuestationyear extends WSrevenuestation {
@@ -39,77 +40,77 @@ export interface WSrevenuestationyear extends WSrevenuestation {
 }
 // ===============================
 export interface revenuefuel {
-    stationId: number;
-    fuelName: string;
-    totalAmount: number;
-    totalLiters: number;
+    StationId: number;
+    FuelName: string;
+    TotalAmount: number;
+    TotalLiters: number;
 }
 
 export interface WSrevenuefuel {
-    id: number;
-    fuelName: string;
-    amount: number;
-    liters: number;
+    StationId: number;
+    FuelName: string;
+    TotalAmount: number;
+    TotalLiters: number;
 }
 
 export interface revenuefuelday extends revenuefuel {
-    date: string;
+    Date: string;
 }
 
 export interface WSrevenuefuelday extends WSrevenuefuel {
-    date: string;
+    Date: string;
 }
 
 export interface revenuefuelmonth extends revenuefuel {
-    month: string;
+    Month: string;
 }
 
 export interface WSrevenuefuelmonth extends WSrevenuefuel {
-    month: string;
+    Month: string;
 }
 
 export interface revenuefuelyear extends revenuefuel {
-    year: string;
+    Year: string;
 }
 
 export interface WSrevenuefuelyear extends WSrevenuefuel {
-    year: string;
+    Year: string;
 }
 // ===============================
 export interface revenuetype {
-    stationId: number;
-    logTypeName: string;
-    totalAmount: number;
-    totalLiters: number;
+    StationId: number;
+    LogTypeName: string;
+    TotalAmount: number;
+    TotalLiters: number;
 }
 
 export interface WSrevenuetype {
-    id: number;
-    logName: string;
-    amount: number;
-    liters: number;
+    StationId: number;
+    LogTypeName: string;
+    TotalAmount: number;
+    TotalLiters: number;
 }
 
 export interface revenuetypeday extends revenuetype {
-    date: string;
+    Date: string;
 }
 
 export interface WSrevenuetypeday extends WSrevenuetype {
-    date: string;
+    Date: string;
 }
 
 export interface revenuetypemonth extends revenuetype {
-    month: string;
+    Month: string;
 }
 
 export interface WSrevenuetypemonth extends WSrevenuetype {
-    month: string;
+    Month: string;
 }
 
 export interface revenuetypeyear extends revenuetype {
-    year: string;
+    Year: string;
 }
 
 export interface WSrevenuetypeyear extends WSrevenuetype {
-    year: string;
+    Year: string;
 }

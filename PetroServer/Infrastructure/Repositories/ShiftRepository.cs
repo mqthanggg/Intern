@@ -20,11 +20,11 @@ public class ShiftRepository : IShiftRepository
         }
     }
 
-    public async Task<IReadOnlyList<ShiftResponse>> GetShiftById(Shift entity)
+    public async Task<ShiftResponse> GetShiftById(Shift entity)
     {
         await using (var connection = dbRead.CreateConnection())
         {
-            List<ShiftResponse> Shift = (await connection.QueryAsync<ShiftResponse>(ShiftQuery.SelectShiftById, entity)).ToList();
+            ShiftResponse Shift = await connection.QuerySingleAsync<ShiftResponse>(ShiftQuery.SelectShiftById, entity);
             return Shift;
         }
     }
