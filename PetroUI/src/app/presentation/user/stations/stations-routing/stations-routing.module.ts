@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { StationDeleteComponent } from '../station-delete/station-delete.component';
+import { StationEditComponent } from '../station-edit/station-edit.component';
 
 const routes: Routes = [
   {
     path: "delete/:id",
     title: "Deleting station",
-    loadComponent: () => import('../station-delete/station-delete.component').then(m => m.StationDeleteComponent)
+    component: StationDeleteComponent
   },
   {
     path: "edit/:id",
     title: "Editing station",
-    loadComponent: () => import('../station-edit/station-edit.component').then(m => m.StationEditComponent)
+    component: StationEditComponent
   }
 ]
 

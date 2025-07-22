@@ -28,8 +28,8 @@ if (report.Status == HealthStatus.Healthy){
         app.Swagger();
         app.MapSignup();
     }
-    app.MapReport();
     app.MapPublicController();
+    app.MapReport();
     app.Run();
 }
 else{

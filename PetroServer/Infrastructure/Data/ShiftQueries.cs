@@ -31,7 +31,7 @@ public static class ShiftQuery
             last_modified_by,
             last_modified_date
         ) VALUES (
-            @ShiftName,
+            @ShiftType,
             @StartTime,
             @EndTime,
             @CreatedBy,
@@ -43,7 +43,7 @@ public static class ShiftQuery
     public static readonly string UpdateShift = $@"
         UPDATE {Schema}.shift
         SET
-            shift_type =  @ShiftName,
+            shift_type =  @ShiftType,
             start_time = @StartTime,
             end_time = @EndTime,
             last_modified_by = @LastModifiedBy,

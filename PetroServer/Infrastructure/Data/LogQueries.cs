@@ -92,7 +92,6 @@ public static class LogQuery
         UPDATE {Schema}.log
         SET 
             time = date_trunc('day', CURRENT_DATE) + (time::time),
-            last_modified_by = @LastModifiedBy,
             last_modified_date = now()
     ";
 

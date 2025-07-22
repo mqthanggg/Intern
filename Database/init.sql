@@ -16,6 +16,8 @@ ALTER TABLE IF EXISTS petro_application.detailreceipt DROP CONSTRAINT IF EXISTS 
 
 ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_supplier_id_fkey;
 
+ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_station_id_fkey;
+
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
 
 ALTER TABLE IF EXISTS petro_application.dispenser DROP CONSTRAINT IF EXISTS None;
@@ -193,6 +195,9 @@ CREATE TABLE IF NOT EXISTS petro_application.log
     PRIMARY KEY (log_id)
 );
 
+COMMENT ON TABLE petro_application.log
+    IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
+
 DROP TABLE IF EXISTS petro_application.supplier;
 
 CREATE TABLE IF NOT EXISTS petro_application.supplier (
@@ -215,10 +220,10 @@ DROP TABLE IF EXISTS petro_application.receipt;
 
 CREATE TABLE IF NOT EXISTS petro_application.receipt (
     receipt_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    receipt_date time with time zone NOT NULL,
+    receipt_date timestamp(0) without time zone NOT NULL DEFAULT now(),
     supplier_id integer NOT NULL,
     station_id integer NOT NULL,
-    total_amount integer NOT NULL,
+    total_import integer NOT NULL,
     created_by character varying(30),
     created_date time with time zone DEFAULT now(),
     last_modified_by character varying(30),
@@ -236,6 +241,7 @@ CREATE TABLE IF NOT EXISTS petro_application.detailreceipt (
     fuel_id integer NOT NULL,
     liters_fuel integer NOT NULL,
     price integer NOT NULL,
+	total_amount integer NOT NULL,
   	created_by character varying(30) DEFAULT now(),
     created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(30),
@@ -265,15 +271,12 @@ CREATE TABLE IF NOT EXISTS petro_application.assignment
 COMMENT ON TABLE petro_application.assignment
     IS 'for staff '' work schedule in each station';
 
-COMMENT ON TABLE petro_application.log
-    IS 'Table for storing logs. log_type: 1 -> ban le, 2 -> cong no, 3 -> khuyen mai, 4 -> tra truoc';
 
 ALTER TABLE IF EXISTS petro_application.assignment
     ADD CONSTRAINT assignment_shift_id_fkey FOREIGN KEY(shift_id)
     REFERENCES petro_application.shift (shift_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
-
 
 ALTER TABLE IF EXISTS petro_application.assignment
     ADD CONSTRAINT assignment_staff_id_fkey FOREIGN KEY (staff_id)
@@ -295,14 +298,12 @@ ALTER TABLE IF EXISTS petro_application.dispenser
     ON DELETE CASCADE
     NOT VALID;
 
-
 ALTER TABLE IF EXISTS petro_application.dispenser
     ADD FOREIGN KEY (fuel_id)
     REFERENCES petro_application.fuel (fuel_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE SET NULL
     NOT VALID;
-
 
 ALTER TABLE IF EXISTS petro_application.dispenser
     ADD FOREIGN KEY (tank_id)
@@ -311,7 +312,6 @@ ALTER TABLE IF EXISTS petro_application.dispenser
     ON DELETE SET NULL
     NOT VALID;
 
-
 ALTER TABLE IF EXISTS petro_application.tank
     ADD FOREIGN KEY (fuel_id)
     REFERENCES petro_application.fuel (fuel_id) MATCH SIMPLE
@@ -319,14 +319,12 @@ ALTER TABLE IF EXISTS petro_application.tank
     ON DELETE SET NULL
     NOT VALID;
 
-
 ALTER TABLE IF EXISTS petro_application.tank
     ADD FOREIGN KEY (station_id)
     REFERENCES petro_application.station (station_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE
     NOT VALID;
-
 
 ALTER TABLE IF EXISTS petro_application.log
     ADD FOREIGN KEY (dispenser_id)
@@ -342,7 +340,7 @@ ALTER TABLE IF EXISTS petro_application.receipt
     ON DELETE CASCADE
     NOT VALID;
 
-ALTER TABLE IF EXISTS petro_application.detailrecepit
+ALTER TABLE IF EXISTS petro_application.receipt
     ADD FOREIGN KEY (station_id)
     REFERENCES petro_application.station (station_id) MATCH SIMPLE
     ON UPDATE CASCADE
@@ -350,12 +348,19 @@ ALTER TABLE IF EXISTS petro_application.detailrecepit
     NOT VALID;
 
 ALTER TABLE IF EXISTS petro_application.detailreceipt
+    ADD FOREIGN KEY (receipt_id)
+    REFERENCES petro_application.receipt (receipt_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+ALTER TABLE IF EXISTS petro_application.detaireceipt
     ADD FOREIGN KEY (fuel_id) 
 	REFERENCES petro_application.fuel(fuel_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE
     NOT VALID;
-
+	
 INSERT INTO petro_application.station (name, address, created_by, last_modified_by) VALUES
 ('Petrolimex Station 1', '123 Nguyen Hue, Ben Nghe Ward, District 1, Ho Chi Minh City', 'admin', 'admin'),
 ('PV Oil Station 2', '456 Cach Mang Thang 8, Ward 5, District 3, Ho Chi Minh City', 'admin', 'admin'),
@@ -393,61 +398,71 @@ INSERT INTO petro_application.dispenser (station_id, tank_id, fuel_id, name, cre
 (12, 26, 4, 401, 'admin', 'admin'), (12, 27, 1, 402, 'admin', 'admin'), (12, 28, 2, 403, 'admin', 'admin'), (12, 29, 3, 404, 'admin', 'admin'), (12, 30, 4, 405, 'admin', 'admin');
 
 INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_liters, total_amount, time, created_by, last_modified_by) VALUES
-(3, 'DO1', 3, 12.0, 30000, TIMESTAMP(0) '2025-02-04 17:20:00', 'admin', 'admin'),
-(1, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 08:30:00', 'admin', 'admin'),
-(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 08:45:00', 'admin', 'admin'),
-(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
-(1, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:12:00', 'admin', 'admin'),
-(1, 'A95', 2, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
-(1, 'A95', 3, 12.0, 30000, TIMESTAMP(0) '2025-07-04 15:00:00', 'admin', 'admin'),
-(2, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
-(2, 'E5', 1, 9.5, 21850, TIMESTAMP(0) '2025-07-04 08:35:00', 'admin', 'admin'),
-(2, 'E5', 2, 7.8, 17940, TIMESTAMP(0) '2025-07-04 08:50:00', 'admin', 'admin'),
-(2, 'E5', 4, 11.2, 25760, TIMESTAMP(0) '2025-07-04 15:05:00', 'admin', 'admin'),
-(2, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
-(3, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2025-07-04 08:40:00', 'admin', 'admin'),
-(3, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2025-07-04 08:55:00', 'admin', 'admin'),
-(3, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-07-04 08:10:00', 'admin', 'admin'),
-(3, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
-(4, 'DO5', 4, 12.3, 23370, TIMESTAMP(0) '2025-07-04 08:45:00', 'admin', 'admin'),
-(4, 'DO5', 4, 10.8, 20520, TIMESTAMP(0) '2025-07-04 08:00:00', 'admin', 'admin'),
-(4, 'DO5', 4, 14.5, 27550, TIMESTAMP(0) '2025-07-04 08:15:00', 'admin', 'admin'),
-(5, 'A95', 1, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
-(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
-(5, 'A95', 2, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
-(5, 'A95', 3, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
-
-(6, 'A95', 2, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 'admin', 'admin'),
-(6, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
-(6, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
-(6, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
-(6, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
-(7, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 18:50:00', 'admin', 'admin'),
-(7, 'E5', 1, 9.0, 22500, TIMESTAMP(0) '2025-07-04 16:45:00', 'admin', 'admin'),
-(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 'admin', 'admin'),
-(7, 'E5', 1, 9.5, 23000, TIMESTAMP(0) '2025-07-04 16:30:00', 'admin', 'admin'),
-(7, 'E5', 1, 14.0, 31000, TIMESTAMP(0) '2025-07-04 21:30:00', 'admin', 'admin'),
-(8, 'DO1', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
-(8, 'DO1', 2, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
-(8, 'DO1', 2, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
-(9, 'D05', 2, 10.5, 26250, now(),'admin', 'admin'),
-(9, 'D05', 2, 8.2, 20500,now(),'admin', 'admin'),
-(9, 'D05', 2, 11.0, 27500, now(),'admin', 'admin'),
-(9, 'D05', 4, 9.8, 24800, TIMESTAMP(0) '2025-07-04 21:55:00', 'admin', 'admin'),
-(9, 'D05', 4, 11.2, 28000, TIMESTAMP(0) '2025-07-04 11:15:00', 'admin', 'admin'),
-(11, 'A95', 1, 11.0, 27500, TIMESTAMP(0) '2025-07-04 19:15:00', 'admin', 'admin'),
-(11, 'A95', 2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 08:05:00', 'admin', 'admin'),
-(11, 'A95', 3, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin'),
-(11, 'A95', 4, 10.5, 26250, TIMESTAMP(0) '2025-07-04 11:10:00', 'admin', 'admin'),
-(11, 'A95', 4, 8.2, 20500, TIMESTAMP(0) '2025-07-04 15:30:00', 'admin', 'admin'),
-(12, 'E5', 2, 9.0, 22500, TIMESTAMP(0) '2025-07-04 05:45:00', 'admin', 'admin'),
-(12, 'E5', 1, 12.5, 28000, TIMESTAMP(0) '2025-07-04 05:50:00', 'admin', 'admin'),
-(12, 'E5', 4, 14.0, 31000, TIMESTAMP(0) '2025-07-04 05:30:00', 'admin', 'admin'),
-(12, 'E5', 3, 9.5, 23000, TIMESTAMP(0) '2025-07-04 04:30:00', 'admin', 'admin'),
-(13, 'DO1', 3, 13.5, 31000, TIMESTAMP(0) '2025-07-04 21:45:00', 'admin', 'admin'),
-(13, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-07-04 17:20:00', 'admin', 'admin'),
-(13, 'DO1',2, 13.0, 29000, TIMESTAMP(0) '2025-07-04 20:05:00', 'admin', 'admin'),
-(14, 'DO1', 4, 16.2, 32000, TIMESTAMP(0) '2025-07-04 20:45:00', 'admin', 'admin');
+(17, 'DO1', 3, 12.0, 30000, CURRENT_DATE + TIME '08:20:00', 'admin', 'admin'),
+(6, 'A95', 1, 10.5, 26250,CURRENT_DATE + TIME '09:30:00', 'admin', 'admin'),
+(6, 'A95', 2, 8.2, 20500, CURRENT_DATE + TIME '14:10:00', 'admin', 'admin'),
+(6, 'A95', 4, 10.5, 26250,  CURRENT_DATE + TIME '14:12:00', 'admin', 'admin'),
+(6, 'A95', 4, 8.2, 20500,CURRENT_DATE + TIME '15:30:00', 'admin', 'admin'),
+(6, 'A95', 3, 12.0, 30000, CURRENT_DATE + TIME '15:00:00', 'admin', 'admin'),
+(2, 'E5', 2, 9.0, 22500, CURRENT_DATE + TIME '16:45:00', 'admin', 'admin'),
+(7, 'E5', 1, 9.5, 21850, CURRENT_DATE + TIME '08:35:00', 'admin', 'admin'),
+(7, 'E5', 2, 7.8, 17940, CURRENT_DATE + TIME '08:50:00', 'admin', 'admin'),
+(7, 'E5', 4, 11.2, 25760, CURRENT_DATE + TIME '15:05:00', 'admin', 'admin'),
+(7, 'E5', 3, 9.0, 22500, TIMESTAMP(0) '2024-06-11 16:45:00', 'admin', 'admin'),
+(8, 'DO1', 1, 15.0, 30000, TIMESTAMP(0) '2024-06-12 08:40:00', 'admin', 'admin'),
+(8, 'DO1', 1, 13.2, 26400, TIMESTAMP(0) '2024-06-13 08:55:00', 'admin', 'admin'),
+(8, 'DO1', 1, 16.5, 33000, TIMESTAMP(0) '2025-06-14 08:10:00', 'admin', 'admin'),
+(8, 'DO1', 3, 15.0, 30000, TIMESTAMP(0) '2025-06-15 17:20:00', 'admin', 'admin'),
+(8, 'DO1', 1, 10.1, 24847, TIMESTAMP(0) '2025-07-09 07:27:00', 'admin', 'admin'),
+(9, 'E5', 1, 11.3, 27346, TIMESTAMP(0) '2025-07-14 06:16:00', 'admin', 'admin'),
+(9, 'E5', 1, 8.2, 20273, TIMESTAMP(0) '2025-06-08 06:30:00', 'admin', 'admin'),
+(9, 'E5', 3, 10.8, 24101, TIMESTAMP(0) '2025-06-04 09:45:00', 'admin', 'admin'),
+(9, 'DO1', 4, 15.1, 35532, TIMESTAMP(0) '2025-06-03 12:19:00', 'admin', 'admin'),
+(3, 'E5', 2, 11.2, 24983, TIMESTAMP(0) '2025-07-14 16:31:00', 'admin', 'admin'),
+( 3, 'A95', 3, 12.5, 28701, TIMESTAMP(0) '2025-06-28 07:33:00', 'admin', 'admin'),
+( 17, 'DO1', 4, 9.0, 21954, TIMESTAMP(0) '2025-06-25 08:38:00', 'admin', 'admin'),
+( 1, 'E5', 4, 9.1, 21205, TIMESTAMP(0) '2025-06-22 15:44:00', 'admin', 'admin'),
+( 17, 'A95', 1, 14.2, 33225, TIMESTAMP(0) '2025-06-03 11:29:00', 'admin', 'admin'),
+( 3, 'A95', 1, 14.1, 33724, TIMESTAMP(0) '2025-06-16 16:25:00', 'admin', 'admin'),
+( 1, 'DO1', 3, 12.7, 28512, TIMESTAMP(0) '2025-07-08 11:04:00', 'admin', 'admin'),
+( 17, 'DO1', 1, 13.4, 33443, TIMESTAMP(0) '2025-06-12 08:42:00', 'admin', 'admin'),
+( 3, 'E5', 3, 13.0, 31223, TIMESTAMP(0) '2025-07-06 14:29:00', 'admin', 'admin'),
+( 17, 'DO1', 4, 12.8, 28875, TIMESTAMP(0) '2025-06-21 10:24:00', 'admin', 'admin'),
+( 5, 'A95', 3, 13.0, 27534, TIMESTAMP(0) '2025-06-06 06:47:00', 'admin', 'admin'),
+( 1, 'A95', 3, 10.5, 24349, TIMESTAMP(0) '2025-06-21 06:54:00', 'admin', 'admin'),
+( 1, 'DO1', 3, 10.8, 23079, TIMESTAMP(0) '2025-06-03 11:14:00', 'admin', 'admin'),
+( 3, 'E5', 2, 11.1, 24986, TIMESTAMP(0) '2025-06-06 13:57:00', 'admin', 'admin'),
+( 17, 'DO1', 4, 10.0, 20360, TIMESTAMP(0) '2025-07-11 11:58:00', 'admin', 'admin'),
+( 2, 'A95', 3, 11.2, 22568, TIMESTAMP(0) '2025-07-09 09:43:00', 'admin', 'admin'),
+( 17, 'DO1', 1, 9.7, 21951, TIMESTAMP(0) '2025-07-04 07:05:00', 'admin', 'admin'),
+( 2, 'DO1', 3, 9.7, 23037, TIMESTAMP(0) '2025-06-29 07:19:00', 'admin', 'admin'),
+( 2, 'E5', 3, 11.1, 24830, TIMESTAMP(0) '2025-06-07 11:38:00', 'admin', 'admin'),
+( 17, 'E5', 3, 14.3, 31874, TIMESTAMP(0) '2025-06-26 17:24:00', 'admin', 'admin'),
+( 3, 'E5', 4, 10.8, 25844, TIMESTAMP(0) '2025-06-10 13:57:00', 'admin', 'admin'),
+( 2, 'A95', 3, 10.6, 21571, TIMESTAMP(0) '2025-06-09 15:51:00', 'admin', 'admin'),
+( 1, 'A95', 2, 11.1, 24364, TIMESTAMP(0) '2025-06-20 18:00:00', 'admin', 'admin'),
+( 2, 'DO1', 2, 15.9, 38319, TIMESTAMP(0) '2025-06-19 13:16:00', 'admin', 'admin'),
+( 3, 'E5', 2, 10.6, 26277, TIMESTAMP(0) '2025-06-09 06:50:00', 'admin', 'admin'),
+( 17, 'A95', 4, 10.5, 22333, TIMESTAMP(0) '2025-06-12 11:18:00', 'admin', 'admin'),
+( 2, 'DO1', 1, 12.0, 26148, TIMESTAMP(0) '2025-06-25 15:38:00', 'admin', 'admin'),
+( 1, 'DO1', 3, 13.5, 30807, TIMESTAMP(0) '2025-06-01 18:24:00', 'admin', 'admin'),
+( 2, 'DO1', 1, 10.6, 24115, TIMESTAMP(0) '2025-06-15 16:02:00', 'admin', 'admin'),
+( 3, 'A95', 3, 14.7, 32472, TIMESTAMP(0) '2025-07-04 09:27:00', 'admin', 'admin'),
+( 1, 'A95', 3, 9.3, 22161, TIMESTAMP(0) '2025-06-24 17:28:00', 'admin', 'admin'),
+( 3, 'A95', 1, 12.2, 24656, TIMESTAMP(0) '2025-07-04 18:54:00', 'admin', 'admin'),
+( 1, 'E5', 1, 13.3, 27650, TIMESTAMP(0) '2025-07-02 14:31:00', 'admin', 'admin'),
+( 3, 'DO1', 3, 15.2, 35294, TIMESTAMP(0) '2025-07-02 16:39:00', 'admin', 'admin'),
+( 17, 'A95', 3, 15.2, 36996, TIMESTAMP(0) '2025-06-12 09:37:00', 'admin', 'admin'),
+( 17, 'A95', 4, 13.6, 29172, TIMESTAMP(0) '2025-06-10 15:21:00', 'admin', 'admin'),
+( 3, 'DO1', 2, 12.7, 26187, TIMESTAMP(0) '2025-07-04 14:10:00', 'admin', 'admin'),
+( 17, 'DO1', 2, 8.6, 20261, TIMESTAMP(0) '2025-07-02 15:59:00', 'admin', 'admin'),
+( 17, 'DO1', 2, 13.3, 30018, TIMESTAMP(0) '2025-06-25 14:57:00', 'admin', 'admin'),
+( 17, 'E5', 4, 11.0, 23199, TIMESTAMP(0) '2025-06-14 10:57:00', 'admin', 'admin'),
+( 17, 'DO1', 2, 11.2, 27809, TIMESTAMP(0) '2025-06-28 11:32:00', 'admin', 'admin'),
+( 1, 'E5', 3, 12.0, 28680, TIMESTAMP(0) '2025-06-14 14:54:00', 'admin', 'admin'),
+( 1, 'DO1', 4, 14.8, 36733, TIMESTAMP(0) '2025-06-30 11:20:00', 'admin', 'admin'),
+( 2, 'DO1', 4, 14.4, 35395, TIMESTAMP(0) '2025-06-23 14:03:00', 'admin', 'admin'),
+( 1, 'A95', 1, 8.8, 20099, TIMESTAMP(0) '2025-06-08 09:09:00', 'admin', 'admin');
 
 insert into petro_application.shift (shift_type, start_time, end_time, created_by, last_modified_by) 
 VALUES 
@@ -487,31 +502,32 @@ INSERT INTO petro_application.supplier (supplier_name, phone, address, email, cr
 ('Nam Sông Hậu Petro', 0292355550, 'Số 2 Trần Hưng Đạo, Ninh Kiều, Cần Thơ', 'cskh@namsonghau.vn','admin', 'admin'),
 ('Petro Bình Minh', 0283844660, '105 Lý Thường Kiệt, Tân Bình, TP.HCM', 'support@binhminhpetro.vn','admin', 'admin');
 
-INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_amount, created_by, last_modified_by)
+INSERT INTO petro_application.receipt (receipt_date, supplier_id, station_id, total_import, created_by, last_modified_by)
 VALUES
-('2024-07-11 08:30:00-07', 1, 1, 50000000, 'admin', 'admin'),
-('2024-07-11 09:00:00-07', 2, 2, 75000000, 'admin', 'admin'),
-('2024-07-11 10:15:00-07', 3, 1, 62000000, 'admin', 'admin'),
-('2024-07-11 11:45:00-07', 4, 3, 81000000, 'admin', 'admin'),
-('2024-07-11 13:00:00-07', 5, 4, 55000000, 'admin', 'admin'),
-('2024-07-11 14:20:00-07', 1, 5, 70000000, 'admin', 'admin'),
-('2024-07-11 15:35:00-07', 2, 2, 46000000, 'admin', 'admin'),
-('2024-07-11 16:50:00-07', 3, 6, 88000000, 'admin', 'admin'),
-('2024-07-11 18:10:00-07', 4, 3, 93000000, 'admin', 'admin'),
-('2024-07-11 19:25:00-07', 5, 1, 50000000, 'admin', 'admin');
+('2024-08-01 08:30:00-07', 1, 1, 30000, 'admin', 'admin'),
+('2024-07-12 09:00:00-07', 2, 2, 25000, 'admin', 'admin'),
+('2024-07-10 10:15:00-07', 3, 1, 12000, 'admin', 'admin'),
+('2024-07-08 11:45:00-07', 4, 3, 61000, 'admin', 'admin'),
+('2024-07-07 13:00:00-07', 5, 4, 30000, 'admin', 'admin'),
+('2024-07-09 14:20:00-07', 1, 5, 0, 'admin', 'admin'),
+('2024-07-11 15:35:00-07', 2, 2, 46000, 'admin', 'admin'),
+('2024-07-11 16:50:00-07', 3, 6, 0, 'admin', 'admin'),
+('2024-07-11 18:10:00-07', 4, 3, 12000, 'admin', 'admin'),
+('2024-07-11 19:25:00-07', 5, 1, 20000, 'admin', 'admin');
 
-INSERT INTO petro_application.detailreceipt (receipt_id, fuel_id, liters_fuel, price, created_by, last_modified_by)
-VALUES
-(1, 1, 5000, 20000, 'admin', 'admin'),
-(1, 2, 3000, 18000, 'admin', 'admin'),
-(2, 1, 4500, 21000, 'admin', 'admin'),
-(2, 3, 2000, 22000, 'admin', 'admin'),
-(3, 1, 6000, 20500, 'admin', 'admin'),
-(4, 2, 3500, 19000, 'admin', 'admin'),
-(5, 1, 4800, 20000, 'admin', 'admin'),
-(6, 4, 2500, 23000, 'admin', 'admin'),
-(7, 3, 3000, 21500, 'admin', 'admin'),
-(8, 2, 4000, 18500, 'admin', 'admin');
+INSERT INTO petro_application.detailreceipt (receipt_id, fuel_id, liters_fuel, price, total_amount, created_by, last_modified_by) 
+VALUES 
+(1, 1, 5000, 21000, 105000000, 'admin', 'admin'),
+(1, 2, 3000, 22000, 66000000, 'admin', 'admin'),
+(2, 1, 4000, 21500, 86000000, 'admin', 'admin'),
+(2, 3, 2500, 23000, 57500000, 'admin', 'admin'),
+(3, 2, 3500, 21800, 76300000, 'admin', 'admin'),
+(3, 3, 4000, 22500, 90000000, 'admin', 'admin'),
+(4, 1, 6000, 21200, 12720000, 'admin', 'admin'),
+(4, 2, 2000, 21900, 43800000, 'admin', 'admin'),
+(5, 3, 3000, 22800, 68400000, 'admin', 'admin'),
+(5, 1, 2500, 21000, 52500000, 'admin', 'admin');
+
 
 DO $$ 
 BEGIN 
@@ -536,6 +552,15 @@ GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
 
 END;
+
+
+select * from petro_application.log 
+
+
+
+
+
+
 
 
 

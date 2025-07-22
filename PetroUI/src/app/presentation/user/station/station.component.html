@@ -23,15 +23,15 @@
                     </thead>
                     <tbody class="">
                         @for (dispenser of dispenserList; track dispenser.name) {
-                            <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
-                                <td class="text-center">{{dispenser.name}}</td>
-                                <td class="text-center">{{dispenser.status ?? "N/A"}}</td>
-                                <td class="pl-8">{{dispenser.liter ?? "N/A"}}</td>
-                                <td class="text-center">{{dispenser.price}}</td>
-                                <td class="pl-15">{{dispenser.totalAmount ?? "N/A"}}</td>
-                                <td class="pl-4">{{dispenser.longName}}</td>
-                                <td class="px-7">{{dispenser.shortName}}</td>
-                            </tr>
+                        <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
+                            <td class="text-center">{{dispenser.name}}</td>
+                            <td class="text-center">{{dispenser.status ?? "N/A"}}</td>
+                            <td class="pl-8">{{dispenser.liter ?? "N/A"}}</td>
+                            <td class="text-center">{{dispenser.price}}</td>
+                            <td class="pl-15">{{dispenser.totalAmount ?? "N/A"}}</td>
+                            <td class="pl-4">{{dispenser.longName}}</td>
+                            <td class="px-7">{{dispenser.shortName}}</td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -43,19 +43,15 @@
             <div class="flex pb-2.5">
                 <div style="width: 400px; height: 210px; margin-left: 25px;">
                     <h3>Biểu đồ thống kê doanh thu</h3>
-                    <canvas baseChart  style="margin-bottom: 3px;"
-                        [data]="revenueChartData"
-                        [options]="pieChartOptions"
+                    <canvas baseChart style="margin-bottom: 3px;" [data]="revenueChartData" [options]="pieChartOptions"
                         [type]="'pie'">
                     </canvas>
                 </div>
                 <div style="width: 250px; height: 210px; margin-left: 10px;">
                     <h3>Biểu đồ thống kê nhiên liệu</h3>
-                    <canvas baseChart style="margin-bottom: 3px;"
-                        [data]="fuelChartData"
-                         [options]="pieChartOptions"
+                    <canvas baseChart style="margin-bottom: 3px;" [data]="fuelChartData" [options]="pieChartOptions"
                         [type]="'pie'">
-                    </canvas>   
+                    </canvas>
                 </div>
             </div>
         </div>
@@ -82,17 +78,19 @@
                     </thead>
                     <tbody class="">
                         @for (tank of tankList; track tank.name) {
-                            <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
-                                <td class="text-center">{{tank.name}}</td>
-                                <td class="pl-7">{{tank.shortName}}</td>
-                                <td class="pl-5">
-                                    <div class="w-full !bg-gray-500 rounded-md h-full z-10">
-                                        <div class="!bg-green-500 h-full rounded-md text-center text-white duration-200" [style.width]="(tank.percentage ?? '0') + '%'">{{tank.percentage ?? 'N/A'}}%</div>
+                        <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
+                            <td class="text-center">{{tank.name}}</td>
+                            <td class="pl-7">{{tank.shortName}}</td>
+                            <td class="pl-5">
+                                <div class="w-full !bg-gray-500 rounded-md h-full z-10">
+                                    <div class="!bg-green-500 h-full rounded-md text-center text-white duration-200"
+                                        [style.width]="(tank.percentage ?? '0') + '%'">{{tank.percentage ?? 'N/A'}}%
                                     </div>
-                                </td>
-                                <td class="text-center">{{tank.currentVolume}}</td>
-                                <td class="text-center">{{tank.maxVolume}}</td>
-                            </tr>
+                                </div>
+                            </td>
+                            <td class="text-center">{{tank.currentVolume}}</td>
+                            <td class="text-center">{{tank.maxVolume}}</td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -119,17 +117,15 @@
                             <th class="px-20">Time</th>
                         </tr>
                     </thead>
-                    <tbody class="">
-                        @for (log of logList; track $index) {
-                        <tr class="even:**:bg-gray-300 hover:scale-102 duration-200">
-                            <td class="text-center">{{log.name}}</td>
-                            <td class="text-center">{{log.fuelName}}</td>
-                            <td class="text-center">{{log.totalLiters}}</td>
-                            <td class="text-center">{{log.price}}</td>
-                            <td class="text-center">{{log.totalAmount}}</td>
-                            <td class="text-center">{{log.time}}</td>
+                    <tbody class="" >
+                        <tr *ngFor="let record of logList">
+                            <td class="text-black">{{ record.Name }}</td>
+                            <td>{{ record.FuelName }}</td>
+                            <td>{{ record.TotalLiters }}</td>
+                            <td>{{ record.Price | number:'1.0-0' }}</td>
+                            <td>{{ record.TotalAmount | currency:'VND' }}</td>
+                            <td>{{ record.Time }}</td>
                         </tr>
-                        }
                     </tbody>
                 </table>
                 }
