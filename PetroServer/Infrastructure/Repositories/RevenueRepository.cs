@@ -110,11 +110,19 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameDayAsync(GetIdRevenue ren)
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameDayAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
         {
             List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNameDay, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNamegetDayAsync(GetDateRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNamegetDay, ren)).ToList();
             return revenue;
         }
     }

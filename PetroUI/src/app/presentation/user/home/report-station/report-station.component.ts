@@ -43,6 +43,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     revstationDaySocket: { [key: string]: WebSocketSubject<WSrevenuestationday[]> } = {}
     revenuedaysocket: WebSocketSubject<revenuestationday[]> | undefined;
     revstationday: revenuestationday[] = [];
+    StationId: number[]=[];
     Day: string[] = [];
     DayAccount: number[] = [];
     DayProfit: number[] = [];
@@ -228,7 +229,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                     this.piechartfueldaySocket[value.StationId].subscribe({
                         next: (Datares: WSrevenuefuelday) => {
                             // res[index].FuelName = Datares.FuelName
-                            res[index].Date = Datares.Date
+                            // res[index].Date = Datares.Date
                             res[index].TotalAmount = Datares.TotalAmount
                             res[index].TotalLiters = Datares.TotalLiters
                         },
@@ -482,6 +483,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 const dateSet = new Set<string>();
                 res.forEach(item => dateSet.add(item.Date));
                 const sortedDates = Array.from(dateSet).sort();
+                this.StationId = this.revstationday.map((item) =>item.StationId);
                 this.Day = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
                 this.DayAccount = this.revstationday.map((item) => item.TotalRevenue);
                 this.DayProfit = this.revstationday.map((item) => item.TotalProfit);
@@ -506,6 +508,24 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             }
         })
     }
+    onChartClick(event: any): void {
+        const activePoints = event.active;
+        if (activePoints && activePoints.length > 0) {
+            const chartElement = activePoints[0];
+            const chartIndex = chartElement.index;
+            const clickedStationId = this.StationId[chartIndex];
+            const clickedDate = this.Day[chartIndex];
+            const clickedRevenue = this.DayAccount[chartIndex];
+            const clickedProfit = this.DayProfit[chartIndex];
+            console.log('Station Id: ', clickedStationId);
+            console.log('🟡 Ngày được chọn:', clickedDate);
+            console.log('➡️ Doanh thu:', clickedRevenue);
+            console.log('➡️ Lợi nhuận:', clickedProfit);
+            // Ví dụ: Hiển thị popup hoặc điều hướng
+            // this.router.navigate(['/doanh-thu/ngay', clickedDate]);
+        }
+    }
+
     loadBarChartMonth() {
         this.revenuemonthsocket = webSocket<revenuestationmonth[]>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}`)
         this.revenuemonthsocket.subscribe({

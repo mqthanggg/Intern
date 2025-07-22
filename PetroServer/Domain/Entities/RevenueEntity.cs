@@ -25,6 +25,11 @@ public class GetIdRevenue
 {
     public int StationId { get; set; }
 }
+public class GetDateRevenue
+{
+    public int StationId { get; set; }
+    public DateTime GetDate { get; set; }
+}
 public class RevenueByName : Entity
 {
     public string? FuelName { get; set; } = null;

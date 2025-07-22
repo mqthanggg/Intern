@@ -146,73 +146,73 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.connectWebsocket();
   }
-  // handleBarChartData(event: MessageEvent): void {
-  //   const rawData = JSON.parse(event.data);
-  //   console.log('Received revenue and profit:', rawData);
-  //   const filteredData = rawData.filter((item: any) =>
-  //     item.TotalRevenue > 0 || item.TotalProfit > 0
-  //   );
-  //   this.barData = filteredData;
-  //   const stations = filteredData.map((item: any) => item.StationName);
-  //   const revenue = filteredData.map((item: any) => item.TotalRevenue);
-  //   const profit = filteredData.map((item: any) => item.TotalProfit);
-  //   this.stationIdList = filteredData.map((item: any) => item.StationId);
-  //   this.barChartData = {
-  //     labels: stations,
-  //     datasets: [
-  //       {
-  //         label: 'Doanh thu (VNĐ)',
-  //         data: revenue,
-  //         backgroundColor: '#42A5F5'
-  //       },
-  //       {
-  //         label: 'Lợi nhuận (VNĐ)',
-  //         data: profit,
-  //         backgroundColor: '#66BB6A'
-  //       }
-  //     ]
-  //   };
-  // }
-
-  handleBarChartData(event: any) {
-    try {
-      const rawData = typeof event.data === 'string' ? JSON.parse(event.data) : event;
-
-      if (!Array.isArray(rawData)) {
-        throw new Error('Dữ liệu không phải là mảng');
-      }
-      const data: totalStationName[] = rawData;
-      const validData = data.filter(
-        item =>
-          item &&
-          typeof item.TotalRevenue === 'number' &&
-          typeof item.TotalProfit === 'number' &&
-          item.TotalRevenue > 0 || item.TotalProfit > 0
-      );
-      this.barData = validData;
-      this.station = validData.map(item => item.StationName);
-      this.revenue = validData.map(item => item.TotalRevenue);
-      this.profit = validData.map(item => item.TotalProfit);
-      this.barChartData = {
-        labels: this.station,
-        datasets: [
-          {
-            label: 'Doanh thu (VNĐ)',
-            data: this.revenue,
-            backgroundColor: '#42A5F5'
-          },
-          {
-            label: 'Lợi nhuận (VNĐ)',
-            data: this.profit,
-            backgroundColor: '#66BB6A'
-          }
-        ]
-      };
-      console.log('Bar chart updated:', this.barChartData);
-    } catch (error) {
-      console.error('Lỗi khi xử lý dữ liệu WebSocket:', error);
-    }
+  handleBarChartData(event: MessageEvent): void {
+    const rawData = JSON.parse(event.data);
+    console.log('Received revenue and profit:', rawData);
+    const filteredData = rawData.filter((item: any) =>
+      item.TotalRevenue > 0 || item.TotalProfit > 0
+    );
+    this.barData = filteredData;
+    const stations = filteredData.map((item: any) => item.StationName);
+    const revenue = filteredData.map((item: any) => item.TotalRevenue);
+    const profit = filteredData.map((item: any) => item.TotalProfit);
+    this.stationIdList = filteredData.map((item: any) => item.StationId);
+    this.barChartData = {
+      labels: stations,
+      datasets: [
+        {
+          label: 'Doanh thu (VNĐ)',
+          data: revenue,
+          backgroundColor: '#42A5F5'
+        },
+        {
+          label: 'Lợi nhuận (VNĐ)',
+          data: profit,
+          backgroundColor: '#66BB6A'
+        }
+      ]
+    };
   }
+
+  // handleBarChartData(event: any) {
+  //   try {
+  //     const rawData = typeof event.data === 'string' ? JSON.parse(event.data) : event;
+
+  //     if (!Array.isArray(rawData)) {
+  //       throw new Error('Dữ liệu không phải là mảng');
+  //     }
+  //     const data: totalStationName[] = rawData;
+  //     const validData = data.filter(
+  //       item =>
+  //         item &&
+  //         typeof item.TotalRevenue === 'number' &&
+  //         typeof item.TotalProfit === 'number' &&
+  //         item.TotalRevenue > 0 || item.TotalProfit > 0
+  //     );
+  //     this.barData = validData;
+  //     this.station = validData.map(item => item.StationName);
+  //     this.revenue = validData.map(item => item.TotalRevenue);
+  //     this.profit = validData.map(item => item.TotalProfit);
+  //     this.barChartData = {
+  //       labels: this.station,
+  //       datasets: [
+  //         {
+  //           label: 'Doanh thu (VNĐ)',
+  //           data: this.revenue,
+  //           backgroundColor: '#42A5F5'
+  //         },
+  //         {
+  //           label: 'Lợi nhuận (VNĐ)',
+  //           data: this.profit,
+  //           backgroundColor: '#66BB6A'
+  //         }
+  //       ]
+  //     };
+  //     console.log('Bar chart updated:', this.barChartData);
+  //   } catch (error) {
+  //     console.error('Lỗi khi xử lý dữ liệu WebSocket:', error);
+  //   }
+  // }
 
   connectWebsocket(): void {
     this.wsService.connect('barchar', environment.wsServerURI + '/ws/sumrevenue');

@@ -32,10 +32,10 @@
       </select>
     </div>
     <div class="w-full flex justify-center">
-      <!-- <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
-        [options]="barChartOptions" class="w-full max-w-4xl h-80" (chartClick)="onChartClick($event)"></canvas> -->
-         <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
-        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
+      <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
+        [options]="barChartOptions" class="w-full max-w-4xl h-80" (chartClick)="onChartClick($event)"></canvas>
+         <!-- <canvas baseChart *ngIf="selectedChart === 'day' && barChartData" [data]="barChartData" [type]="'bar'"
+        [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas> -->
       <canvas baseChart *ngIf="selectedChart === 'month' && barChartMonthData" [data]="barChartMonthData" [type]="'bar'"
         [options]="barChartOptions" class="w-full max-w-4xl h-80"></canvas>
       <canvas baseChart *ngIf="selectedChart === 'year' && barChartYearData" [data]="barChartYearData" [type]="'bar'"

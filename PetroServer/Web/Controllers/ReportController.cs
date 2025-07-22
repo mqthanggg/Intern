@@ -21,6 +21,7 @@ public static class ReportController
         app.MapGet("station/sumrevenueday/{id}", GetSumRevenueByStationDay);
         app.MapGet("station/sumrevenuemonth/{id}", GetSumRevenueByStationMonth);
         app.MapGet("station/sumrevenueyear/{id}", GetSumRevenueByStationYear);
+        app.MapGet("station/getdate/{id}/{date}", GetSumRevenuegetDayByName);
 
         app.Map("ws/revenue", GetSumRevenueWS);
         app.Map("ws/station", GetSumStationWS);
@@ -47,6 +48,26 @@ public static class ReportController
 
     //===========================================================
     //======================== HTTP =============================
+    [Authorize]
+    [HttpGet("station/{id}/{date}")]
+    [HttpGet("sumrevenuenamegetday/{id}")]
+    [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report name get day",
+        Description = "Total revenue statistics for the current day by name get day"
+    )]
+    public static async Task<IResult> GetSumRevenuegetDayByName([FromRoute] int id,[FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
+    {
+        var result = await revenueRepository.GetTotalRevenueByNamegetDayAsync(new GetDateRevenue { StationId = id, GetDate = date });
+
+        if (result == null)
+        {
+            return Results.NotFound();
+        }
+        return TypedResults.Ok(result);
+    }
+
     [Authorize]
     [HttpGet("sumrevenuebystatioyear/{id}")]
     [ProducesResponseType(typeof(SumRevenueStationByYearResponse), StatusCodes.Status200OK)]

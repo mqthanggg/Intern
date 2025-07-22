@@ -329,7 +329,23 @@ public static class RevenueQueries
             AND station.station_id = @StationId
         GROUP BY log_type
    ";
-
+    public static readonly string SumFuelbyNamegetDay = @"
+        SELECT 
+            fuel_name AS FuelName,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE
+            log.""time""::DATE = @GetDate AND
+            station.station_id = @StationId
+        GROUP BY fuel_name
+        ORDER BY fuel_name;
+    ";
     // SumRevenue query returns the total revenue AND liters for the current month
     public static readonly string SumFuelbyNameMonth = $@"
         SELECT 
