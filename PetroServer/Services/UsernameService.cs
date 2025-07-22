@@ -1,16 +1,12 @@
 public class UsernameService : IUsernameService{
     private readonly IHttpContextAccessor _httpContext;
-    private readonly IJWTService _jwt;
     public UsernameService(
-        IHttpContextAccessor httpContext,
-        IJWTService jWTService
+        IHttpContextAccessor httpContext
     ){
         _httpContext = httpContext;
-        _jwt = jWTService;
     }
     public string GetUsername(){
-        string bearer = _httpContext.HttpContext?.Request.Headers.Authorization.FirstOrDefault() ?? "";
-        string username = _jwt.GetClaims(bearer).First(e => e.Type == ClaimTypes.Name).Value;
+        string username = (_httpContext.HttpContext?.User.Claims.First(e => e.Type == ClaimTypes.Name).Value) ?? throw new InvalidDataException("No username is found");
         return username;
     }
 }

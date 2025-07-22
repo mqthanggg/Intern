@@ -29,7 +29,10 @@ showPassword: any;
     this.http.post(
       `${environment.serverURI}/login`,
       this.loginForm.value,
-      {observe: 'response'}
+      {
+        observe: 'response',
+        withCredentials: true
+      }
     ).pipe(
       mergeMap((res) => of(res).pipe(delay(1000))),//Simulating delay
       catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),//Simulating delay
@@ -42,7 +45,8 @@ showPassword: any;
           localStorage.clear()
           localStorage.setItem('jwt',res.body.token);
           localStorage.setItem('refresh',res.body.refreshToken)
-          this.router.navigate(['/user/home'])
+          localStorage.setItem('role',res.body.role)
+          this.router.navigate([`/${res.body.role}`])
         }
       },
       error: (err: HttpErrorResponse) => {

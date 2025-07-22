@@ -1,5 +1,9 @@
 BEGIN;
 
+DROP SCHEMA IF EXISTS petro_application;
+
+CREATE SCHEMA petro_application;
+
 SET search_path TO petro_application, public;
 
 ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_shift_id_fkey;
@@ -203,9 +207,9 @@ CREATE TABLE IF NOT EXISTS petro_application.supplier (
     address character varying(50) NOT NULL,
     email character varying(50) NOT NULL,
     created_by character varying(50),
-    created_date time with time zone,
+    created_date time with time zone DEFAULT now(),
     last_modified_by character varying(50),
-    last_modified_date time with time zone,
+    last_modified_date time with time zone DEFAULT now(),
 	 PRIMARY KEY (supplier_id)
 );
 
@@ -257,8 +261,8 @@ CREATE TABLE IF NOT EXISTS petro_application.assignment
     staff_id integer NOT NULL,
     station_id integer NOT NULL ,
 	work_date date NOT NULL, 
-    created_by character varying(255) DEFAULT now(),
-    created_date timestamp(0) with time zone,
+    created_by character varying(255),
+    created_date timestamp(0) with time zone DEFAULT now(),
     last_modified_by character varying(255),
     last_modified_date timestamp(0) with time zone DEFAULT now(),
     CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id)

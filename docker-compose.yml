@@ -1,29 +1,85 @@
 services:
   database:
-    build:
-      image: postgres
-      restart: always
-      env_file: Database/database.env
-      healthcheck:
-        test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
-        interval: 10s
-        timeout: 3s
-        retries: 3
-      ports:
-        - "5432:5432"
-  server:
-    build: 
-      context: .
-      dockerfile: PetroServer/Dockerfile
+    image: postgres
+    restart: always
     networks:
       - petro-network
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=Intern
+    volumes:
+      - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:5170/health || exit 1"]
-      interval: 30s
-      timeout: 30s
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d Intern'"]
+      interval: 10s
+      timeout: 3s
       retries: 3
+    expose:
+      - "5432:5432"
+  mqtt:
+    restart: always
+    networks:
+      - petro-network
+    build:
+      context: Mosquitto/mosquitto
+      dockerfile: Dockerfile
+    volumes:
+      - ./Mosquitto/mosquitto/config:/mosquitto/config
+      - ./Mosquitto/mosquitto/certs:/mosquitto/certs
+    ports:
+      - "8883:8883"
+  server:
+    build:
+      context: PetroServer
+      dockerfile: Dockerfile
+    networks:
+      - petro-network
+    environment:
+      - SCHEMA=petro_application
+      - DBWRITE_CONNECTION_STRING=Host=database;Port=5432;Username=write_user;Password=write123;Database=Intern
+      - DBREAD_CONNECTION_STRING=Host=database;Port=5432;Username=read_user;Password=read123;Database=Intern
+      - DEVELOPMENT_AUTHORITY=http://localhost:5170
+      - DEVELOPMENT_AUDIENCE=http://localhost:5170
+      - PRODUCTION_AUTHORITY=https://localhost:7149
+      - PRODUCTION_AUDIENCE=https://localhost:7149
+      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
+      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
+      - CLIENT_PFX_PATH=certs/certificate.pfx
+      - CLIENT_PFX_PASSWORD=admin123
+      - MOSQUITTO_USERNAME=mqthanggg
+      - MOSQUITTO_PASSWORD=admin123
+      - MOSQUITTO_HOST=mqtt
+      - MOSQUITTO_PORT=8883
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:7149;http://0.0.0.0:5170
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://0.0.0.0:5170/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5170:5170"
+      - "7149:7149"
     depends_on:
       database:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+  fe:
+    build:
+      context: PetroUI
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - petro-network
+    restart: always
+    depends_on:
+      server:
         condition: service_healthy
 
 networks:

@@ -35,7 +35,8 @@ export class StationEditComponent implements OnInit {
   formSubmit(){
     this.isUpdateLoading = true
     this.http.put(`${environment.serverURI}/station/${this.stationId}`,this.stationForm.getRawValue(),{
-      observe: 'response'
+      observe: 'response',
+      withCredentials: true
     }).pipe(
       mergeMap((val) => of(val).pipe(delay(1000))),
       catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))),

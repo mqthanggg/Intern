@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { userGuard } from './infrastructure/guards/user-guard.guard';
-import { UserComponent } from './presentation/user/user.component';
+import { administratorGuard } from './infrastructure/guards/administrator-guard.guard';
+import { autoRedirection } from './infrastructure/services/auto-redirection.service';
 
 export const routes: Routes = [
     {
@@ -18,8 +19,21 @@ export const routes: Routes = [
         title: "User",
         canActivateChild: [userGuard],
         canActivate: [userGuard],
-        component: UserComponent,
+        loadComponent: ()=>import('./presentation/user/user.component').then(m => m.UserComponent),
         loadChildren: () => import('./presentation/user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModule)
+    },
+    {
+        path: "administrator",
+        title: "Administrator",
+        canActivateChild: [administratorGuard],
+        canActivate: [administratorGuard],
+        loadComponent: () => import('./presentation/administrator/administrator.component').then(m => m.AdministratorComponent),
+        loadChildren: () => import('./presentation/administrator/administrator-routing/administrator-routing.module').then(m=>m.AdministratorRoutingModule)
+    },
+    {
+        path: "",
+        pathMatch: "full",
+        redirectTo: autoRedirection,
     },
     {
         path: "**",

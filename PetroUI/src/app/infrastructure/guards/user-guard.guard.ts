@@ -1,26 +1,10 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { CanActivateChildFn, CanActivateFn, Router, UrlTree } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { catchError, map, of } from 'rxjs';
+import { CanActivateChildFn, CanActivateFn, Router } from '@angular/router';
 
 export const userGuard: CanActivateChildFn | CanActivateFn = (childRoute, state) => {
-  const http = inject(HttpClient)
   const router = inject(Router)
-  if (localStorage.getItem('refresh') == null || localStorage.getItem('jwt') == null)
+  const [refreshToken, jwt, role] = [localStorage.getItem('refresh'),localStorage.getItem('jwt'),localStorage.getItem('role')]
+  if (refreshToken == null || jwt == null || role != 'user')
     return router.parseUrl('login')
-  return http.post(`${environment.serverURI}/refresh`,{
-    token: localStorage.getItem('jwt'),
-    refreshToken: localStorage.getItem('refresh')
-  },{
-    observe: "response"
-  }).pipe(
-    map((value: HttpResponse<any>) => {
-      localStorage.setItem('jwt', value.body.token)
-      return true
-    }),
-    catchError((_: any) => {
-      return of(router.parseUrl(`/login`))
-    })
-  )
+  return true
 };

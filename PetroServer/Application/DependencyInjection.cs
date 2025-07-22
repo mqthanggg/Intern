@@ -1,7 +1,6 @@
 public static class DependencyInjection{
     public static IServiceCollection AddServices(this IServiceCollection services){
         services.AddHttpContextAccessor();
-        services.AddLogging();
         services.AddSingleton<IJWTService,JWTService>();
         services.AddSingleton<IAsymmetricKeyService,AsymmetricKeyService>();
         services.AddSingleton<IJWKsService,JWKsService>();

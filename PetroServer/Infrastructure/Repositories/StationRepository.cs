@@ -9,7 +9,7 @@ public class StationRepository : IStationRepository{
     }
     public async Task<int> GetSumStationResponseAsync(){
         await using (var connection = dbRead.CreateConnection()){
-            int count = (await connection.ExecuteScalarAsync<int>(StationQuery.SelectSumStation));
+            int count = await connection.ExecuteScalarAsync<int>(StationQuery.SelectSumStation);
             return count;
         }
     }

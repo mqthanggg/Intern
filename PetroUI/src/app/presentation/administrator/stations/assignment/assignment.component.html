@@ -1,0 +1,39 @@
+<div class="py-5 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll scroll-smooth">
+    <div class="flex w-full justify-between items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-5 hover:cursor-pointer"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
+        <span class="text-xl font-semibold mx-auto">{{monthText[nextMonth]}}, {{year}}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-5 hover:cursor-pointer"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
+    </div>
+    <div class="mt-10 grid grid-cols-7 gap-5 mx-auto w-[80%]">
+        <div class="font-medium text-center bg-gray-400">Sun</div>
+        <div class="font-medium text-center bg-gray-400">Mon</div>
+        <div class="font-medium text-center bg-gray-400">Tue</div>
+        <div class="font-medium text-center bg-gray-400">Wed</div>
+        <div class="font-medium text-center bg-gray-400">Thu</div>
+        <div class="font-medium text-center bg-gray-400">Fri</div>
+        <div class="font-medium text-center bg-gray-400">Sat</div>
+        @for(cell of calendar; track $index){
+            @if ($index == 0){
+                <div class="aspect-square font-bold text-xl border border-gray-300 p-2 rounded-lg" [style.grid-column-start]="startDate + 1">
+                    <div class="w-full h-full relative">
+                        <span class="top-0 left-0 absolute">{{cell}}</span>
+                        <a class="bottom-0 right-0 absolute" [routerLink]="['./edit']" [queryParams]="{date: year.toString() + '-' + nextMonth.toString().padStart(2,'0') + '-' + cell.toString().padStart(2,'0')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-5"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            }
+            @else {
+                <div class="aspect-square font-bold text-xl border border-gray-300 p-2 rounded-lg">
+                    <div class="w-full h-full relative">
+                        <span class="top-0 left-0 absolute">{{cell}}</span>
+                        <a class="bottom-0 right-0 absolute" [routerLink]="['./edit']" [queryParams]="{date: year.toString() + '-' + nextMonth.toString().padStart(2,'0') + '-' + cell.toString().padStart(2,'0')}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-5"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<router-outlet></router-outlet>

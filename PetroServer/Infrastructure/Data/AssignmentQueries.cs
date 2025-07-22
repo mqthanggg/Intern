@@ -2,25 +2,39 @@ public static class AssignmentQuery{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string SelectAssignment = $@"
         SELECT 
-            assignment_id,
-            shift_id,
-            staff_id,
-            station_id,
-            work_date
-        FROM {Schema}.assignment
+            a.assignment_id,
+            sh.shift_type,
+            st.staff_name,
+            a.station_id,
+            a.work_date
+        FROM {Schema}.assignment as a
+        INNER JOIN {Schema}.staff as st
+        INNER JOIN {Schema}.shift as sh
+        ON
+            a.staff_id = st.staff_id
+        AND
+            a.shift_id = sh.shift_id
         ORDER BY
-           assignment_id
+            a.assignment_id
     ";
     public static readonly string SelectAssignmentById = $@"
         SELECT 
-            assignment_id,
-            shift_id,
-            staff_id,
-            station_id,
-            work_date
-        FROM {Schema}.assignment
+            a.assignment_id,
+            sh.shift_type,
+            st.staff_name,
+            a.station_id,
+            a.work_date
+        FROM {Schema}.assignment as a
+        INNER JOIN {Schema}.staff as st
+        INNER JOIN {Schema}.shift as sh
+        ON
+            a.staff_id = st.staff_id
+        AND
+            a.shift_id = sh.shift_id
+        ORDER BY
+            a.assignment_id
         WHERE
-            assignment_id = @AssignmentId
+            a.assignment_id = @AssignmentId
     ";
     public static readonly string InsertAssignment = $@"
         INSERT INTO {Schema}.assignment(
@@ -59,5 +73,24 @@ public static class AssignmentQuery{
         DELETE FROM {Schema}.assignment
         WHERE 
             assignment_id = @AssignmentId
+    ";
+    public static readonly string SelectAssignmentByStationId = $@"
+        SELECT 
+            a.assignment_id,
+            sh.shift_type,
+            st.staff_name,
+            a.station_id,
+            a.work_date
+        FROM {Schema}.assignment as a
+        INNER JOIN {Schema}.staff as st
+        INNER JOIN {Schema}.shift as sh
+        ON
+            a.staff_id = st.staff_id
+        AND
+            a.shift_id = sh.shift_id
+        ORDER BY
+            a.assignment_id
+        WHERE
+            a.station_id = @StationId
     ";
 }

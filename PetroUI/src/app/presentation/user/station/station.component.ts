@@ -145,73 +145,58 @@ export class StationComponent implements OnInit, OnDestroy {
 
 
     forkJoin({
-      dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response" }),
-      tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response" }),
+      dispenser: this.http.get(environment.serverURI+`/dispenser/station/${this.id}`,{observe: "response", withCredentials: true}),
+      tank: this.http.get(environment.serverURI+`/tank/station/${this.id}`,{observe: "response", withCredentials: true}),
+      log: this.http.get(environment.serverURI+`/log/station/${this.id}`,{observe: "response", withCredentials: true})
     }).
-      pipe(
-        mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay
-        catchError((err) => of(err).pipe(delay(1000), mergeMap(() => throwError(() => err)))), //Simulating delay
-        finalize(() => {
-          this.isDispenserLoading = false
-          this.isTankLoading = false
-          this.isLogLoading = false
-        })
-      ).subscribe({
-        next: (res: {
-          dispenser: HttpResponse<any>,
-          tank: HttpResponse<any>,
-
-        }) => {
-          this.dispenserList = res.dispenser.body
-          this.dispenserList.forEach((value, index) => {
-            this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}?token=${localStorage.getItem('jwt')}`)
-            this.dispenserSocket[value.dispenserId].subscribe({
-              next: (res: WSDispenserRecord) => {
-                this.dispenserList[index].liter = res.liter
-                this.dispenserList[index].totalAmount = res.price
-                this.dispenserList[index].status = res.state
-              },
-              error: (err) => {
-                console.error(`Error at dispenser ${value.dispenserId}: ${err}`);
-              }
-            })
-          })
-          this.tankList = res.tank.body
-          this.tankList.forEach((value, index) => {
-            this.tankSocket[value.tankId] = webSocket<WSTankRecord>(environment.wsServerURI + `/ws/tank/${value.tankId}?token=${localStorage.getItem('jwt')}`)
-            this.tankSocket[value.tankId].subscribe({
-              next: (res: WSTankRecord) => {
-                this.tankList[index].currentVolume = res.current_volume
-                const vMax = new BigNumber(this.tankList[index].maxVolume)
-                this.tankList[index].percentage = new BigNumber(res.current_volume).dividedBy(vMax).times(100).toFixed(2).toString()
-              },
-              error: (err) => {
-                console.error(`Error at tank ${value.tankId}: ${err}`);
-              }
-            })
-          })
-          // this.logList = res.log  
-          // this.logList.forEach((value, index) => {
-          //   this.logSocket[value.stationId] = webSocket<WSLogRecord>(environment.wsServerURI + `/ws/log/station/${value.stationId}?token=${localStorage.getItem('jwt')}`)
-          //   this.logSocket[value.stationId].subscribe({
-          //     next: (res: WSLogRecord) => {
-          //       this.logList[index].name = res.name;
-          //       this.logList[index].fuelName=res.fuelName;
-          //       this.logList[index].totalLiters=res.totalLiters;
-          //       this.logList[index].price=res.price;
-          //       this.logList[index].totalAmount=res.totalAmount;
-          //       this.logList[index].time=res.time;
-          //     },
-          //     error: (err) => {
-          //       console.error(`Error at tank ${value.stationId}: ${err}`);
-          //     }
-          //   })
-          // })   
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error(err.message);
-        }
+    pipe(
+      mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay
+      catchError((err) => of(err).pipe(delay(1000),mergeMap(() => throwError(() => err)))), //Simulating delay
+      finalize(() => {
+        this.isDispenserLoading = false
+        this.isTankLoading = false
+        this.isLogLoading = false
       })
+    ).subscribe({
+      next: (res: {
+        dispenser: HttpResponse<any>,
+        tank: HttpResponse<any>,
+        log: HttpResponse<any>
+      }) => {
+        this.dispenserList = res.dispenser.body
+        this.dispenserList.forEach((value, index) => {
+          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}?token=${localStorage.getItem('jwt')}`)
+          this.dispenserSocket[value.dispenserId].subscribe({
+            next: (res: WSDispenserRecord) => {
+              this.dispenserList[index].liter = res.liter
+              this.dispenserList[index].totalAmount = res.price
+              this.dispenserList[index].status = res.state
+            },
+            error: (err) => {
+              console.error(`Error at dispenser ${value.dispenserId}: ${err}`);
+            }
+          })
+        })
+        this.tankList = res.tank.body
+        this.tankList.forEach((value, index) => {
+          this.tankSocket[value.tankId] = webSocket<WSTankRecord>(environment.wsServerURI + `/ws/tank/${value.tankId}?token=${localStorage.getItem('jwt')}`)
+          this.tankSocket[value.tankId].subscribe({
+            next: (res: WSTankRecord) => {
+              this.tankList[index].currentVolume = res.current_volume
+              const vMax = new BigNumber(this.tankList[index].maxVolume)
+              this.tankList[index].percentage = new BigNumber(res.current_volume).dividedBy(vMax).times(100).toFixed(2).toString()
+            },
+            error: (err) => {
+              console.error(`Error at tank ${value.tankId}: ${err}`);
+            }
+          })
+        })
+        this.logList = res.log.body
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err.message);
+      }
+    })
     window.onbeforeunload = () => this.ngOnDestroy()
   }
 
