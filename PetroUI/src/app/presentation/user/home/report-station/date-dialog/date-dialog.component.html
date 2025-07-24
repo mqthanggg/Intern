@@ -1,0 +1,28 @@
+<div class="fixed inset-0 bg-gray-500/30 flex items-center justify-center z-50">
+  <div class="bg-white rounded-md p-6 w-1/2">
+    <div>
+      <h2 class="text-2xl mr-3 text-violet-600 font-bold text-center">Report station: {{ this.id }}</h2>
+      <h2 class="text-2xl text-violet-600 font-bold text-center"> Ngày: {{ this.date }}</h2>
+    </div>
+    <div class="flex flex-nowrap justify-between px-5 pt-5">
+      <div class="relative w-full max-w-xs">
+        <canvas *ngIf="pieChartFuelDateData?.datasets?.length > 0 && pieChartFuelDateData.datasets[0]?.data?.length > 0"
+          baseChart [type]="'pie'" [data]="pieChartFuelDateData" [options]="PieChartFuelOption">
+        </canvas>
+        <div *ngIf="!pieChartFuelDateData?.datasets?.length || !pieChartFuelDateData.datasets[0]?.data?.length"
+          class="absolute inset-0 flex justify-center items-center bg-white bg-opacity-80 z-10 rounded-xl">
+          <h1 class="text-gray-400 text-xl font-bold text-center">Không có dữ liệu</h1>
+        </div>
+      </div>
+      <div class="relative w-full max-w-xs">
+        <canvas *ngIf="pieChartTypeDateData?.datasets?.length > 0 && pieChartTypeDateData.datasets[0]?.data?.length > 0"
+          baseChart [type]="'pie'" [data]="pieChartTypeDateData" [options]="PieChartFuelOption">
+        </canvas>
+        <div *ngIf="!pieChartTypeDateData?.datasets?.length || !pieChartTypeDateData.datasets[0]?.data?.length"
+          class="absolute inset-0 flex justify-center items-center bg-white bg-opacity-80 z-10 rounded-xl">
+          <h1 class="text-gray-400 text-xl font-bold text-center">Không có dữ liệu</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

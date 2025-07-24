@@ -44,8 +44,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-    //======================================================================
-    //======================================================================
     public async Task<SumRevenueResponse> GetTotalRevenueAsync()
     {
         await using (var connection = dbRead.CreateConnection())
@@ -86,14 +84,7 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-    public async Task<IReadOnlyList<SumRevenueByDateResponse>> GetTotalRevenueByDayAsync()
-    {
-        await using (var connection = dbRead.CreateConnection())
-        {
-            List<SumRevenueByDateResponse> revenue = (await connection.QueryAsync<SumRevenueByDateResponse>(RevenueQueries.SumRevenueByDay)).ToList();
-            return revenue;
-        }
-    }
+    //=================================
     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameShiftAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -110,6 +101,15 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
+    public async Task<IReadOnlyList<SumRevenueByDateResponse>> GetTotalRevenueByDayAsync()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByDateResponse> revenue = (await connection.QueryAsync<SumRevenueByDateResponse>(RevenueQueries.SumRevenueByDay)).ToList();
+            return revenue;
+        }
+    }
+    //=================================
     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameDayAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -122,16 +122,32 @@ public class RevenueRepository : IRevenueRepository
     {
         await using (var connection = dbRead.CreateConnection())
         {
-            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNamegetDay, ren)).ToList();
+            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNameGetDay, ren)).ToList();
             return revenue;
         }
     }
-
     public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeDayAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
         {
             List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumFuelbyTypeDay, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeGetDayAsync(GetDateRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumFuelbyTypeGetDay, ren)).ToList();
+            return revenue;
+        }
+    }
+    //=================================
+     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNamegetMonthAsync(GetMonthRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNameGetMonth, ren)).ToList();
             return revenue;
         }
     }
@@ -143,7 +159,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
     public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeMonthAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -152,8 +167,24 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
-     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameYearAsync(GetIdRevenue ren)
+    public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeGetMonthAsync(GetMonthRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumFuelbyTypeGetMonth, ren)).ToList();
+            return revenue;
+        }
+    }
+    //=================================
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNamegetYearAsync(GetYearRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByNameResponse> revenue = (await connection.QueryAsync<SumRevenueByNameResponse>(RevenueQueries.SumFuelbyNameGetYear, ren)).ToList();
+            return revenue;
+        }
+    }
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNameYearAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
         {
@@ -161,7 +192,6 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
     public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeYearAsync(GetIdRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
@@ -170,7 +200,15 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-
+    public async Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByTypeGetYearAsync(GetYearRevenue ren)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<SumRevenueByTypeResponse> revenue = (await connection.QueryAsync<SumRevenueByTypeResponse>(RevenueQueries.SumFuelbyTypeGetYear, ren)).ToList();
+            return revenue;
+        }
+    }
+    //=================================
     public async Task<int> InsertAsync(User user)
     {
         await using (var connection = dbRead.CreateConnection())

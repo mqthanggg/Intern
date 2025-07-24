@@ -28,7 +28,18 @@ public class GetIdRevenue
 public class GetDateRevenue
 {
     public int StationId { get; set; }
-    public DateTime GetDate { get; set; }
+    public DateTime Time { get; set; }
+}
+public class GetMonthRevenue
+{
+    public int StationId { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+}
+public class GetYearRevenue
+{
+    public int StationId { get; set; }
+    public int Year { get; set; }
 }
 public class RevenueByName : Entity
 {

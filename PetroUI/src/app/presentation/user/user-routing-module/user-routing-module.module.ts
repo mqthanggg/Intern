@@ -4,7 +4,9 @@ import { ReportStationComponent } from '../home/report-station/report-station.co
 import { HomeComponent } from '../home/home.component';
 import { StationComponent } from '../station/station.component';
 import { StationsComponent } from '../stations/stations.component';
-import { ReportComponent } from '../home/report-station/my-dialog/my-dialog.component';
+import { ReportComponent } from '../home/report-station/date-dialog/date-dialog.component';
+import { ReportMonthComponent } from '../home/report-station/month-dialog/month-dialog.component';
+import { ReportYearComponent } from '../home/report-station/year-dialog/year-dialog.component';
 
 const routes: Routes = [
   {
@@ -22,17 +24,30 @@ const routes: Routes = [
     path: "home",
     title: "Home",
     component: HomeComponent
-   },
+  },
   {
-      path: "home/report/:id",
-      title: "Report",
-      component: ReportStationComponent
-    },
-{
-      path: "home/report/station/:id",
-      title: "Report-Station",
-      component: ReportComponent
-    },
+    path: "home/report/:id",
+    title: "Report",
+    component: ReportStationComponent,
+    children: [
+      {
+        path: "day/:date",
+        title: "Report-Day-Station",
+        component: ReportComponent
+      },
+      {
+        path: "month/:month",
+        title: "Report-Month-Station",
+        component: ReportMonthComponent
+      },
+      {
+        path: "year/:year",
+        title: "Report-Year-Station",
+        component: ReportYearComponent
+      },
+    ]
+  },
+  
   
 ]
 
@@ -44,4 +59,5 @@ const routes: Routes = [
     RouterModule
   ]
 })
+
 export class UserRoutingModule { }

@@ -18,7 +18,7 @@ export class UserComponent implements OnInit{
   title: string = "";
   logout: () => Promise<boolean>;
   ngOnInit(): void {
-    this.title = "Dashboard"
+     this.title = "Dashboard"
   }
   constructor(
     private titleService: TitleService, 
