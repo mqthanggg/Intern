@@ -2,5 +2,8 @@
 PetroServer/bin/Debug/net9.0/
 PetroServer/obj
 PetroServer/.vs
+MQTTHandler/bin/Debug/net9.0/
+MQTTHandler/obj
+MQTTHandler/.vs
 Mosquitto/simulator/venv
 .vs
