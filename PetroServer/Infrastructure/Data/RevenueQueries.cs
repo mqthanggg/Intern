@@ -329,7 +329,40 @@ public static class RevenueQueries
             AND station.station_id = @StationId
         GROUP BY log_type
    ";
-
+    public static readonly string SumFuelbyNameGetDay = @"
+        SELECT 
+            fuel_name AS FuelName,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE
+            log.""time""::DATE = @Time
+            AND station.station_id = @StationId
+        GROUP BY fuel_name
+        ORDER BY fuel_name;
+    ";
+    public static readonly string SumFuelbyTypeGetDay = @"
+        SELECT 
+            log_type AS LogType, 
+            SUM(total_amount) AS TotalAmount, 
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE  
+            log.""time""::date = @Time
+            AND station.station_id = @StationId
+        GROUP BY log_type
+        ORDER BY log_type
+    ";
     // SumRevenue query returns the total revenue AND liters for the current month
     public static readonly string SumFuelbyNameMonth = $@"
         SELECT 
@@ -365,6 +398,42 @@ public static class RevenueQueries
         GROUP BY log_type
         ORDER BY log_type
    ";
+    public static readonly string SumFuelbyNameGetMonth = $@"
+        SELECT 
+            fuel_name AS FuelName,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE
+            EXTRACT(MONTH FROM log.""time"") = @Month
+            AND EXTRACT(YEAR FROM log.""time"") = @Year
+            AND station.station_id = 1
+        GROUP BY fuel_name
+        ORDER BY fuel_name;
+    ";
+    public static readonly string SumFuelbyTypeGetMonth = $@"
+        SELECT 
+            log_type AS LogType, 
+            SUM(total_amount) AS TotalAmount, 
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE
+            EXTRACT(MONTH FROM log.""time"") = @Month
+            AND EXTRACT(YEAR FROM log.""time"") = @Year
+            AND station.station_id = @StationId
+        GROUP BY log_type
+        ORDER BY log_type
+    ";
 
     // SumRevenue query returns the total revenue AND liters for the current year
     public static readonly string SumFuelbyNameYear = $@"
@@ -401,4 +470,38 @@ public static class RevenueQueries
         GROUP BY log_type
         ORDER BY log_type
    ";
+    public static readonly string SumFuelbyNameGetYear = @"
+        SELECT 
+            fuel_name AS FuelName,
+            SUM(total_amount) AS TotalAmount,
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE
+            EXTRACT(YEAR FROM log.""time"") = @Year
+            AND station.station_id = @StationId
+        GROUP BY fuel_name
+        ORDER BY fuel_name;
+    ";
+    public static readonly string SumFuelbyTypeGetYear = @"
+        SELECT 
+            log_type AS LogType, 
+            SUM(total_amount) AS TotalAmount, 
+            SUM(total_liters) AS TotalLiters
+        FROM 
+            petro_application.log
+        JOIN 
+            petro_application.dispenser ON log.dispenser_id = dispenser.dispenser_id
+        JOIN 
+            petro_application.station ON station.station_id = dispenser.station_id
+        WHERE 
+            EXTRACT(YEAR FROM log.""time"") = @Year
+            AND station.station_id = @StationId
+        GROUP BY log_type
+        ORDER BY log_type
+    ";
 }

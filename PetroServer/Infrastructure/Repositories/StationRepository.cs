@@ -20,11 +20,21 @@ public class StationRepository : IStationRepository{
         }
     }
 
-    public async Task<int> InsertAsync(Station entity){
+    public async Task<StationResponse> GetStationById(Station entity)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            StationResponse station = await connection.QuerySingleAsync<StationResponse>(StationQuery.SelectStationById, entity);
+            return station;
+        }
+    }
+    public async Task<int> InsertAsync(Station entity)
+    {
         entity.CreatedBy ??= username.GetUsername();
         entity.LastModifiedBy ??= username.GetUsername();
-        await using (var connection = dbWrite.CreateConnection()){
-            int affectedRows = await connection.ExecuteAsync(StationQuery.InsertStation,entity);
+        await using (var connection = dbWrite.CreateConnection())
+        {
+            int affectedRows = await connection.ExecuteAsync(StationQuery.InsertStation, entity);
             return affectedRows;
         }
     }
