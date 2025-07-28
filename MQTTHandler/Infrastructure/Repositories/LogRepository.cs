@@ -20,21 +20,9 @@ public class LogRepository : ILogRepository{
                         created_date,
                         last_modified_by,
                         last_modified_date
-                    ) VALUES (
+                    ) SELECT 
                         @DispenserId,
-                        (
-                            SELECT short_name 
-                            FROM {Env.GetString("SCHEMA")}.fuel 
-                            WHERE 
-                            fuel_id = (
-                                SELECT fuel_id 
-                                FROM {Env.GetString("SCHEMA")}.dispenser
-                                WHERE
-                                    dispenser_id = @DispenserId
-                                LIMIT 1
-                            )
-                            LIMIT 1
-                        ),
+                        f.short_name,
                         @TotalLiters,
                         @TotalAmount,
                         now(),
@@ -43,7 +31,12 @@ public class LogRepository : ILogRepository{
                         now(),
                         @LastModifiedBy,
                         now()
-                    )
+                    FROM {Env.GetString("SCHEMA")}.dispenser d
+                    JOIN {Env.GetString("SCHEMA")}.fuel f 
+                    ON 
+                        d.fuel_id = f.fuel_id
+                    WHERE 
+                        d.dispenser_id = @DispenserId
                 ",
                 entity
             );
