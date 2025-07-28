@@ -1,4 +1,8 @@
-BEGIN;
+DROP USER IF EXISTS replicator;
+
+CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'admin123';
+
+SELECT pg_create_physical_replication_slot('replication_slot');
 
 ALTER TABLE IF EXISTS petro_application.attendance DROP CONSTRAINT IF EXISTS attendance_pkey;
 
@@ -613,5 +617,3 @@ DROP USER IF EXISTS write_user;
 CREATE USER write_user WITH ENCRYPTED PASSWORD 'write123';
 GRANT USAGE ON SCHEMA petro_application TO write_user;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA petro_application TO write_user;
-
-END;
