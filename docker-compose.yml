@@ -1,3 +1,4 @@
+# version: "2.4"
 services:
   postgres-common:
     &postgres-common
@@ -130,42 +131,43 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
-  server:
+      
+  server1:
     build:
-      context: PetroServer
+      context: ./PetroServer
       dockerfile: Dockerfile
     networks:
       - petro-network
     environment:
-      SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=localhost;Port=5432;Username=write_user;Password=write123;Database=Intern"
-      DBREAD_CONNECTION_STRING: "Host=localhost;Port=5432;Username=read_user;Password=read123;Database=Intern"
-      DEVELOPMENT_AUTHORITY: "http://localhost:5170"
-      DEVELOPMENT_AUDIENCE: "http://localhost:5170"
-      PRODUCTION_AUTHORITY: "https://localhost:7149"
-      PRODUCTION_AUDIENCE: "https://localhost:7149"
-      PRIVATE_KEY_PATH: "rsa_key/private_key.pem"
-      PUBLIC_KEY_PATH: "rsa_key/public_key.pem"
-      CLIENT_PFX_PATH: "certs/certificate.pfx"
-      CLIENT_PFX_PASSWORD: "admin123"
-      MOSQUITTO_USERNAME: "mqthanggg"
-      MOSQUITTO_PASSWORD: "admin123"
-      MOSQUITTO_HOST: "mqtt"
-      MOSQUITTO_PORT: "8883"
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ASPNETCORE_URLS: "https://0.0.0.0:7149;http://0.0.0.0:5170"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      - SCHEMA=petro_application
+      - DBWRITE_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=write_user;Password=write123;Database=Intern
+      - DBREAD_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=read_user;Password=read123;Database=Intern
+      - DEVELOPMENT_AUTHORITY=http://localhost:5170
+      - DEVELOPMENT_AUDIENCE=http://localhost:5170
+      - PRODUCTION_AUTHORITY=https://localhost:7149
+      - PRODUCTION_AUDIENCE=https://localhost:7149
+      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
+      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
+      - CLIENT_PFX_PATH=certs/certificate.pfx
+      - CLIENT_PFX_PASSWORD=admin123
+      - MOSQUITTO_USERNAME=mqthanggg
+      - MOSQUITTO_PASSWORD=admin123
+      - MOSQUITTO_HOST=mqtt
+      - MOSQUITTO_PORT=8883
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:7159;http://0.0.0.0:5180
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    ports:
+      - "5180:5180"
+      - "7159:7159"
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://0.0.0.0:5170/health || exit 1"]
+      test: ["CMD-SHELL", "curl --fail http://localhost:5180/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
-    ports:
-      - "5170:5170"
-      - "7149:7149"
     depends_on:
       database-primary:
         condition: service_healthy
@@ -173,6 +175,95 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+
+  server2:
+    build:
+      context: ./PetroServer
+      dockerfile: Dockerfile
+    networks:
+      - petro-network
+    environment:
+      - SCHEMA=petro_application
+      - DBWRITE_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=write_user;Password=write123;Database=Intern
+      - DBREAD_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=read_user;Password=read123;Database=Intern
+      - DEVELOPMENT_AUTHORITY=http://localhost:5170
+      - DEVELOPMENT_AUDIENCE=http://localhost:5170
+      - PRODUCTION_AUTHORITY=https://localhost:7149
+      - PRODUCTION_AUDIENCE=https://localhost:7149
+      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
+      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
+      - CLIENT_PFX_PATH=certs/certificate.pfx
+      - CLIENT_PFX_PASSWORD=admin123
+      - MOSQUITTO_USERNAME=mqthanggg
+      - MOSQUITTO_PASSWORD=admin123
+      - MOSQUITTO_HOST=mqtt
+      - MOSQUITTO_PORT=8883
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:7160;http://0.0.0.0:5181
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    ports:
+      - "5181:5181"
+      - "7160:7160"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5181/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      database-primary:
+        condition: service_healthy
+      database-replica:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+
+  server3:
+    build:
+      context: ./PetroServer
+      dockerfile: Dockerfile
+    networks:
+      - petro-network
+    environment:
+      - SCHEMA=petro_application
+      - DBWRITE_CONNECTION_STRING=Host=database;Port=5432;Username=write_user;Password=write123;Database=Intern
+      - DBREAD_CONNECTION_STRING=Host=database;Port=5432;Username=read_user;Password=read123;Database=Intern
+      - DEVELOPMENT_AUTHORITY=http://localhost:5170
+      - DEVELOPMENT_AUDIENCE=http://localhost:5170
+      - PRODUCTION_AUTHORITY=https://localhost:7149
+      - PRODUCTION_AUDIENCE=https://localhost:7149
+      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
+      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
+      - CLIENT_PFX_PATH=certs/certificate.pfx
+      - CLIENT_PFX_PASSWORD=admin123
+      - MOSQUITTO_USERNAME=mqthanggg
+      - MOSQUITTO_PASSWORD=admin123
+      - MOSQUITTO_HOST=mqtt
+      - MOSQUITTO_PORT=8883
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:7161;http://0.0.0.0:5182
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5182/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5182:5182"
+      - "7161:7161"
+    depends_on:
+      database-primary:
+        condition: service_healthy
+      database-replica:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+
   fe:
     build:
       context: PetroUI
@@ -183,12 +274,12 @@ services:
       - petro-network
     restart: always
     depends_on:
-      server:
+      server1:
         condition: service_healthy
 
 networks:
   petro-network:
     driver: bridge
-
+    
 volumes:
   pgdata:

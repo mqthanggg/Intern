@@ -117,14 +117,14 @@
                             <th class="px-20">Time</th>
                         </tr>
                     </thead>
-                    <tbody class="" >
-                        <tr *ngFor="let record of logList">
-                            <td class="text-black">{{ record.Name }}</td>
-                            <td>{{ record.FuelName }}</td>
-                            <td>{{ record.TotalLiters }}</td>
-                            <td>{{ record.Price | number:'1.0-0' }}</td>
-                            <td>{{ record.TotalAmount | currency:'VND' }}</td>
-                            <td>{{ record.Time }}</td>
+                    <tbody class="">
+                        <tr *ngFor="let item of logList" class="border-t hover:bg-gray-50">
+                            <td class="px-4 py-2">{{ item.Name }}</td>
+                            <td class="px-4 py-2">{{ item.FuelName }}</td>
+                            <td class="px-4 py-2">{{ item.TotalLiters | number:'1.2-2' }}</td>
+                            <td class="px-4 py-2">{{ item.Price | number:'1.0-0' }}</td>
+                            <td class="px-4 py-2">{{ item.TotalAmount | number:'1.0-0' }}</td>
+                            <td class="px-4 py-2">{{ item.Time | date:'dd/MM/yyyy HH:mm:ss' }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -6,4 +6,7 @@ MQTTHandler/bin/Debug/net9.0/
 MQTTHandler/obj
 MQTTHandler/.vs
 Mosquitto/simulator/venv
+YarpGateway/bin/Debug/net9.0/
+YarpGateway/obj
+YarpGateway/.vs
 .vs
