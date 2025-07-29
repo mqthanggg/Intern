@@ -3,4 +3,7 @@ PetroServer/bin/Debug/net9.0/
 PetroServer/obj
 PetroServer/.vs
 Mosquitto/simulator/venv
+YarpGateway/bin/Debug/net9.0/
+YarpGateway/obj
+YarpGateway/.vs
 .vs
