@@ -36,6 +36,9 @@ export class AssignmentEditComponent implements OnInit {
   month: number = 0;
   year: number = 0;
   assignmentForm: UntypedFormGroup;
+  revokeStaff(form: string, id: number){
+    this.assignmentForm.get(form)?.value.splice(id,1)
+  }
   constructor(
     private router:Router,
     private activatedRoute: ActivatedRoute,
@@ -96,9 +99,7 @@ export class AssignmentEditComponent implements OnInit {
         )
       ]).subscribe({
         next: res => {
-          this.staffRecords = res[0].body!
-          console.log(res[1].body!);
-          
+          this.staffRecords = res[0].body!          
           this.assignmentForm.get('morningStaffs')?.setValue(
             res[1].body!.filter(
               res => res.shiftType == 1
