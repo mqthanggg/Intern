@@ -1,5 +1,4 @@
 Env.Load();
-
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
@@ -12,6 +11,7 @@ builder.Services.SwaggerSetup();
 builder.Services.DbSetup();
 builder.Services.AddServices();
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
+builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -29,6 +29,7 @@ if (report.Status == HealthStatus.Healthy){
         app.MapSignup();
     }
     app.MapPublicController();
+    // app.MapReverseProxy();
     app.MapReport();
     app.Run();
 }

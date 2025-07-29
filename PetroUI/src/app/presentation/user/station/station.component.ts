@@ -57,6 +57,14 @@ export class StationComponent implements OnInit, OnDestroy {
   revenueChartData: any;
   fuelChartData: any;
 
+  DispenserId: number[] = [];
+  DispenserName: number[] = [];
+  FuelName: string[] = [];
+  TotalLites: number[] = [];
+  Price: number[] = [];
+  TotalAmount: number[] = [];
+
+
   constructor(
     private http: HttpClient,
     private titleServer: TitleService,
@@ -138,7 +146,11 @@ export class StationComponent implements OnInit, OnDestroy {
               console.error(`Error at station ${value.StationId}: ${err}`);
             }
           })
-
+          this.DispenserName= this.logList.map((item)=>item.Name);
+          this.FuelName=this.logList.map((item)=>item.FuelName);
+          this.TotalLites= this.logList.map((item)=>item.TotalLiters);
+          this.Price= this.logList.map((item)=>item.Price);
+          this.TotalAmount= this.logList.map((item)=>item.TotalAmount);
         })
       },
       error: err => console.error("(WebSocket error) - not load data log", err),
