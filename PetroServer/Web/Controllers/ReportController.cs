@@ -47,7 +47,7 @@ public static class ReportController
         app.Map("ws/station/revenueday/{id}", GetSumRevenueByStationDayWS);
         app.Map("ws/station/revenuemonth/{id}", GetSumRevenueByStationMonthWS);
         app.Map("ws/station/revenueyear/{id}", GetSumRevenueByStationYearWS);
-        
+
         app.Map("ws/sumrenuename/getdate/{id}/{date}", GetSumRevenuegetDayByNameWS);
         app.Map("ws/sumrenuetype/getdate/{id}/{date}", GetSumRevenuegetDayByTypeWS);
         app.Map("ws/sumrenuename/getmonth/{id}/{month}/{year}", GetSumRevenuegetMonthByNameWS);
@@ -69,7 +69,7 @@ public static class ReportController
     )]
     public static async Task<IResult> GetSumRevenuegetYearByName([FromRoute] int id, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
     {
-        var result = await revenueRepository.GetTotalRevenueByNamegetYearAsync(new GetYearRevenue { StationId = id, Year=year });
+        var result = await revenueRepository.GetTotalRevenueByNamegetYearAsync(new GetYearRevenue { StationId = id, Year = year });
 
         if (result == null)
         {
@@ -87,7 +87,7 @@ public static class ReportController
     )]
     public static async Task<IResult> GetSumRevenuegetYearByType([FromRoute] int id, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
     {
-        var result = await revenueRepository.GetTotalRevenueByTypeGetYearAsync(new GetYearRevenue { StationId = id, Year=year });
+        var result = await revenueRepository.GetTotalRevenueByTypeGetYearAsync(new GetYearRevenue { StationId = id, Year = year });
 
         if (result == null)
         {
@@ -103,9 +103,9 @@ public static class ReportController
         Summary = "Report name get month",
         Description = "Total revenue statistics by name get month"
     )]
-    public static async Task<IResult> GetSumRevenuegetMonthByName([FromRoute] int id,[FromRoute] int month, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task<IResult> GetSumRevenuegetMonthByName([FromRoute] int id, [FromRoute] int month, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
     {
-        var result = await revenueRepository.GetTotalRevenueByNamegetMonthAsync(new GetMonthRevenue { StationId = id, Month = month, Year=year });
+        var result = await revenueRepository.GetTotalRevenueByNamegetMonthAsync(new GetMonthRevenue { StationId = id, Month = month, Year = year });
 
         if (result == null)
         {
@@ -121,9 +121,9 @@ public static class ReportController
         Summary = "Report logtype get month",
         Description = "Total revenue statistics by logtype get month"
     )]
-    public static async Task<IResult> GetSumRevenuegetMonthByType([FromRoute] int id,[FromRoute] int month, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task<IResult> GetSumRevenuegetMonthByType([FromRoute] int id, [FromRoute] int month, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository)
     {
-        var result = await revenueRepository.GetTotalRevenueByTypeGetMonthAsync(new GetMonthRevenue { StationId = id, Month = month, Year=year });
+        var result = await revenueRepository.GetTotalRevenueByTypeGetMonthAsync(new GetMonthRevenue { StationId = id, Month = month, Year = year });
 
         if (result == null)
         {
@@ -139,7 +139,7 @@ public static class ReportController
         Summary = "Report name get day",
         Description = "Total revenue statistics for the current day by name get day"
     )]
-    public static async Task<IResult> GetSumRevenuegetDayByName([FromRoute] int id,[FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task<IResult> GetSumRevenuegetDayByName([FromRoute] int id, [FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
     {
         var result = await revenueRepository.GetTotalRevenueByNamegetDayAsync(new GetDateRevenue { StationId = id, Time = date });
 
@@ -157,7 +157,7 @@ public static class ReportController
         Summary = "Report logtype get day",
         Description = "Total revenue statistics for the current day by logtype get day"
     )]
-    public static async Task<IResult> GetSumRevenueGetDayByType([FromRoute] int id,[FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task<IResult> GetSumRevenueGetDayByType([FromRoute] int id, [FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
     {
         var result = await revenueRepository.GetTotalRevenueByTypeGetDayAsync(new GetDateRevenue { StationId = id, Time = date });
 
@@ -203,7 +203,7 @@ public static class ReportController
         }
         return TypedResults.Ok(result);
     }
-    
+
 
     // [Authorize]
     [ProducesResponseType(typeof(SumRevenueStationByDateResponse), StatusCodes.Status200OK)]
@@ -574,7 +574,7 @@ public static class ReportController
         {
             while (socket.State == WebSocketState.Open)
             {
-                var result = await revenueRepository.GetTotalRevenueByNamegetYearAsync(new GetYearRevenue { StationId = id, Year=year });
+                var result = await revenueRepository.GetTotalRevenueByNamegetYearAsync(new GetYearRevenue { StationId = id, Year = year });
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {
@@ -620,7 +620,7 @@ public static class ReportController
         {
             while (socket.State == WebSocketState.Open)
             {
-                var result = await revenueRepository.GetTotalRevenueByTypeGetYearAsync(new GetYearRevenue { StationId = id, Year=year});
+                var result = await revenueRepository.GetTotalRevenueByTypeGetYearAsync(new GetYearRevenue { StationId = id, Year = year });
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {
@@ -666,7 +666,7 @@ public static class ReportController
         {
             while (socket.State == WebSocketState.Open)
             {
-                var result = await revenueRepository.GetTotalRevenueByNamegetMonthAsync(new GetMonthRevenue { StationId = id, Month=month, Year=year });
+                var result = await revenueRepository.GetTotalRevenueByNamegetMonthAsync(new GetMonthRevenue { StationId = id, Month = month, Year = year });
                 var currentJson = JsonSerializer.Serialize(result);
                 if (currentJson != previousJson)
                 {
@@ -768,14 +768,32 @@ public static class ReportController
                 }
                 if (socket.State != WebSocketState.Open)
                     break;
-                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
-                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                try
                 {
-                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                    var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000)); // timeout 3s
+
+                    if (completedTask == receiveTask)
+                    {
+                        if (receiveTask.IsCompletedSuccessfully && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                        {
+                            logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        logger.LogWarning($"Timeout while waiting for WebSocket message for stationId: {id}");
+                        // Xử lý nếu cần
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"WebSocket error at stationId: {id}");
                     break;
                 }
+
             }
         }
         catch (Exception ex)
@@ -1683,14 +1701,32 @@ public static class ReportController
                 }
                 if (socket.State != WebSocketState.Open)
                     break;
-                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
-                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                try
                 {
-                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                    var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000)); // timeout 3s
+
+                    if (completedTask == receiveTask)
+                    {
+                        if (receiveTask.IsCompletedSuccessfully && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                        {
+                            logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        logger.LogWarning($"Timeout while waiting for WebSocket message for stationId: {id}");
+                        // Xử lý nếu cần
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"WebSocket error at stationId: {id}");
                     break;
                 }
+
             }
         }
         catch (Exception ex)

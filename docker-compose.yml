@@ -131,7 +131,6 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
-      
   server1:
     build:
       context: ./PetroServer
