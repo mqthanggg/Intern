@@ -18,7 +18,8 @@ import { sumRevenueByLogType, sumRevenueByName } from './revenue-record';
 @Component({
   selector: 'app-station',
   standalone: true,
-  imports: [NgChartsModule, CommonModule, FormsModule],
+  imports: [NgChartsModule,
+   CommonModule, FormsModule],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css']
 })
