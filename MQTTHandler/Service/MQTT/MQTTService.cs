@@ -74,7 +74,7 @@ public class MqttService : IHostedService{
         string matchDevice = match.Groups[1].Value;
         int matchId = Convert.ToInt32(match.Groups[2].Value);
         string channel = $"{matchDevice}:{matchId}";
-        _hub.Clients.Group(channel).SendMessage(SegmentString);
+        _ = _hub.Clients.Group(channel).SendMessage(SegmentString);
             if(matchDevice == "dispenser" && !ApplicationMessage.Retain){
             _ = _logUpdate.SegmentProcessAsync(matchId, ApplicationMessage.Payload);
         }
