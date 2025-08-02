@@ -2,11 +2,12 @@ public static class DispenserQuery{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string GetDispenserByStationId = $@"
         SELECT 
-            dp.dispenser_id,
-            dp.name, 
-            f.price, 
-            f.long_name, 
-            f.short_name 
+            dp.station_id AS StationId,
+            dp.dispenser_id AS DispenserId,
+            dp.name AS Name, 
+            f.price AS Price, 
+            f.long_name AS LongName, 
+            f.short_name AS ShortName
         FROM {Schema}.dispenser as dp
         INNER JOIN {Schema}.fuel as f 
         ON 

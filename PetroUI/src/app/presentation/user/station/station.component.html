@@ -3,7 +3,7 @@
         <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl">
             <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
             <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
-                @if (isDispenserLoading) {
+            @if (isDispenserLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
                 </div>
                 }
@@ -27,7 +27,7 @@
                             <td class="text-center">{{dispenser.name}}</td>
                             <td class="text-center">{{dispenser.status ?? "N/A"}}</td>
                             <td class="pl-8">{{dispenser.liter ?? "N/A"}}</td>
-                            <td class="text-center">{{dispenser.price}}</td>
+                            <td class="text-center">{{dispenser.price ?? "N/A"}}</td>
                             <td class="pl-15">{{dispenser.totalAmount ?? "N/A"}}</td>
                             <td class="pl-4">{{dispenser.longName}}</td>
                             <td class="px-7">{{dispenser.shortName}}</td>
@@ -100,11 +100,11 @@
         <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl ml-1">
             <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
             <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
-                @if (isLogLoading) {
+                <!-- @if (isLogLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
                 </div>
                 }
-                @else{
+                @else{ -->
                 <table
                     class="border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="sticky top-0">
@@ -119,16 +119,16 @@
                     </thead>
                     <tbody class="">
                         <tr *ngFor="let item of logList" class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">{{ item.Name }}</td>
-                            <td class="px-4 py-2">{{ item.FuelName }}</td>
-                            <td class="px-4 py-2">{{ item.TotalLiters | number:'1.2-2' }}</td>
-                            <td class="px-4 py-2">{{ item.Price | number:'1.0-0' }}</td>
-                            <td class="px-4 py-2">{{ item.TotalAmount | number:'1.0-0' }}</td>
-                            <td class="px-4 py-2">{{ item.Time | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                            <td class="text-center">{{ item.Name }}</td>
+                            <td class="text-center">{{ item.FuelName }}</td>
+                            <td class="text-center">{{ item.TotalLiters | number:'1.2-2' }}</td>
+                            <td class="text-center">{{ item.Price | number:'1.0-0' }}</td>
+                            <td class="text-center">{{ item.TotalAmount | number:'1.0-0' }}</td>
+                            <td class="text-center">{{ item.Time | date:'dd/MM/yyyy HH:mm:ss' }}</td>
                         </tr>
                     </tbody>
                 </table>
-                }
+                <!-- } -->
             </div>
         </div>
     </div>

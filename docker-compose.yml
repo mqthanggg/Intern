@@ -1,5 +1,6 @@
 # version: "2.4"
 services:
+ # database
   postgres-common:
     &postgres-common
     image: postgres:17
@@ -81,8 +82,8 @@ services:
     depends_on:
       database-primary:
         condition: service_healthy
-  
-  mqtt-handler:
+  # mqtt handler
+  mqtt-handler: 
     build:
       context: MQTTHandler
       dockerfile: Dockerfile
@@ -118,7 +119,7 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
-
+  # mqtt broken
   mqtt:
     restart: always
     networks:
@@ -131,6 +132,7 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
+  # Client
   server1:
     build:
       context: ./PetroServer
@@ -262,7 +264,7 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
-
+ # UI
   fe:
     build:
       context: PetroUI
@@ -275,7 +277,6 @@ services:
     depends_on:
       server1:
         condition: service_healthy
-
 networks:
   petro-network:
     driver: bridge

@@ -103,9 +103,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                             this.revstation[index].TotalRevenue = Datares[index].TotalRevenue
                             this.revstation[index].TotalProfit = Datares[index].TotalProfit
                         },
-                        error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
-                        }
                     })
                 })
                 this.DataAccount = this.revstation.map((item) => item.TotalRevenue);
@@ -116,8 +113,8 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 this.totalProfit = this.DataProfit.reduce((acc, val) => acc + val, 0);
                 this.stationName=this.revstation.map((item) => item.StationName);
             },
-            error: (err) => console.error('WebSocket error:', err),
-            complete: () => console.warn('WebSocket connection closed'),
+            // error: (err) => console.error('WebSocket error:', err),
+            // complete: () => console.warn('WebSocket connection closed'),
         })
         this.loadBarChartDay();
     }
@@ -281,6 +278,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.revenuesocket?.complete()
         this.revenuesocket?.complete()
     }
 }

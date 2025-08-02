@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
   totalLog: totalLogType[] = [];
   chartBaryLogName: string[] = [];
   chartBaryDataAccounts: number[] = [];
-
+  showLogs=true;
   public barChartOptions: ChartOptions<'bar'> = {
     responsive: false,
     animation: {
@@ -143,12 +143,12 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showLogs = true;
     this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
     this.barsocket.subscribe({
       next: (res) => {
         console.log('bar Chart date Websocket connected');
         console.log("✔️ bar data: ", res);
-
         // ✅ Chỉ lấy những station có TotalRevenue hoặc TotalProfit > 0
         const filtered = res.filter(s => s.TotalRevenue > 0 || s.TotalProfit > 0);
 
