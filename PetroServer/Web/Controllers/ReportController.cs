@@ -47,7 +47,6 @@ public static class ReportController
         app.Map("ws/station/revenueday/{id}", GetSumRevenueByStationDayWS);
         app.Map("ws/station/revenuemonth/{id}", GetSumRevenueByStationMonthWS);
         app.Map("ws/station/revenueyear/{id}", GetSumRevenueByStationYearWS);
-
         app.Map("ws/sumrenuename/getdate/{id}/{date}", GetSumRevenuegetDayByNameWS);
         app.Map("ws/sumrenuetype/getdate/{id}/{date}", GetSumRevenuegetDayByTypeWS);
         app.Map("ws/sumrenuename/getmonth/{id}/{month}/{year}", GetSumRevenuegetMonthByNameWS);
@@ -55,14 +54,64 @@ public static class ReportController
         app.Map("ws/sumrenuename/getyear/{id}/{year}", GetSumRevenuegetYearByNameWS);
         app.Map("ws/sumrenuetype/getyear/{id}/{year}", GetSumRevenuegetyearByTypeWS);
         app.Map("ws/log/station/{id}", GetLogByStationWS);
-
-        app.Map("/ws/dispenser/station/{id}", GetDispenserByStationIdWS);
+        // ========================================
+       app.Map("dispenser/station/{id}", GetDispenserByStationIdWS);
         app.Map("ws/tank/station/{id}", GetTankByStationIdWS);
         app.Map("ws/{device}/{id}", GetWS);
+
+        app.Map("ws/reportstationbyid/{id}", GetTankStationWS);
         return app;
     }
 
     //===========================================================
+    //   [SwaggerOperation(
+    //     Summary = "Obtain web socket for total station by day",
+    //     Description = "Return a web socket for total station of each stations by day in the system."
+    // )]
+    public static async Task GetTankStationWS(HttpContext context, [FromRoute] int id,
+        [FromServices] ITankRepository revenueRepository, [FromServices] ILogger<object> logger)
+    {
+        logger.LogInformation($"IsWebSocketRequest = {context.WebSockets.IsWebSocketRequest}");
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await revenueRepository.GetTanksByStationIdAsync(new Station { StationId = id });
+                logger.LogInformation("Repository result: " + JsonSerializer.Serialize(result));
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+
     //======================== HTTP =============================
     // [Authorize]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
@@ -1578,10 +1627,8 @@ public static class ReportController
         Summary = "Obtain web socket for total name for shift",
         Description = "Return a web socket for total revenue statistics for the current shift by name"
     )]
-    public static async Task GetSumRevenueShiftByNameWS(HttpContext context,
-        [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository,
-        [FromServices] ILogger<object> logger)
+    public static async Task GetSumRevenueShiftByNameWS(HttpContext context, [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1927,53 +1974,4 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
-    //============================================================
-    [SwaggerOperation(
-        Summary = "Obtain web socket for total name for shift",
-        Description = "Return a web socket for total revenue statistics for the current shift by name"
-    )]
-    public static async Task GetTankStationIdWS(HttpContext context,
-        [FromRoute] int id,
-        [FromServices] ITankRepository tankRepository,
-        [FromServices] ILogger<object> logger)
-    {
-        if (!context.WebSockets.IsWebSocketRequest)
-        {
-            context.Response.StatusCode = 400;
-            return;
-        }
-        var socket = await context.WebSockets.AcceptWebSocketAsync();
-        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
-        var receiveBuffer = new byte[1024 * 4];
-        string? previousJson = null;
-        try
-        {
-            while (socket.State == WebSocketState.Open)
-            {
-                var result = await tankRepository.GetTanksByStationIdAsync(new Station { StationId = id });
-                var currentJson = JsonSerializer.Serialize(result);
-                if (currentJson != previousJson)
-                {
-                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
-                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                    previousJson = currentJson;
-                }
-                if (socket.State != WebSocketState.Open)
-                    break;
-                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
-                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
-                {
-                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
-                    break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, $"WebSocket error for stationId: {id}");
-        }
-    }
-
 }

@@ -27,7 +27,7 @@
                             <td class="text-center">{{dispenser.name}}</td>
                             <td class="text-center">{{dispenser.status ?? "N/A"}}</td>
                             <td class="pl-8">{{dispenser.liter ?? "N/A"}}</td>
-                            <td class="text-center">{{dispenser.price ?? "N/A"}}</td>
+                            <td class="text-center">{{dispenser.price }}</td>
                             <td class="pl-15">{{dispenser.totalAmount ?? "N/A"}}</td>
                             <td class="pl-4">{{dispenser.longName}}</td>
                             <td class="px-7">{{dispenser.shortName}}</td>
@@ -41,7 +41,7 @@
         <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[30%] w-xl max-w-3xl ml-1">
             <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dữ liệu trong ca</div>
             <div class="flex pb-2.5">
-                <div style="width: 400px; height: 210px; margin-left: 25px;">
+                <div style="width: 500px; height: 210px; margin-left: 25px;">
                     <h3>Biểu đồ thống kê doanh thu</h3>
                     <canvas baseChart style="margin-bottom: 3px;" [data]="revenueChartData" [options]="pieChartOptions"
                         [type]="'pie'">

@@ -31,8 +31,7 @@ services:
       - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./Database/init.sh:/docker-entrypoint-initdb.d/init.sh
     ports:
-      - "5432:5432"
-  
+      - "5432:5432" 
   database-replica:
     <<: *postgres-common
     ports:

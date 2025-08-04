@@ -58,7 +58,6 @@ export class StationComponent implements OnInit, OnDestroy {
   Price: number[] = [];
   TotalAmount: number[] = [];
 
-
   sumRevenueByLogTypeSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
   sumRevenueByFuelNameSocket: WebSocketSubject<sumRevenueByName[]> | undefined
   public pieChartType: any = 'pie';
@@ -77,7 +76,6 @@ export class StationComponent implements OnInit, OnDestroy {
   chartDataFuel: number[] = [];
   revenueChartData: any;
   fuelChartData: any;
-
 
   constructor(
     private http: HttpClient,
