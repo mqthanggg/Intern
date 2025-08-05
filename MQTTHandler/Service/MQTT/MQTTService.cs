@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.SignalR;
 
 public class DeviceMonitoringHub : Hub<DeviceMonitoringInterface>{
-    public async Task SendMessageAsync(string channel, string message){
-        await Clients.Group(channel).SendMessage(message);
-    }
     public async Task JoinDevice(string device, int id){
         await Groups.AddToGroupAsync(Context.ConnectionId,$"{device}:{id}");
+    }
+    public async Task LeftDevice(string device, int id){
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId,$"{device}:{id}");
     }
 }
 public class MqttService : IHostedService{
@@ -68,13 +68,13 @@ public class MqttService : IHostedService{
     private Task ApplicationMessageReceivedCallback(MqttApplicationMessageReceivedEventArgs args){
         var ApplicationMessage = args.ApplicationMessage;
         var topic = ApplicationMessage.Topic;
-        var SegmentString = Encoding.UTF8.GetString(ApplicationMessage.Payload);
+        var SegmentArray = ApplicationMessage.Payload.ToArray();
         Regex regex = new Regex(@"devices/(\w+)/(\d+)");
         Match match = regex.Match(topic);
         string matchDevice = match.Groups[1].Value;
         int matchId = Convert.ToInt32(match.Groups[2].Value);
         string channel = $"{matchDevice}:{matchId}";
-        _ = _hub.Clients.Group(channel).SendMessage(SegmentString);
+        _ = _hub.Clients.Group(channel).SendMessage(SegmentArray);
             if(matchDevice == "dispenser" && !ApplicationMessage.Retain){
             _ = _logUpdate.SegmentProcessAsync(matchId, ApplicationMessage.Payload);
         }
