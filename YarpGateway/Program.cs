@@ -17,6 +17,7 @@ builder.Services.AddCors(options =>
                .SetIsOriginAllowed(_ => true);
     });
 });
+
 var app = builder.Build();
 app.UseCors("AllowAll");
 app.UseRouting();
@@ -24,14 +25,10 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapReverseProxy();
 });
-app.MapReverseProxy(proxyPipeline =>
+// app.UseWebSockets();
+app.UseWebSockets(new WebSocketOptions
 {
-    proxyPipeline.Use((context, next) =>
-    {
-        context.Request.Headers.Remove(HeaderNames.Cookie); 
-        return next();
-    });
+    KeepAliveInterval = TimeSpan.FromSeconds(30)
 });
-app.UseWebSockets();
 app.MapReverseProxy();
 app.Run();

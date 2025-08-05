@@ -5,9 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
-import { revenuefuelday, revenuefuelmonth, revenuefuelyear, revenuestation, revenuestationday, revenuestationmonth, revenuestationyear, revenuetypeday, revenuetypemonth, revenuetypeyear, WSrevenuefuelday, WSrevenuefuelmonth, WSrevenuefuelyear, WSrevenuestation, WSrevenuestationday, WSrevenuestationmonth, WSrevenuestationyear, WSrevenuetypeday, WSrevenuetypemonth, WSrevenuetypeyear } from './model/sumrevenuestation-record';
+import { revenuestation, revenuestationday, revenuestationmonth, revenuestationyear } from './sumrevenuestation-record';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { FormsModule } from '@angular/forms';
+
 @Component({
     standalone: true,
     selector: 'app-report-station',
@@ -18,7 +19,6 @@ import { FormsModule } from '@angular/forms';
 export class ReportStationComponent implements OnInit, OnDestroy {
     @Input() id: number = -1;
     stationName: string [] = [];
-    revstationSocket: { [key: string]: WebSocketSubject<WSrevenuestation[]> } = {}
     revenuesocket: WebSocketSubject<revenuestation[]> | undefined;
     revstation: revenuestation[] = [];
     DataAccount: number[] = [];
@@ -49,7 +49,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 { data: [0, 0], label: 'VNĐ' }
             ]
         };
-    revstationDaySocket: { [key: string]: WebSocketSubject<WSrevenuestationday[]> } = {}
     revenuedaysocket: WebSocketSubject<revenuestationday[]> | undefined;
     revstationday: revenuestationday[] = [];
     StationId: number[] = [];
@@ -95,16 +94,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             next: res => {
                 this.revstation = res;
                 console.log("✔️ total revenue station: ", res);
-                this.revstation.forEach((value, index) => {
-                    this.revstationSocket[value.StationId] = webSocket<WSrevenuestation[]>(environment.wsServerURI + `/ws/station/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.revstationSocket[value.StationId].subscribe({
-                        next: (Datares: WSrevenuestation[]) => {
-                            this.revstation[index].TotalLiters = Datares[index].TotalLiters
-                            this.revstation[index].TotalRevenue = Datares[index].TotalRevenue
-                            this.revstation[index].TotalProfit = Datares[index].TotalProfit
-                        },
-                    })
-                })
                 this.DataAccount = this.revstation.map((item) => item.TotalRevenue);
                 this.TotalRevenue = this.DataAccount.reduce((acc, val) => acc + val, 0);
                 this.DataLitters = this.revstation.map((item) => item.TotalLiters);
@@ -113,8 +102,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 this.totalProfit = this.DataProfit.reduce((acc, val) => acc + val, 0);
                 this.stationName=this.revstation.map((item) => item.StationName);
             },
-            // error: (err) => console.error('WebSocket error:', err),
-            // complete: () => console.warn('WebSocket connection closed'),
         })
         this.loadBarChartDay();
     }
@@ -136,11 +123,10 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                         const year = d.getFullYear();
                         const month = String(d.getMonth() + 1).padStart(2, '0');
                         const day = String(d.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`;  // chuẩn ISO: yyyy-MM-dd
+                        return `${year}-${month}-${day}`; 
                     }
-                    return ''; // hoặc xử lý lỗi
+                    return ''; 
                 });
-                // this.Day = this.revstationday.map((item) =>item.Date)
                 this.DayAccount = this.revstationday.map((item) => item.TotalRevenue);
                 this.DayProfit = this.revstationday.map((item) => item.TotalProfit);
                 this.barChartData = {
@@ -220,7 +206,6 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             const chartIndex = chartElement.index;
             const clickedStationId = this.StationId[chartIndex];
             const clickedMonth = this.Month[chartIndex];
-            const clickedRevenue = this.MonthAccount[chartIndex];
             const clickedProfit = this.MonthProfit[chartIndex];
             console.log('Station Id: ', clickedStationId);
             console.log('🟡 Select month:', clickedMonth);
@@ -278,7 +263,9 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.revenuesocket?.complete()
-        this.revenuesocket?.complete()
+        this.revenuesocket?.complete();
+        this.revenuedaysocket?.complete();
+        this.revenuemonthsocket?.complete();
+        this.revenueyearsocket?.complete();
     }
 }

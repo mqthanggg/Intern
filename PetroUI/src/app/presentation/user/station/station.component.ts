@@ -1,7 +1,6 @@
 declare let BigNumber: any;
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-// import { TitleService } from '../../../infrastructure/services/title.service';
 import { environment } from './../../../../environments/environment';
 import { delay, mergeMap, catchError, finalize, of, throwError, forkJoin } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
@@ -30,7 +29,6 @@ export class StationComponent implements OnInit, OnDestroy {
   stationAddress: string = "";
   isDispenserLoading = false;
   isTankLoading = false;
-  // isLogLoading = false;
 
   dispenserSocket: { [key: string]: WebSocketSubject<WSDispenserRecord[]> } = {}
   dispensersocket: WebSocketSubject<DispenserRecord[]> | undefined
@@ -79,7 +77,6 @@ export class StationComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    // private titleServer: TitleService,
     private route: ActivatedRoute
   ) { }
 
@@ -133,37 +130,23 @@ export class StationComponent implements OnInit, OnDestroy {
     })
 
     // ✅ Load table log by StationId
-    this.logsocket = webSocket<LogRecord[]>(environment.wsServerURI + `/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`)
+    this.logsocket = webSocket<WSLogRecord[]>(`${environment.wsServerURI}/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`);
     this.logsocket.subscribe({
-      next: res => {
+      next: (res: WSLogRecord[]) => {
         this.logList = res;
         console.log("load log data: ", this.logList);
         this.showLogs = true;
-        this.logList.forEach((value, index) => {
-          this.logSocket[value.StationId] = webSocket<WSLogRecord[]>(environment.wsServerURI + `/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`)
-          this.logSocket[value.StationId].subscribe({
-            next: (Datares: WSLogRecord[]) => {
-              res[index].StationId = Datares[index].StationId
-              res[index].Name = Datares[index].Name
-              res[index].FuelName = Datares[index].FuelName
-              res[index].TotalLiters = Datares[index].TotalLiters
-              res[index].Price = Datares[index].Price
-              res[index].TotalAmount = Datares[index].TotalAmount
-              res[index].Time = Datares[index].Time
-            },
-            error: (err) => {
-              console.error(`Error at station ${value.StationId}: ${err}`);
-            }
-          })
-          this.DispenserName = this.logList.map((item) => item.Name);
-          this.FuelName = this.logList.map((item) => item.FuelName);
-          this.TotalLiters = this.logList.map((item) => item.TotalLiters);
-          this.Price = this.logList.map((item) => item.Price);
-          this.TotalAmount = this.logList.map((item) => item.TotalAmount);
-        })
+        this.DispenserName = this.logList.map((item) => item.Name);
+        this.FuelName = this.logList.map((item) => item.FuelName);
+        this.TotalLiters = this.logList.map((item) => item.TotalLiters);
+        this.Price = this.logList.map((item) => item.Price);
+        this.TotalAmount = this.logList.map((item) => item.TotalAmount);
       },
-      error: err => console.error("(WebSocket error) - not load data log", err)
+      error: err => {
+        console.error("(WebSocket error) - not load data log", err);
+      }
     });
+
 
     forkJoin({
       dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: false }),
@@ -184,7 +167,7 @@ export class StationComponent implements OnInit, OnDestroy {
         this.dispenserList = res.dispenser.body
         console.log("dispenser data", this.dispenserList)
         this.dispenserList.forEach((value, index) => {
-          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord[]>(environment.wsServerURI + `/ws/dispenser/station/${this.id}?token=${localStorage.getItem('jwt')}`)
+          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord[]>(environment.wsServerURI + `/ws/dispenser/${this.id}?token=${localStorage.getItem('jwt')}`)
           this.dispenserSocket[value.dispenserId].subscribe({
             next: (res: WSDispenserRecord[]) => {
               this.dispenserList[index].liter = res[index]?.liter

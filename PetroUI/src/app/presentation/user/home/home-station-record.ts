@@ -1,12 +1,6 @@
 export interface totalrevenue {
     TotalRevenue: number;
     TotalProfit: number;
-    TotalLiter: number;
-}
-
-export interface WStotalrevenue {
-    TotalRevenue: number;
-    TotalProfit: number;
     TotalLiters: number;
 }
 
@@ -46,11 +40,6 @@ export interface WStotalLogType {
 
 //==================================
 export interface totalStationName extends totalrevenue {
-    StationId: number;
-    StationName: string;
-}
-
-export interface WStotalStationName extends WStotalrevenue {
     StationId: number;
     StationName: string;
 }
