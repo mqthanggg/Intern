@@ -22,12 +22,13 @@ public class LogUpdateService : ILogUpdateService{
     }
 
     public Task SegmentProcessAsync(int id, ReadOnlySequence<byte> segment){
+        byte[] data = segment.ToArray();
         return Task.Run(
             async () => {
                 try
                 {
                     WSDispenserRecord? wSDispenserRecord = JsonSerializer.Deserialize<WSDispenserRecord>(
-                        new MemoryStream(segment.ToArray())
+                        new MemoryStream(data)
                     );
                     if (wSDispenserRecord != null){
                         await FetchDispenserData(
@@ -38,7 +39,7 @@ public class LogUpdateService : ILogUpdateService{
                     }
                 catch (Exception e)
                 {  
-                    Console.WriteLine($"Failed, why: {e.Message}");                    
+                    Console.WriteLine($"Failed, why: {e}");                    
                 }
             }
         );
@@ -66,7 +67,7 @@ public class LogUpdateService : ILogUpdateService{
                 }
             }
             catch(Exception e){
-                Console.WriteLine($"Failed, why: {e.Message}");
+                Console.WriteLine($"Failed, why: {e}");
             }
         }
         else if (
