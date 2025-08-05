@@ -69,13 +69,13 @@ public static class LogQuery
 
     public static readonly string SelectLogByStationId = $@"
         SELECT 
-            dp.name, 
-            log.fuel_name, 
-            log.total_liters, 
-            fuel.price, 
-            log.total_amount, 
-            log.time,
-            log.log_type 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.time AS Time,
+            log.log_type AS LogType 
         FROM {Schema}.log as log
         INNER JOIN {Schema}.dispenser as dp 
         ON 
@@ -85,8 +85,9 @@ public static class LogQuery
         INNER JOIN {Schema}.fuel as fuel 
         ON 
             dp.fuel_id = fuel.fuel_id
+        WHERE DATE(log.time) = CURRENT_DATE
         ORDER BY
-            log.log_id
+            log.time DESC 
     ";
     public static readonly string UpdateLogTime = $@"
         UPDATE {Schema}.log

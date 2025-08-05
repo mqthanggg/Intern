@@ -1,5 +1,6 @@
 # version: "2.4"
 services:
+ # database
   postgres-common:
     &postgres-common
     image: postgres:17
@@ -111,7 +112,6 @@ services:
     depends_on:
       database-primary:
         condition: service_healthy
-
   pg-bouncer-replica:
     <<: *pg-bouncer-common
     depends_on:
@@ -182,7 +182,7 @@ services:
         condition: service_started
       mqtt:
         condition: service_started
-
+  # mqtt broken
   mqtt:
     restart: no
     networks:
@@ -195,6 +195,7 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
+  # Client
   server1:
     build:
       context: ./PetroServer
@@ -314,7 +315,7 @@ services:
         condition: service_started
       mqtt-handler:
         condition: service_healthy
-
+ # UI
   fe:
     build:
       context: PetroUI
@@ -327,7 +328,6 @@ services:
     depends_on:
       server1:
         condition: service_healthy
-
 networks:
   petro-network:
     driver: bridge

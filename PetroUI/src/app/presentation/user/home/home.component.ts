@@ -1,28 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartOptions, ChartDataset, ChartEvent } from 'chart.js';
 import { Router } from '@angular/router';
-import { WebSocketService } from './../../../services/web-socket.service';
-import { totalFuelName, totalLogType, totalrevenue, totalrevenue7day, totalStationName, WStotalFuelName, WStotalLogType, WStotalrevenue, WStotalrevenue7day, WStotalStationName } from './home-station-record';
+import { totalFuelName, totalLogType, totalrevenue, totalrevenue7day, totalStationName } from './home-station-record';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
-  imports: [
-    CommonModule,
-    CurrencyPipe,
-    NgChartsModule
-  ]
+  imports: [ CommonModule, CurrencyPipe, NgChartsModule ]
 })
 
 export class HomeComponent implements OnInit {
   constructor(
     private router: Router,
-    private wsService: WebSocketService
   ) { }
 
   stationData: any = {};
@@ -34,19 +29,16 @@ export class HomeComponent implements OnInit {
 
   stationsocket: WebSocket | undefined;
   barsocket: WebSocketSubject<totalStationName[]> | undefined;
-  barSocket: WebSocketSubject<WStotalStationName[]> | undefined;
   listStation: totalStationName[] = [];
-  stationId: number[]=[];
+  stationId: number[] = [];
   station: string[] = [];
   profit: number[] = [];
   revenue: number[] = [];
 
-  revenuesocket: WebSocketSubject<totalrevenue[]> | undefined;
-  revenueSocket: WebSocketSubject<WStotalrevenue> | undefined;
+  revenuesocket: WebSocketSubject<totalrevenue> | undefined
   revenueData?: totalrevenue;
 
   piecharsocket: WebSocketSubject<totalFuelName[]> | undefined;
-  piecharSocket: WebSocketSubject<WStotalFuelName[]> | undefined;
   totalNameData: totalFuelName[] = [];
   fuelname: string[] = [];
   totalliters: number[] = [];
@@ -55,15 +47,14 @@ export class HomeComponent implements OnInit {
   pieChartLittersData: any = {};
 
   linecharsocket: WebSocketSubject<totalrevenue7day[]> | undefined;
-  linecharSocket: WebSocketSubject<WStotalrevenue7day[]> | undefined;
   totalDate: totalrevenue7day[] = [];
   DataLable: string[] = [];
 
   barycharsocket: WebSocketSubject<totalLogType[]> | undefined;
-  barycharSocket: WebSocketSubject<WStotalLogType[]> | undefined;
   totalLog: totalLogType[] = [];
   chartBaryLogName: string[] = [];
   chartBaryDataAccounts: number[] = [];
+  showLogs = true;
 
   public barChartOptions: ChartOptions<'bar'> = {
     responsive: false,
@@ -77,6 +68,7 @@ export class HomeComponent implements OnInit {
       }
     },
   };
+
   public barChartData: {
     labels: string[],
     datasets: ChartDataset<'bar'>[]
@@ -143,20 +135,18 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showLogs = true;
     this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
     this.barsocket.subscribe({
       next: (res) => {
         console.log('bar Chart date Websocket connected');
         console.log("✔️ bar data: ", res);
-
-        // ✅ Chỉ lấy những station có TotalRevenue hoặc TotalProfit > 0
         const filtered = res.filter(s => s.TotalRevenue > 0 || s.TotalProfit > 0);
-
         this.stationId = filtered.map(item => item.StationId);
         this.station = filtered.map(item => item.StationName);
         this.revenue = filtered.map(item => item.TotalRevenue);
         this.profit = filtered.map(item => item.TotalProfit);
-
+        
         this.barChartData = {
           labels: this.station,
           datasets: [
@@ -176,15 +166,15 @@ export class HomeComponent implements OnInit {
     });
 
     // ✅ Load sum revenue 
-    this.revenueSocket = webSocket<WStotalrevenue>(environment.wsServerURI + '/ws/revenue');
-    this.revenueSocket.subscribe({
-      next: (data: WStotalrevenue) => {
+    this.revenuesocket = webSocket<totalrevenue>(environment.wsServerURI + '/ws/revenue');
+    this.revenuesocket.subscribe({
+      next: (data: totalrevenue) => {
         this.revenueData = {
-          TotalLiter: data.TotalLiters,
+          TotalLiters: data.TotalLiters,
           TotalRevenue: data.TotalRevenue,
           TotalProfit: data.TotalProfit
         };
-        console.log('✔️ Received 1 record:', this.revenueData);
+        console.log('✔️ Received data:', this.revenueData);
       },
       error: (err) => {
         console.error('WebSocket error:', err);
@@ -203,28 +193,15 @@ export class HomeComponent implements OnInit {
     this.stationsocket.onclose = () => console.warn('Station Websocket closed');
 
     // ✅ Load 2 chart pie sum revenue name
-    this.piecharsocket = webSocket<totalFuelName[]>(environment.wsServerURI + `/ws/sumrenuename`);
+    this.piecharsocket = webSocket<totalFuelName[]>(environment.wsServerURI + `/ws/sumrenuename?token=${localStorage.getItem('jwt')}`);
     this.piecharsocket.subscribe({
       next: res => {
         this.totalNameData = res
         console.log('Pie Chart date Websocket connected');
-        console.log("✔️ date data: ", res)
-        this.totalNameData.forEach((value, index) => {
-          this.piecharSocket = webSocket<WStotalFuelName[]>(environment.wsServerURI + `/ws/sumrenuename?token=${localStorage.getItem('jwt')}`)
-          this.piecharSocket.subscribe({
-            next: (Datares: WStotalFuelName[]) => {
-              res[index].FuelName = Datares[index].FuelName
-              res[index].TotalAmount = Datares[index].TotalAmount
-              res[index].TotalLiters = Datares[index].TotalLiters
-            },
-            error: (err) => {
-              console.error(`Error at station: ${err}`);
-            }
-          })
-        })
+        console.log("✔️ date data: ", res);
         this.fuelname = this.totalNameData.map((item) => item.FuelName);
         this.totalamount = this.totalNameData.map((item) => item.TotalAmount);
-        this.totalliters = this.totalNameData.map((item) => item.TotalLiters)
+        this.totalliters = this.totalNameData.map((item) => item.TotalLiters);
         this.pieChartAccountData = {
           labels: this.fuelname,
           datasets: [{
@@ -266,19 +243,6 @@ export class HomeComponent implements OnInit {
         this.totalDate = res
         console.log('Line Chart date Websocket connected');
         console.log("✔️ line data: ", res)
-        this.totalNameData.forEach((value, index) => {
-          this.linecharSocket = webSocket<WStotalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday?token=${localStorage.getItem('jwt')}`)
-          this.linecharSocket.subscribe({
-            next: (Datares: WStotalrevenue7day[]) => {
-              res[index].Date = Datares[index].Date
-              res[index].TotalAmount = Datares[index].TotalAmount
-              res[index].StationName = Datares[index].StationName
-            },
-            error: (err) => {
-              console.error(`Error at station: ${err}`);
-            }
-          })
-        })
         const dateSet = new Set<string>();
         this.totalDate.forEach(item => dateSet.add(item.Date));
         const sortedDates = Array.from(dateSet).sort();
@@ -328,28 +292,18 @@ export class HomeComponent implements OnInit {
         this.totalLog = res
         console.log('bar y Chart date Websocket connected');
         console.log("✔️ bary data: ", res)
-        this.totalLog.forEach((value, index) => {
-          this.barycharSocket = webSocket<WStotalLogType[]>(environment.wsServerURI + `/ws/sumrenuetype?token=${localStorage.getItem('jwt')}`)
-          this.barycharSocket.subscribe({
-            next: (Datares: WStotalLogType[]) => {
-              res[index].LogTypeName = Datares[index].LogTypeName
-              res[index].TotalAmount = Datares[index].TotalAmount
+        this.chartBaryLogName = this.totalLog.map(item => item.LogTypeName);
+        this.chartBaryDataAccounts = this.totalLog.map(item => item.TotalAmount);
+        this.baryData = {
+          labels: this.chartBaryLogName,
+          datasets: [
+            {
+              label: 'Doanh thu (VNĐ)',
+              data: this.chartBaryDataAccounts,
+              backgroundColor: '#42A5F5'
             },
-          })
-          this.chartBaryLogName = this.totalLog.map(item => item.LogTypeName);
-          this.chartBaryDataAccounts = this.totalLog.map(item => item.TotalAmount);
-          this.baryData = {
-            labels: this.chartBaryLogName,
-            datasets: [
-              {
-                label: 'Doanh thu (VNĐ)',
-                data: this.chartBaryDataAccounts,
-                backgroundColor: '#42A5F5'
-              },
-            ]
-          };
-
-        })
+          ]
+        };
       },
       error: err => {
         console.error(err);
@@ -358,8 +312,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.revenuesocket && this.stationsocket && this.barsocket) {
-      this.stationsocket.close();
-    }
+    this.barycharsocket?.complete();
+    this.linecharsocket?.complete();
+    this.piecharsocket?.complete();
+    this.revenuesocket?.complete();
+    this.barsocket?.complete();
   }
 }

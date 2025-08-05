@@ -1,7 +1,6 @@
 declare let BigNumber: any;
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { TitleService } from '../../../infrastructure/services/title.service';
 import { environment } from './../../../../environments/environment';
 import { delay, mergeMap, catchError, finalize, of, throwError, forkJoin } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
@@ -19,27 +18,46 @@ import { sumRevenueByLogType, sumRevenueByName } from './revenue-record';
   selector: 'app-station',
   standalone: true,
   imports: [NgChartsModule,
-   CommonModule, FormsModule],
+    CommonModule, FormsModule],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css']
 })
 export class StationComponent implements OnInit, OnDestroy {
   @Input() id: number = -1;
+  showLogs = true;
   stationName: string = "";
   stationAddress: string = "";
   isDispenserLoading = false;
   isTankLoading = false;
-  isLogLoading = false;
+
+  dispenserSocket: { [key: string]: WebSocketSubject<WSDispenserRecord[]> } = {}
+  dispensersocket: WebSocketSubject<DispenserRecord[]> | undefined
   dispenserList: DispenserRecord[] = [];
-  dispenserSocket: { [key: string]: WebSocketSubject<WSDispenserRecord> } = {}
-  tankSocket: { [key: string]: WebSocketSubject<WSTankRecord> } = {}
-  logSocket:  { [key: string]: WebSocketSubject<WSLogRecord> } = {}
+  Status: (string | undefined)[] = [];
+  Liter: (number | undefined)[] = [];
+  LongName: string[] = [];
+  ShortName: string[] = [];
+  TotalPrice: (number | undefined)[] = [];
+
+  tankList: TankRecord[] = [];
+  tankSocket: { [key: string]: WebSocketSubject<WSTankRecord[]> } = {}
+  tanksocket: WebSocketSubject<TankRecord[]> | undefined
+  TankName: number[]=[];
+  TankShortName: string[]=[];
+  Percentage: string[]=[];
+
+  logSocket: { [key: string]: WebSocketSubject<WSLogRecord[]> } = {}
   logsocket: WebSocketSubject<LogRecord[]> | undefined
+  logList: LogRecord[] = [];
+  DispenserId: number[] = [];
+  DispenserName: number[] = [];
+  FuelName: string[] = [];
+  TotalLiters: number[] = [];
+  Price: number[] = [];
+  TotalAmount: number[] = [];
+
   sumRevenueByLogTypeSocket: WebSocketSubject<sumRevenueByLogType[]> | undefined
   sumRevenueByFuelNameSocket: WebSocketSubject<sumRevenueByName[]> | undefined
-  tankList: TankRecord[] = [];
-  logList: LogRecord[] = [];
-  _temp_statusList: number[] = [];
   public pieChartType: any = 'pie';
   public pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
@@ -57,14 +75,6 @@ export class StationComponent implements OnInit, OnDestroy {
   revenueChartData: any;
   fuelChartData: any;
 
-  DispenserId: number[] = [];
-  DispenserName: number[] = [];
-  FuelName: string[] = [];
-  TotalLites: number[] = [];
-  Price: number[] = [];
-  TotalAmount: number[] = [];
-
-
   constructor(
     private http: HttpClient,
     private titleService: TitleService,
@@ -75,90 +85,74 @@ export class StationComponent implements OnInit, OnDestroy {
     const snapshot = this.route.snapshot;
     this.stationName = snapshot.queryParams['name'];
     this.stationAddress = snapshot.queryParams['address'];
+    // ✅ Load sum revenue by fuel name
+    this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}?token=${localStorage.getItem('jwt')}`)
+    this.sumRevenueByFuelNameSocket.subscribe({
+      next: res => {
+        console.log("Received data:", res);
+        this.chartLabels = res.map(item => item.FuelName);
+        this.chartDataFuel = res.map(item => item.TotalLiters);
+        this.fuelChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataFuel,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      }
+    })
+
+    this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}?token=${localStorage.getItem('jwt')}`)
+    this.sumRevenueByLogTypeSocket.subscribe({
+      next: res => {
+        this.chartLabels = res.map(item => item.LogTypeName);
+        this.chartDataAccount = res.map(item => item.TotalAmount);
+        this.chartDataFuel = res.map(item => item.TotalLiters);
+        this.revenueChartData = {
+          labels: this.chartLabels,
+          datasets: [{
+            data: this.chartDataAccount,
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#4BC0C0',
+              '#9966FF'
+            ]
+          }]
+        };
+      }
+    })
+
+    // ✅ Load table log by StationId
+    this.logsocket = webSocket<WSLogRecord[]>(`${environment.wsServerURI}/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`);
+    this.logsocket.subscribe({
+      next: (res: WSLogRecord[]) => {
+        this.logList = res;
+        console.log("load log data: ", this.logList);
+        this.showLogs = true;
+        this.DispenserName = this.logList.map((item) => item.Name);
+        this.FuelName = this.logList.map((item) => item.FuelName);
+        this.TotalLiters = this.logList.map((item) => item.TotalLiters);
+        this.Price = this.logList.map((item) => item.Price);
+        this.TotalAmount = this.logList.map((item) => item.TotalAmount);
+      },
+      error: err => {
+        console.error("(WebSocket error) - not load data log", err);
+      }
+    });
     setTimeout(() => {
       this.titleService.updateTitle(this.stationName)
     }, 0);
-
-    // ✅ Load sum revenue by fuel name
-    // this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}`)
-    // this.sumRevenueByFuelNameSocket.subscribe({
-    //   next: res => {
-    //     console.log("Received data:", res);
-    //     this.chartLabels = res.map(item => item.FuelName);
-    //     this.chartDataFuel = res.map(item => item.TotalLiters);
-    //     this.fuelChartData = {
-    //       labels: this.chartLabels,
-    //       datasets: [{
-    //         data: this.chartDataFuel,
-    //         backgroundColor: [
-    //           '#FF6384',
-    //           '#36A2EB',
-    //           '#FFCE56',
-    //           '#4BC0C0',
-    //           '#9966FF'
-    //         ]
-    //       }]
-    //     };
-    //   }
-    // })
-
-    // this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`)
-    // this.sumRevenueByLogTypeSocket.subscribe({
-    //   next: res => {
-    //     this.chartLabels = res.map(item => item.LogTypeName);
-    //     this.chartDataAccount = res.map(item => item.TotalAmount);
-    //     this.chartDataFuel = res.map(item => item.TotalLiters);
-    //     this.revenueChartData = {
-    //       labels: this.chartLabels,
-    //       datasets: [{
-    //         data: this.chartDataAccount,
-    //         backgroundColor: [
-    //           '#FF6384',
-    //           '#36A2EB',
-    //           '#FFCE56',
-    //           '#4BC0C0',
-    //           '#9966FF'
-    //         ]
-    //       }]
-    //     };
-    //   }
-    // })
-
-    // this.logsocket = webSocket<LogRecord[]>(environment.wsServerURI + `/ws/log/station/${this.id}`);
-    // this.logsocket.subscribe({
-    //   next: res => {
-    //     this.logList = res; 
-    //     console.table(res);
-    //     this.logList.forEach((value, index) => {
-    //       this.logSocket[value.StationId] = webSocket<WSLogRecord>(environment.wsServerURI + `/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`)
-    //       this.logSocket[value.StationId].subscribe({
-    //         next: (Datares: WSLogRecord) => {
-    //           res[index].Name = Datares.name
-    //           res[index].FuelName = Datares.fuelName
-    //           res[index].TotalLiters = Datares.totalLiters
-    //           res[index].Price = Datares.price
-    //           res[index].TotalAmount = Datares.totalAmount
-    //           res[index].Time = Datares.time
-    //         },
-    //         error: (err) => {
-    //           console.error(`Error at station ${value.StationId}: ${err}`);
-    //         }
-    //       })
-    //       this.DispenserName= this.logList.map((item)=>item.Name);
-    //       this.FuelName=this.logList.map((item)=>item.FuelName);
-    //       this.TotalLites= this.logList.map((item)=>item.TotalLiters);
-    //       this.Price= this.logList.map((item)=>item.Price);
-    //       this.TotalAmount= this.logList.map((item)=>item.TotalAmount);
-    //     })
-    //   },
-    //   error: err => console.error("(WebSocket error) - not load data log", err),
-    // });
-
-
     forkJoin({
-      dispenser: this.http.get(environment.serverURI+`/dispenser/station/${this.id}`,{observe: "response", withCredentials: true}),
-      tank: this.http.get(environment.serverURI+`/tank/station/${this.id}`,{observe: "response", withCredentials: true}),
-      log: this.http.get(environment.serverURI+`/log/station/${this.id}`,{observe: "response", withCredentials: true})
+      dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: false }),
+      tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response", withCredentials: false }),
     }).
     pipe(
       mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay
@@ -166,22 +160,20 @@ export class StationComponent implements OnInit, OnDestroy {
       finalize(() => {
         this.isDispenserLoading = false
         this.isTankLoading = false
-        this.isLogLoading = false
       })
     ).subscribe({
       next: (res: {
         dispenser: HttpResponse<any>,
         tank: HttpResponse<any>,
-        log: HttpResponse<any>
       }) => {
         this.dispenserList = res.dispenser.body        
         this.dispenserList.forEach((value, index) => {
-          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}?token=${localStorage.getItem('jwt')}`)
+          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord[]>(environment.wsServerURI + `/ws/dispenser/${this.id}?token=${localStorage.getItem('jwt')}`)
           this.dispenserSocket[value.dispenserId].subscribe({
-            next: (res: WSDispenserRecord) => {
-              this.dispenserList[index].liter = res.liter
-              this.dispenserList[index].totalAmount = res.price
-              this.dispenserList[index].status = res.state
+            next: (res: WSDispenserRecord[]) => {
+              this.dispenserList[index].liter = res[index]?.liter
+              this.dispenserList[index].totalAmount = res[index]?.totalAmount
+              this.dispenserList[index].status = res[index]?.status
             },
             error: (err) => {
               console.error(`Error at dispenser ${value.dispenserId}: ${err}`);
@@ -189,20 +181,20 @@ export class StationComponent implements OnInit, OnDestroy {
           })
         })
         this.tankList = res.tank.body
+        console.log("tank data: ", this.tankList)
         this.tankList.forEach((value, index) => {
-          this.tankSocket[value.tankId] = webSocket<WSTankRecord>(environment.wsServerURI + `/ws/tank/${value.tankId}?token=${localStorage.getItem('jwt')}`)
+          this.tankSocket[value.tankId] = webSocket<WSTankRecord[]>(environment.wsServerURI + `/ws/tank/station/${this.id}?token=${localStorage.getItem('jwt')}`)
           this.tankSocket[value.tankId].subscribe({
-            next: (res: WSTankRecord) => {
-              this.tankList[index].currentVolume = res.current_volume
+            next: (res: WSTankRecord[]) => {
+              this.tankList[index].currentVolume = res[index]?.currentVolume
               const vMax = new BigNumber(this.tankList[index].maxVolume)
-              this.tankList[index].percentage = new BigNumber(res.current_volume).dividedBy(vMax).times(100).toFixed(2).toString()
+              this.tankList[index].percentage = new BigNumber(res[index]?.currentVolume).dividedBy(vMax).times(100).toFixed(2).toString()
             },
             error: (err) => {
               console.error(`Error at tank ${value.tankId}: ${err}`);
             }
           })
         })
-        this.logList = res.log.body
       },
       error: (err: HttpErrorResponse) => {
         console.error(err.message);
@@ -222,4 +214,3 @@ export class StationComponent implements OnInit, OnDestroy {
     this.sumRevenueByFuelNameSocket?.complete()
   }
 }
-

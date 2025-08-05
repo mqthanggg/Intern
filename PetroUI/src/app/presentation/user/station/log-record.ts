@@ -5,14 +5,14 @@ export interface LogRecord {
     TotalLiters: number,
     Price: number
     TotalAmount: number,
-    Time: string
+    Time: string,
 }
 export interface WSLogRecord {
-    id:number,
-    name: number,
-    fuelName: string,
-    totalLiters: number,
-    price: number
-    totalAmount: number,
-    time: string
+    StationId:number,
+    Name: number,
+    FuelName: string,
+    TotalLiters: number,
+    Price: number
+    TotalAmount: number,
+    Time: string,
 }

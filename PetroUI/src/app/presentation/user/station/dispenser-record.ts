@@ -1,16 +1,22 @@
 export interface DispenserRecord {
+    // stationId:number,
     dispenserId: number,
-    name: number,
-    price: number,
+    name: number,  // Number
+    price: number,  
     longName: string,
     shortName: string,
     liter: number | undefined,
     totalAmount: number | undefined,
-    status: string | undefined
+    status: string | undefined,
 }
 
 export interface WSDispenserRecord{
-    liter: number,
-    price: number,
-    state: string
+    dispenserId: number,
+    name: number,  // Number
+    price: number,  
+    longName: string,
+    shortName: string,
+    liter: number | undefined,
+    totalAmount: number | undefined,
+    status: string | undefined,
 }
