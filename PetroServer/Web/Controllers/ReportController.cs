@@ -1,3 +1,5 @@
+using System.Text;
+
 public static class ReportController
 {
     public static WebApplication MapReport(this WebApplication app)
@@ -531,28 +533,37 @@ public static class ReportController
        Summary = "Obtain web socket for devices",
        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
    )]
-    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, IMqttService mqttService, ILogger<object> logger, IJWTService jWTService)
+    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, [FromServices] IWebSocketHubService hubService, ILogger<object> logger, IJWTService jWTService)
     {
         if (context.WebSockets.IsWebSocketRequest && jWTService.Verify(token))
         {
             var socket = await context.WebSockets.AcceptWebSocketAsync();
-            mqttService.AddSocket($"{device}:{id}", socket);
             var buffer = new byte[1024 * 4];
+            await hubService.StartAsync();
+            await hubService.JoinDevice(device,id);
+            var connection = hubService.GetHubConnection();
+            var subscription = connection.On<byte[]>("SendMessage",async (message) => {
+                try{
+                    await socket.SendAsync(message,WebSocketMessageType.Text,true,CancellationToken.None);
+                }
+                catch (Exception e){
+                    Console.WriteLine($"Failed, why: {e.Message}");
+                }
+            }); 
             try
             {
                 while (socket.State == WebSocketState.Open)
                 {
-                    await socket.ReceiveAsync(buffer, CancellationToken.None);
+                    await socket.ReceiveAsync(buffer, CancellationToken.None);               
                 }
             }
             catch (WebSocketException e)
             {
                 Console.WriteLine($"Websocket closed, reason: {e.Message}");
             }
-            finally
-            {
-                mqttService.RemoveSocket($"{device}:{id}", socket);
-            }
+            subscription.Dispose();
+            await connection.InvokeAsync("LeftDevice",device,id);
+            await hubService.StopAsync();
         }
     }
 

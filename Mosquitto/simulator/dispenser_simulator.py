@@ -36,7 +36,7 @@ try:
     while True:
         liter = 0
         current_price = 0
-        selected_price_limit = random.randint(1,10)*10000
+        selected_price_limit = 10000
         payload = {
             "liter": 0.00,
             "price": 0,

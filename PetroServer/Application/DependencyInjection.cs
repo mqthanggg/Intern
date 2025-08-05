@@ -6,9 +6,8 @@ public static class DependencyInjection{
         services.AddSingleton<IJWKsService,JWKsService>();
         services.AddSingleton<IHasher,Hasher>();
         services.AddSingleton<IUsernameService,UsernameService>();
-        services.AddSingleton<IMqttService,MqttService>();
         services.AddSingleton<ILogUpdateService,LogUpdateService>();
-        services.AddHostedService(e => (MqttService)e.GetRequiredService<IMqttService>());
+        services.AddScoped<IWebSocketHubService,WebSocketHub>();
         return services;
     }
 }

@@ -6,8 +6,7 @@ public static class DependencyInjection{
         return services;
     }
     public static IServiceCollection AddMqttService(this IServiceCollection services){
-        services.AddSingleton<IMqttService,MqttService>();
-        services.AddHostedService(e => (MqttService)e.GetRequiredService<IMqttService>());
+        services.AddHostedService<MqttService>();
         return services;
     }
 
@@ -17,6 +16,11 @@ public static class DependencyInjection{
             Env.GetString("DBWRITE_CONNECTION_STRING"),
             name:"write"
         );
+        return services;
+    }
+
+    public static IServiceCollection AddSignalRService(this IServiceCollection services){
+        services.AddSignalR();
         return services;
     }
 }

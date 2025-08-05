@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHealthCheckService();
 builder.Services.AddDbService();
+builder.Services.AddSignalRService();
 builder.Services.AddMqttService();
 
 DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -14,6 +15,7 @@ var healthCheckService = app.Services.GetRequiredService<HealthCheckService>();
 var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
+    app.MapController();
     app.Run();
 }
 else{

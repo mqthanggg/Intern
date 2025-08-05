@@ -1,19 +1,29 @@
-public class MqttService : IMqttService{
+using Microsoft.AspNetCore.SignalR;
+
+public class DeviceMonitoringHub : Hub<DeviceMonitoringInterface>{
+    public async Task JoinDevice(string device, int id){
+        await Groups.AddToGroupAsync(Context.ConnectionId,$"{device}:{id}");
+    }
+    public async Task LeftDevice(string device, int id){
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId,$"{device}:{id}");
+    }
+}
+public class MqttService : IHostedService{
     private class WSDispenserRecord{
         public float liter {get; set;}
         public int price {get; set;}
         public DispenserState state{get; set;}
         public int payment {get; set;}
     }
-    public ConcurrentDictionary<string, List<WebSocket>> connections;
-    private readonly ConcurrentDictionary<string, ArraySegment<byte>> _retainMessages;
     private readonly IMqttClient _client;
     private readonly MqttClientOptions _options;
     private readonly ILogUpdateService _logUpdate;
+    private readonly IHubContext<DeviceMonitoringHub,DeviceMonitoringInterface> _hub;
     public MqttService(
         ILogUpdateService logUpdate,
-        IConfiguration configuration
+        IHubContext<DeviceMonitoringHub,DeviceMonitoringInterface> hub
     ){
+        _hub = hub;
         _logUpdate = logUpdate;
         var mqttFactory = new MqttClientFactory();
         _client = mqttFactory.CreateMqttClient();
@@ -43,8 +53,6 @@ public class MqttService : IMqttService{
             }).
             Build();
 
-        connections = new ConcurrentDictionary<string, List<WebSocket>>();
-        _retainMessages = new ConcurrentDictionary<string, ArraySegment<byte>>();
         //device/dispenser/1
         _client.ApplicationMessageReceivedAsync += ApplicationMessageReceivedCallback;
     }
@@ -55,77 +63,20 @@ public class MqttService : IMqttService{
     public async Task StopAsync(CancellationToken cancellationToken){
         var token = new CancellationTokenSource(TimeSpan.FromMinutes(30)).Token;
         await _client.DisconnectAsync(MqttClientDisconnectOptionsReason.NormalDisconnection,"normal server shutdown",0,null,token);
-        foreach (var kvp in connections)
-        {
-            var sockets = kvp.Value;
-            lock(sockets){
-                sockets.RemoveAll(e => e.State != WebSocketState.Open);
-            }
-            foreach (var socket in sockets)
-            {
-                await socket.CloseAsync(
-                    WebSocketCloseStatus.NormalClosure,
-                    "Server shut down",
-                    token
-                );
-            }
-        }
-    }
-
-    public void AddSocket(string channel, WebSocket webSocket){
-        connections.AddOrUpdate(channel, [webSocket],(key, list) => {
-            lock(list){
-                list.Add(webSocket);
-            }
-            return list;
-        });
-        if (_retainMessages.TryGetValue(channel,out var _)){
-            _ = webSocket.SendAsync(
-                _retainMessages[channel],
-                WebSocketMessageType.Text,
-                true,
-                CancellationToken.None
-            );
-        }
-    }
-    public void RemoveSocket(string channel, WebSocket webSocket){
-        var list = connections[channel];
-        lock(list){
-            list.Remove(webSocket);
-        }
     }
 
     private Task ApplicationMessageReceivedCallback(MqttApplicationMessageReceivedEventArgs args){
         var ApplicationMessage = args.ApplicationMessage;
         var topic = ApplicationMessage.Topic;
-        var segment = new ArraySegment<byte>(ApplicationMessage.Payload.ToArray());
+        var SegmentArray = ApplicationMessage.Payload.ToArray();
         Regex regex = new Regex(@"devices/(\w+)/(\d+)");
         Match match = regex.Match(topic);
         string matchDevice = match.Groups[1].Value;
         int matchId = Convert.ToInt32(match.Groups[2].Value);
         string channel = $"{matchDevice}:{matchId}";
-        if (ApplicationMessage.Retain)
-            _retainMessages[channel] = segment;
-        else if(matchDevice == "dispenser"){
+        _ = _hub.Clients.Group(channel).SendMessage(SegmentArray);
+            if(matchDevice == "dispenser" && !ApplicationMessage.Retain){
             _ = _logUpdate.SegmentProcessAsync(matchId, ApplicationMessage.Payload);
-        }
-        foreach(var kvp in connections){
-            string device = kvp.Key.Split(":")[0];
-            int id = Convert.ToInt32(kvp.Key.Split(":")[1]);
-            List<WebSocket> sockets = kvp.Value;
-            if (device == matchDevice && id == matchId){
-                lock(sockets){
-                    sockets.RemoveAll(e => e.State != WebSocketState.Open);
-                    foreach(var socket in sockets){
-                        _ = socket.SendAsync(
-                            segment,
-                            WebSocketMessageType.Text,
-                            true,
-                            CancellationToken.None
-                        );
-                    }
-                }
-            }
         }
         return Task.CompletedTask;
     }

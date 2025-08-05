@@ -77,6 +77,7 @@ export class StationComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
+    private titleService: TitleService,
     private route: ActivatedRoute
   ) { }
 
@@ -146,8 +147,9 @@ export class StationComponent implements OnInit, OnDestroy {
         console.error("(WebSocket error) - not load data log", err);
       }
     });
-
-
+    setTimeout(() => {
+      this.titleService.updateTitle(this.stationName)
+    }, 0);
     forkJoin({
       dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: false }),
       tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response", withCredentials: false }),
@@ -164,8 +166,7 @@ export class StationComponent implements OnInit, OnDestroy {
         dispenser: HttpResponse<any>,
         tank: HttpResponse<any>,
       }) => {
-        this.dispenserList = res.dispenser.body
-        console.log("dispenser data", this.dispenserList)
+        this.dispenserList = res.dispenser.body        
         this.dispenserList.forEach((value, index) => {
           this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord[]>(environment.wsServerURI + `/ws/dispenser/${this.id}?token=${localStorage.getItem('jwt')}`)
           this.dispenserSocket[value.dispenserId].subscribe({
