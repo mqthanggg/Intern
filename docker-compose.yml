@@ -3,12 +3,19 @@ services:
   postgres-common:
     &postgres-common
     image: postgres:17
-    restart: always
+    restart: no
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -h localhost -d Intern'"]
       interval: 10s
       timeout: 3s
       retries: 3
+    networks:
+      - petro-network
+  
+  pg-bouncer-common:
+    &pg-bouncer-common
+    image: edoburu/pgbouncer
+    restart: no
     networks:
       - petro-network
   database-primary:
@@ -29,22 +36,45 @@ services:
     volumes:
       - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./Database/init.sh:/docker-entrypoint-initdb.d/init.sh
-    ports:
+    expose:
       - "5432:5432"
+
+  pg-bouncer-primary:
+    <<: *pg-bouncer-common
+    depends_on:
+      database-primary: 
+        condition: service_healthy
+    ports:
+      - "6432:6432"
+    environment:
+      DB_USER: "postgres"
+      DB_PASSWORD: "admin"
+      DB_HOST: "database-primary"
+      DB_NAME: "Intern"
+    volumes:
+      - ./Database/PgBouncer/pgbouncer_primary.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -d Intern -U postgres -p 6432"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    entrypoint: "sh /usr/local/bin/init.sh"
   
   database-replica:
     <<: *postgres-common
-    ports:
-      - "5433:5432"
+    expose:
+      - "5433:5433"
     user: "postgres"
     environment:
+      PGPORT: 5433
       PGUSER: "replicator"
       PGPASSWORD: "admin123"
     command: |
       sh -c "
         echo 'Starting base backup from primary...'
         while true; do
-            if pg_isready -h database-primary -d Intern; then
+            if pg_isready -h database-primary -d Intern -p 5432; then
               echo 'Primary is healthy' 
               chmod 0700 /var/lib/postgresql/data
               rm -rf /var/lib/postgresql/data/*
@@ -54,7 +84,7 @@ services:
               done
               echo 'Backup done, starting replica'
               pg_ctl start -D /var/lib/postgresql/data -w
-              until ! pg_isready -h database-primary -d Intern
+              until ! pg_isready -h database-primary -d Intern -p 5432
               do
                 echo 'Replication on primary is healthy'
                 sleep 1
@@ -64,11 +94,11 @@ services:
             pg_ctl status -D /var/lib/postgresql/data >/dev/null 2>&1 || pg_ctl start -D /var/lib/postgresql/data -w
             pg_ctl promote -D /var/lib/postgresql/data
             echo 'Replica promoted to master!'
-            while pg_isready -U replicator -h localhost -d Intern
+            while pg_isready -U replicator -h localhost -d Intern -p 5433
             do
               echo 'Replication after promoting is healthy'
               sleep 1
-              if pg_isready -h database-primary -d Intern; then
+              if pg_isready -h database-primary -d Intern -p 5432; then
                 echo 'Primary is back, stop promoting'
                 pg_ctl stop -D /var/lib/postgresql/data
                 break
@@ -81,7 +111,43 @@ services:
     depends_on:
       database-primary:
         condition: service_healthy
+
+  pg-bouncer-replica:
+    <<: *pg-bouncer-common
+    depends_on:
+      database-replica: 
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -d Intern -U postgres -p 6433"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "6433:6433"
+    environment:
+      DB_USER: "replicator"
+      DB_PASSWORD: "admin123"
+    volumes:
+      - ./Database/PgBouncer/pgbouncer_replica.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
+    entrypoint: "sh /usr/local/bin/init.sh"
   
+  haproxy:
+    image: haproxy:alpine
+    volumes:
+      - ./Database/HAProxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "6001:6001"
+      - "6002:6002"
+      - "8404:8404"
+    restart: no
+    networks:
+      - petro-network
+    depends_on:
+      pg-bouncer-primary:
+        condition: service_healthy
+      pg-bouncer-replica:
+        condition: service_healthy
   mqtt-handler:
     build:
       context: MQTTHandler
@@ -90,7 +156,7 @@ services:
       - petro-network
     environment:
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=host.docker.internal;Port=5432;Username=write_user;Password=write123;Database=Intern"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
       CLIENT_PFX_PATH: "certs/certificate.pfx"
       CLIENT_PFX_PASSWORD: "admin123"
       MOSQUITTO_USERNAME: "mqthanggg"
@@ -112,15 +178,13 @@ services:
       - "5195:5195"
       - "7138:7138"
     depends_on:
-      database-primary:
-        condition: service_healthy
-      database-replica:
-        condition: service_healthy
+      haproxy:
+        condition: service_started
       mqtt:
         condition: service_started
 
   mqtt:
-    restart: always
+    restart: no
     networks:
       - petro-network
     build:
@@ -138,25 +202,21 @@ services:
     networks:
       - petro-network
     environment:
-      - SCHEMA=petro_application
-      - DBWRITE_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=write_user;Password=write123;Database=Intern
-      - DBREAD_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=read_user;Password=read123;Database=Intern
-      - DEVELOPMENT_AUTHORITY=http://localhost:5170
-      - DEVELOPMENT_AUDIENCE=http://localhost:5170
-      - PRODUCTION_AUTHORITY=https://localhost:7149
-      - PRODUCTION_AUDIENCE=https://localhost:7149
-      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
-      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
-      - CLIENT_PFX_PATH=certs/certificate.pfx
-      - CLIENT_PFX_PASSWORD=admin123
-      - MOSQUITTO_USERNAME=mqthanggg
-      - MOSQUITTO_PASSWORD=admin123
-      - MOSQUITTO_HOST=mqtt
-      - MOSQUITTO_PORT=8883
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://0.0.0.0:7159;http://0.0.0.0:5180
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      SCHEMA: "petro_application"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DEVELOPMENT_AUTHORITY: "http://localhost:5170"
+      DEVELOPMENT_AUDIENCE: "http://localhost:5170"
+      PRODUCTION_AUTHORITY: "https://localhost:7149"
+      PRODUCTION_AUDIENCE: "https://localhost:7149"
+      PRIVATE_KEY_PATH: "rsa_key/private_key.pem"
+      PUBLIC_KEY_PATH: "rsa_key/public_key.pem"
+      CLIENT_PFX_PATH: "certs/certificate.pfx"
+      CLIENT_PFX_PASSWORD: "admin123"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://0.0.0.0:7159;http://0.0.0.0:5180"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -168,12 +228,12 @@ services:
       timeout: 5s
       retries: 3
     depends_on:
-      database-primary:
-        condition: service_healthy
-      database-replica:
-        condition: service_healthy
+      haproxy:
+        condition: service_started
       mqtt:
         condition: service_started
+      mqtt-handler:
+        condition: service_healthy
 
   server2:
     build:
@@ -182,25 +242,21 @@ services:
     networks:
       - petro-network
     environment:
-      - SCHEMA=petro_application
-      - DBWRITE_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=write_user;Password=write123;Database=Intern
-      - DBREAD_CONNECTION_STRING=Host=host.docker.internal;Port=5432;Username=read_user;Password=read123;Database=Intern
-      - DEVELOPMENT_AUTHORITY=http://localhost:5170
-      - DEVELOPMENT_AUDIENCE=http://localhost:5170
-      - PRODUCTION_AUTHORITY=https://localhost:7149
-      - PRODUCTION_AUDIENCE=https://localhost:7149
-      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
-      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
-      - CLIENT_PFX_PATH=certs/certificate.pfx
-      - CLIENT_PFX_PASSWORD=admin123
-      - MOSQUITTO_USERNAME=mqthanggg
-      - MOSQUITTO_PASSWORD=admin123
-      - MOSQUITTO_HOST=mqtt
-      - MOSQUITTO_PORT=8883
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://0.0.0.0:7160;http://0.0.0.0:5181
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      SCHEMA: "petro_application"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DEVELOPMENT_AUTHORITY: "http://localhost:5170"
+      DEVELOPMENT_AUDIENCE: "http://localhost:5170"
+      PRODUCTION_AUTHORITY: "https://localhost:7149"
+      PRODUCTION_AUDIENCE: "https://localhost:7149"
+      PRIVATE_KEY_PATH: "rsa_key/private_key.pem"
+      PUBLIC_KEY_PATH: "rsa_key/public_key.pem"
+      CLIENT_PFX_PATH: "certs/certificate.pfx"
+      CLIENT_PFX_PASSWORD: "admin123"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://0.0.0.0:7160;http://0.0.0.0:5181"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -212,12 +268,12 @@ services:
       timeout: 5s
       retries: 3
     depends_on:
-      database-primary:
-        condition: service_healthy
-      database-replica:
-        condition: service_healthy
+      haproxy:
+        condition: service_started
       mqtt:
         condition: service_started
+      mqtt-handler:
+        condition: service_healthy
 
   server3:
     build:
@@ -226,25 +282,21 @@ services:
     networks:
       - petro-network
     environment:
-      - SCHEMA=petro_application
-      - DBWRITE_CONNECTION_STRING=Host=database;Port=5432;Username=write_user;Password=write123;Database=Intern
-      - DBREAD_CONNECTION_STRING=Host=database;Port=5432;Username=read_user;Password=read123;Database=Intern
-      - DEVELOPMENT_AUTHORITY=http://localhost:5170
-      - DEVELOPMENT_AUDIENCE=http://localhost:5170
-      - PRODUCTION_AUTHORITY=https://localhost:7149
-      - PRODUCTION_AUDIENCE=https://localhost:7149
-      - PRIVATE_KEY_PATH=rsa_key/private_key.pem
-      - PUBLIC_KEY_PATH=rsa_key/public_key.pem
-      - CLIENT_PFX_PATH=certs/certificate.pfx
-      - CLIENT_PFX_PASSWORD=admin123
-      - MOSQUITTO_USERNAME=mqthanggg
-      - MOSQUITTO_PASSWORD=admin123
-      - MOSQUITTO_HOST=mqtt
-      - MOSQUITTO_PORT=8883
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://0.0.0.0:7161;http://0.0.0.0:5182
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=admin123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      SCHEMA: "petro_application"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DEVELOPMENT_AUTHORITY: "http://localhost:5170"
+      DEVELOPMENT_AUDIENCE: "http://localhost:5170"
+      PRODUCTION_AUTHORITY: "https://localhost:7149"
+      PRODUCTION_AUDIENCE: "https://localhost:7149"
+      PRIVATE_KEY_PATH: "rsa_key/private_key.pem"
+      PUBLIC_KEY_PATH: "rsa_key/public_key.pem"
+      CLIENT_PFX_PATH: "certs/certificate.pfx"
+      CLIENT_PFX_PASSWORD: "admin123"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://0.0.0.0:7161;http://0.0.0.0:5182"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     healthcheck:
@@ -256,12 +308,12 @@ services:
       - "5182:5182"
       - "7161:7161"
     depends_on:
-      database-primary:
-        condition: service_healthy
-      database-replica:
-        condition: service_healthy
+      haproxy:
+        condition: service_started
       mqtt:
         condition: service_started
+      mqtt-handler:
+        condition: service_healthy
 
   fe:
     build:
@@ -271,7 +323,7 @@ services:
       - "4200:4200"
     networks:
       - petro-network
-    restart: always
+    restart: no
     depends_on:
       server1:
         condition: service_healthy

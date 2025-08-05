@@ -67,94 +67,92 @@ export class StationComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private titleServer: TitleService,
-    private route: ActivatedRoute,
-    private TitleService: TitleService
+    private titleService: TitleService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-
     const snapshot = this.route.snapshot;
     this.stationName = snapshot.queryParams['name'];
     this.stationAddress = snapshot.queryParams['address'];
     setTimeout(() => {
-      this.titleServer.updateTitle(this.stationName)
+      this.titleService.updateTitle(this.stationName)
     }, 0);
 
     // ✅ Load sum revenue by fuel name
-    this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}`)
-    this.sumRevenueByFuelNameSocket.subscribe({
-      next: res => {
-        console.log("Received data:", res);
-        this.chartLabels = res.map(item => item.FuelName);
-        this.chartDataFuel = res.map(item => item.TotalLiters);
-        this.fuelChartData = {
-          labels: this.chartLabels,
-          datasets: [{
-            data: this.chartDataFuel,
-            backgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#4BC0C0',
-              '#9966FF'
-            ]
-          }]
-        };
-      }
-    })
+    // this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}`)
+    // this.sumRevenueByFuelNameSocket.subscribe({
+    //   next: res => {
+    //     console.log("Received data:", res);
+    //     this.chartLabels = res.map(item => item.FuelName);
+    //     this.chartDataFuel = res.map(item => item.TotalLiters);
+    //     this.fuelChartData = {
+    //       labels: this.chartLabels,
+    //       datasets: [{
+    //         data: this.chartDataFuel,
+    //         backgroundColor: [
+    //           '#FF6384',
+    //           '#36A2EB',
+    //           '#FFCE56',
+    //           '#4BC0C0',
+    //           '#9966FF'
+    //         ]
+    //       }]
+    //     };
+    //   }
+    // })
 
-    this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`)
-    this.sumRevenueByLogTypeSocket.subscribe({
-      next: res => {
-        this.chartLabels = res.map(item => item.LogTypeName);
-        this.chartDataAccount = res.map(item => item.TotalAmount);
-        this.chartDataFuel = res.map(item => item.TotalLiters);
-        this.revenueChartData = {
-          labels: this.chartLabels,
-          datasets: [{
-            data: this.chartDataAccount,
-            backgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#4BC0C0',
-              '#9966FF'
-            ]
-          }]
-        };
-      }
-    })
+    // this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}`)
+    // this.sumRevenueByLogTypeSocket.subscribe({
+    //   next: res => {
+    //     this.chartLabels = res.map(item => item.LogTypeName);
+    //     this.chartDataAccount = res.map(item => item.TotalAmount);
+    //     this.chartDataFuel = res.map(item => item.TotalLiters);
+    //     this.revenueChartData = {
+    //       labels: this.chartLabels,
+    //       datasets: [{
+    //         data: this.chartDataAccount,
+    //         backgroundColor: [
+    //           '#FF6384',
+    //           '#36A2EB',
+    //           '#FFCE56',
+    //           '#4BC0C0',
+    //           '#9966FF'
+    //         ]
+    //       }]
+    //     };
+    //   }
+    // })
 
-    this.logsocket = webSocket<LogRecord[]>(environment.wsServerURI + `/ws/log/station/${this.id}`);
-    this.logsocket.subscribe({
-      next: res => {
-        this.logList = res; 
-        console.table(res);
-        this.logList.forEach((value, index) => {
-          this.logSocket[value.StationId] = webSocket<WSLogRecord>(environment.wsServerURI + `/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`)
-          this.logSocket[value.StationId].subscribe({
-            next: (Datares: WSLogRecord) => {
-              res[index].Name = Datares.name
-              res[index].FuelName = Datares.fuelName
-              res[index].TotalLiters = Datares.totalLiters
-              res[index].Price = Datares.price
-              res[index].TotalAmount = Datares.totalAmount
-              res[index].Time = Datares.time
-            },
-            error: (err) => {
-              console.error(`Error at station ${value.StationId}: ${err}`);
-            }
-          })
-          this.DispenserName= this.logList.map((item)=>item.Name);
-          this.FuelName=this.logList.map((item)=>item.FuelName);
-          this.TotalLites= this.logList.map((item)=>item.TotalLiters);
-          this.Price= this.logList.map((item)=>item.Price);
-          this.TotalAmount= this.logList.map((item)=>item.TotalAmount);
-        })
-      },
-      error: err => console.error("(WebSocket error) - not load data log", err),
-    });
+    // this.logsocket = webSocket<LogRecord[]>(environment.wsServerURI + `/ws/log/station/${this.id}`);
+    // this.logsocket.subscribe({
+    //   next: res => {
+    //     this.logList = res; 
+    //     console.table(res);
+    //     this.logList.forEach((value, index) => {
+    //       this.logSocket[value.StationId] = webSocket<WSLogRecord>(environment.wsServerURI + `/ws/log/station/${this.id}?token=${localStorage.getItem('jwt')}`)
+    //       this.logSocket[value.StationId].subscribe({
+    //         next: (Datares: WSLogRecord) => {
+    //           res[index].Name = Datares.name
+    //           res[index].FuelName = Datares.fuelName
+    //           res[index].TotalLiters = Datares.totalLiters
+    //           res[index].Price = Datares.price
+    //           res[index].TotalAmount = Datares.totalAmount
+    //           res[index].Time = Datares.time
+    //         },
+    //         error: (err) => {
+    //           console.error(`Error at station ${value.StationId}: ${err}`);
+    //         }
+    //       })
+    //       this.DispenserName= this.logList.map((item)=>item.Name);
+    //       this.FuelName=this.logList.map((item)=>item.FuelName);
+    //       this.TotalLites= this.logList.map((item)=>item.TotalLiters);
+    //       this.Price= this.logList.map((item)=>item.Price);
+    //       this.TotalAmount= this.logList.map((item)=>item.TotalAmount);
+    //     })
+    //   },
+    //   error: err => console.error("(WebSocket error) - not load data log", err),
+    // });
 
 
     forkJoin({
@@ -176,7 +174,7 @@ export class StationComponent implements OnInit, OnDestroy {
         tank: HttpResponse<any>,
         log: HttpResponse<any>
       }) => {
-        this.dispenserList = res.dispenser.body
+        this.dispenserList = res.dispenser.body        
         this.dispenserList.forEach((value, index) => {
           this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}?token=${localStorage.getItem('jwt')}`)
           this.dispenserSocket[value.dispenserId].subscribe({

@@ -12,3 +12,4 @@ global using MQTTnet;
 global using System.Buffers;
 global using LogUpdate;
 global using System.Text.Json;
+global using Microsoft.AspNetCore.SignalR.Client;

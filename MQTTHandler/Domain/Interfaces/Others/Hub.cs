@@ -1,3 +1,3 @@
 public interface DeviceMonitoringInterface{
-    Task SendMessage(string message);
+    Task SendMessage(byte[] message);
 }
