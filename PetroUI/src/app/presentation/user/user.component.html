@@ -1,6 +1,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<div class="flex w-full md:w-auto h-max-screen">
-   <div class="duration-300 flex flex-col" [ngClass]="{'w-1/6 h-screen': isNavExtended, 'w-0': !isNavExtended}">
+<div class="flex w-full md:w-auto h-screen overflow-hidden">
+   <div class="duration-300 flex flex-col h-full overflow-y-auto" [ngClass]="{'w-1/6 h-screen': isNavExtended, 'w-0': !isNavExtended} ">
         <div class="w-full bg-[#ffd66b] px-3 h-20 flex items-center justify-center relative">
             <div class="text-black font-semibold text-2xl text-center">PMS</div>
         </div>

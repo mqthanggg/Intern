@@ -1,7 +1,6 @@
 public interface IRevenueRepository
 {
-   //Task<SumRevenueResponse> GetTotalRevenueShiftAsync();
-   Task<SumRevenueResponse> GetTotalRevenueAsync();
+   Task<RevenueResponse> GetTotalRevenueAsync();
    Task<IReadOnlyList<SumStationResponse>> GetTotalRevenueStationtAsync();
    Task<IReadOnlyList<SumRevenueByTypeResponse>> GetTotalRevenueByType7dayAsync();
    Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueFullBynameAsync();

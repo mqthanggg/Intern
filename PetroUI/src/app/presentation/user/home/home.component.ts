@@ -6,6 +6,7 @@ import { ChartOptions, ChartDataset, ChartEvent } from 'chart.js';
 import { Router } from '@angular/router';
 import { totalFuelName, totalLogType, totalrevenue, totalrevenue7day, totalStationName } from './home-station-record';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { TitleService } from '../../../infrastructure/services/title.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,7 +18,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 
 export class HomeComponent implements OnInit {
   constructor(
-    private router: Router,
+    private router: Router,private titleService: TitleService
   ) { }
 
   stationData: any = {};
@@ -136,6 +137,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.showLogs = true;
+    this.titleService.updateTitle("Home")
     this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
     this.barsocket.subscribe({
       next: (res) => {
@@ -229,7 +231,7 @@ export class HomeComponent implements OnInit {
           }]
         };
       },
-
+      complete: () => console.log("WebSocket connection closed"),
       error: err => {
         console.error(err);
       }
@@ -279,7 +281,7 @@ export class HomeComponent implements OnInit {
           datasets
         };
       },
-
+      complete: () => console.log("WebSocket connection closed"),
       error: err => {
         console.error(err);
       }
@@ -305,6 +307,7 @@ export class HomeComponent implements OnInit {
           ]
         };
       },
+      complete: () => console.log("WebSocket connection closed"),
       error: err => {
         console.error(err);
       }

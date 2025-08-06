@@ -23,7 +23,10 @@ app.UseCors("AllowAll");
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapReverseProxy();
+    endpoints.MapReverseProxy(proxyPipeline =>
+    {
+        proxyPipeline.UseWebSockets();
+    });
 });
 // app.UseWebSockets();
 app.UseWebSockets(new WebSocketOptions

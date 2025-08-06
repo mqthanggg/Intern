@@ -1,0 +1,108 @@
+<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
+    <div class="my-4 flex space-x-4">
+        <label class="block mb-1 font-bold text-lg">Lọc theo thời gian:</label>
+        <select [(ngModel)]="selectedTimeFilter" class="border px-2 py-1 rounded" (change)="onTimeFilterChange()">
+            <option value="" class="items-center">---- All ----</option>
+            <option value="day">Select date</option>
+            <option value="range">Period of time</option>
+            <option value="logtype">Log type name</option>
+            <option value="fuelname">Fuel name</option>
+            <option value="dispenser">Dispenser name</option>
+        </select>
+        <div class="flex items-center">
+            <button (click)="clearFilters()"
+                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Reset</button>
+        </div>
+    </div>
+    <div *ngIf="selectedTimeFilter === 'range'" class="flex space-x-4 mb-4 items-center">
+        <label class="mb-1 inline-block align-middle font-medium">From date:</label>
+        <input datepicker type="date" [(ngModel)]="filter.fromDate" class="border px-2 py-1 rounded" />
+        <label class="block mb-1 font-medium">To date:</label>
+        <input type="date" [(ngModel)]="filter.toDate" class="border px-2 py-1 rounded" />
+        <div class="flex items-end">
+            <button (click)="applyDateFilter()" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                Filter
+            </button>
+        </div>
+    </div>
+    <div *ngIf="selectedTimeFilter === 'logtype'" class="flex space-x-4 mb-4">
+        <label class="block mb-1 font-medium">Filter by Log Name:</label>
+        <select [(ngModel)]="selectedLogType" (change)="applyLogTypeFilter()" class="border px-2 py-1 rounded w-48">
+            <option value="">All LogName</option>
+            <option *ngFor="let type of logTypeList" [value]="type">{{ type }}</option>
+        </select>
+    </div>
+    <div *ngIf="selectedTimeFilter === 'fuelname'" class="flex space-x-4 mb-4">
+        <label class="block mb-1 font-medium">Filter by Fuel Name:</label>
+        <select [(ngModel)]="fuelFilter" (change)="filterByFuel()" class="border px-2 py-1">
+            <option value="">All fuel</option>
+            <option *ngFor="let fuel of fuelList" [value]="fuel">{{ fuel }}</option>
+        </select>
+    </div>
+    <div *ngIf="selectedTimeFilter === 'day'" class="flex space-x-4 mb-4">
+        <label class="block mb-1 font-medium">Select date:</label>
+        <input type="date" id="myDate" [(ngModel)]="selectedDate" (change)="filterBySingleDate()"
+            class="border px-2 py-1" />
+    </div>
+    <div *ngIf="selectedTimeFilter === 'dispenser'" class="flex space-x-4 mb-4">
+        <label class="block mb-1 font-medium">Dispenser name: </label>
+        <select [(ngModel)]="selectedPump" (change)="filterByPump()" class="border px-2 py-1 rounded w-48">
+            <option value="">All</option>
+            <option *ngFor="let pump of pumpList" [value]="pump">{{ pump }}</option>
+        </select>
+    </div>
+
+    <table class=" w-full border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
+        <thead class="sticky top-2 bg-gray-300 text-gray-800 font-semibold text-sm uppercase shadow-sm z-10">
+            <tr>
+                <th class="px-2 py-3 text-center border-b border-gray-300">STT</th>
+                <th class="px-2 py-3 text-center border-b border-gray-300">Dispenser</th>
+                <th class="px-5 py-3 text-center border-b border-gray-300">Fuel</th>
+                <th class="px-5 py-3 text-center border-b border-gray-300">Total liters</th>
+                <th class="px-5 py-3 text-center border-b border-gray-300">Price</th>
+                <th class="px-5 py-3 text-center border-b border-gray-300">Total amount</th>
+                <th class="px-5 py-3 text-center border-b border-gray-300">Log Name</th>
+                <th class="px-20 py-3 text-center border-b border-gray-300">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of pagedList; let i = index" class="border-t hover:bg-gray-50 text-center"
+                [ngClass]="{ 'bg-white': i % 2 === 0, 'bg-gray-100': i % 2 === 1 }">
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td>{{ item.Name }}</td>
+                <td>{{ item.FuelName }}</td>
+                <td>{{ item.TotalLiters | number:'1.2-2' }}</td>
+                <td>{{ item.Price | number:'1.0-0' }}</td>
+                <td>{{ item.TotalAmount | number:'1.0-0' }}</td>
+                <td class="justify-items-center">
+                    <p [ngClass]="getLogTypeClass(item.LogTypeName)" class="text-center font-medium px-2 py-1 rounded">
+                        {{ item.LogTypeName }}</p>
+                </td>
+                <td>{{ item.Time | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="flex justify-center mt-4 space-x-2">
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+        </button>
+        <ng-container *ngFor="let page of pages">
+            <button (click)="goToPage(page)" [ngClass]="{'bg-blue-500 text-white': currentPage === page, 
+                'bg-gray-200': currentPage !== page }" class="px-3 py-1 rounded hover:bg-gray-300"> {{ page }}</button>
+        </ng-container>
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+            class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+
+        </button>
+    </div>
+
+</div>

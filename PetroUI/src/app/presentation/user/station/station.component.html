@@ -3,7 +3,7 @@
         <div class="shadow-xl rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl">
             <div class="text-[#4DA8DA] font-semibold text-xl select-none pb-3">Dispenser's status</div>
             <div class="w-full overflow-y-scroll max-h-55 overflow-auto relative">
-            @if (isDispenserLoading) {
+                @if (isDispenserLoading) {
                 <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
                 </div>
                 }
@@ -98,13 +98,15 @@
             </div>
         </div>
         <div class="shadow-xl right-0 top-1/2 rounded-md p-5 bg-white h-[50%] max-h-[50%] w-3xl max-w-3xl ml-1">
-            <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
-            <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
-                <!-- @if (isLogLoading) {
-                <div class="loader absolute top-1/2 left-1/2 -translate-1/2 border-yellow-500 border-b-transparent">
+            <div class="flex justify-between">
+                <div class="text-[#4DA8DA] font-semibold text-xl pb-3">Logs</div>
+                <div>
+                    <button type="button" [routerLink]="['/user/station/log', id]" class="bg-blue-700 hover:bg-[#4DA8DA] text-white font-medium py-1 px-3 rounded">
+                       Show list log
+                    </button>
                 </div>
-                }
-                @else{ -->
+            </div>
+            <div class="h-80 w-full overflow-y-scroll max-h-55 relative">
                 <table
                     class="border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
                     <thead class="sticky top-0">
@@ -128,7 +130,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- } -->
             </div>
         </div>
     </div>

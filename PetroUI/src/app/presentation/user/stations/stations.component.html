@@ -1,9 +1,9 @@
-<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll">
+<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-auto">
     @if (isStationLoading){
         <div class="loader border-amber-500 border-b-transparent absolute top-1/2 left-1/2 -translate-1/2"></div>
     }
     @else {
-        <div class="grid grid-cols-4 gap-x-5 gap-3">
+        <div class="grid grid-cols-4 gap-x-5 gap-3 overflow-y-auto">
             @for(station of stationList;track station.stationId){
                 <div class="border rounded-md shadow-xl p-5 space-y-2 bg-[#F5F5F5] flex flex-col justify-between">
                     <div class="flex justify-center">

@@ -4,7 +4,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { environment } from './../../../../environments/environment';
 import { delay, mergeMap, catchError, finalize, of, throwError, forkJoin } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule  } from '@angular/router';
 import { DispenserRecord, WSDispenserRecord } from './dispenser-record';
 import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord, WSLogRecord } from './log-record';
@@ -13,18 +13,21 @@ import { ChartConfiguration } from 'chart.js';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { sumRevenueByLogType, sumRevenueByName } from './revenue-record';
+import { TitleService } from '../../../infrastructure/services/title.service';
 
 @Component({
   selector: 'app-station',
   standalone: true,
-  imports: [NgChartsModule,
+  imports: [NgChartsModule,RouterModule,
     CommonModule, FormsModule],
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css']
 })
+
 export class StationComponent implements OnInit, OnDestroy {
   @Input() id: number = -1;
   showLogs = true;
+  stationId: string = "";
   stationName: string = "";
   stationAddress: string = "";
   isDispenserLoading = false;
@@ -90,6 +93,7 @@ export class StationComponent implements OnInit, OnDestroy {
     this.sumRevenueByFuelNameSocket.subscribe({
       next: res => {
         console.log("Received data:", res);
+         this.showLogs = true;
         this.chartLabels = res.map(item => item.FuelName);
         this.chartDataFuel = res.map(item => item.TotalLiters);
         this.fuelChartData = {
@@ -105,12 +109,14 @@ export class StationComponent implements OnInit, OnDestroy {
             ]
           }]
         };
-      }
+      },
+      complete: () => console.log("WebSocket connection closed"),
     })
 
     this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}?token=${localStorage.getItem('jwt')}`)
     this.sumRevenueByLogTypeSocket.subscribe({
       next: res => {
+        this.showLogs = true;
         this.chartLabels = res.map(item => item.LogTypeName);
         this.chartDataAccount = res.map(item => item.TotalAmount);
         this.chartDataFuel = res.map(item => item.TotalLiters);
@@ -127,7 +133,8 @@ export class StationComponent implements OnInit, OnDestroy {
             ]
           }]
         };
-      }
+      },
+      complete: () => console.log("WebSocket connection closed"),
     })
 
     // ✅ Load table log by StationId
@@ -137,12 +144,8 @@ export class StationComponent implements OnInit, OnDestroy {
         this.logList = res;
         console.log("load log data: ", this.logList);
         this.showLogs = true;
-        this.DispenserName = this.logList.map((item) => item.Name);
-        this.FuelName = this.logList.map((item) => item.FuelName);
-        this.TotalLiters = this.logList.map((item) => item.TotalLiters);
-        this.Price = this.logList.map((item) => item.Price);
-        this.TotalAmount = this.logList.map((item) => item.TotalAmount);
       },
+      complete: () => console.log("WebSocket connection closed"),
       error: err => {
         console.error("(WebSocket error) - not load data log", err);
       }
@@ -150,6 +153,8 @@ export class StationComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.titleService.updateTitle(this.stationName)
     }, 0);
+
+    
     forkJoin({
       dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: false }),
       tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response", withCredentials: false }),
@@ -183,7 +188,7 @@ export class StationComponent implements OnInit, OnDestroy {
         this.tankList = res.tank.body
         console.log("tank data: ", this.tankList)
         this.tankList.forEach((value, index) => {
-          this.tankSocket[value.tankId] = webSocket<WSTankRecord[]>(environment.wsServerURI + `/ws/tank/station/${this.id}?token=${localStorage.getItem('jwt')}`)
+          this.tankSocket[value.tankId] = webSocket<WSTankRecord[]>(environment.wsServerURI + `/ws/tank/${this.id}?token=${localStorage.getItem('jwt')}`)
           this.tankSocket[value.tankId].subscribe({
             next: (res: WSTankRecord[]) => {
               this.tankList[index].currentVolume = res[index]?.currentVolume

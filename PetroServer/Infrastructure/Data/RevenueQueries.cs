@@ -3,7 +3,6 @@ public static class RevenueQueries
 {
     private static readonly string Schema = Env.GetString("SCHEMA");
 
-    
     // Report sum revenue of the stations in the system
     public static readonly string SumRevenue = $@"     
         WITH 
