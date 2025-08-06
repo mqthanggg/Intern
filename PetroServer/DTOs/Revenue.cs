@@ -3,34 +3,30 @@ public class RevenueResponse
 {
     public decimal? TotalLiters { get; set; } = -1;
     public decimal? TotalRevenue { get; set; } = -1;
-}
-public class SumRevenueResponse : RevenueResponse
-{
     public decimal? TotalImport { get; set; } = -1;
     public decimal? TotalProfit { get; set; } = -1;
 }
-
-public class SumStationResponse: SumRevenueResponse
+public class SumStationResponse: RevenueResponse
 {
     public required int StationId { get; set; } = -1;
     public required string StationName { get; set; } = "";
 }
+public class SumRevenueResponse {
+    public decimal? TotalAmount { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
+}
 
-public class SumRevenueResponseByShift
+public class SumRevenueResponseByShift: SumRevenueResponse
 {
     public required string ShiftNow { get; set; } = "";
-    public decimal? TotalAmount { get; set; } = -1;
-    public decimal? TotalLiters { get; set; } = -1;
 }
 
-public class SumRevenueByNameResponse
+public class SumRevenueByNameResponse: SumRevenueResponse
 {
     public required string FuelName { get; set; } = "";
-    public decimal? TotalAmount { get; set; } = -1;
-    public decimal? TotalLiters { get; set; } = -1;
 }
 
-public class SumRevenueByTypeResponse
+public class SumRevenueByTypeResponse: SumRevenueResponse
 {
     public int? LogType { get; set; } = null;
         public string LogTypeName
@@ -47,42 +43,24 @@ public class SumRevenueByTypeResponse
             };
         }
     }
-    public decimal? TotalAmount { get; set; } = null;
-    public decimal? TotalLiters { get; set; } = null;
-    // public string? Month { get; set; } = null;
 }
 
-public class SumRevenueByDateResponse
+public class SumRevenueByDateResponse : SumStationResponse
 {
     public required string Date { get; set; } = "";
-    public required string StationName { get; set; } = "";
-    public decimal? TotalAmount { get; set; } = -1;
-    public decimal? TotalLiters { get; set; } = -1;
 }
 
-public class SumRevenueStationByDateResponse
+public class SumRevenueStationByDateResponse : SumStationResponse
 {
-    public required int StationId { get; set; } = -1;
-    public required string StationName { get; set; } = "";
     public required string Date { get; set; } = "";
-    public decimal? TotalRevenue { get; set; } = -1;
-    public decimal? TotalProfit { get; set; } = -1;
 }
 
-public class SumRevenueStationByMonthResponse
+public class SumRevenueStationByMonthResponse : SumStationResponse
 {
-    public required int StationId { get; set; } = -1;
-    public required string StationName { get; set; } = "";
     public required string Month { get; set; } = "";
-    public decimal? TotalRevenue { get; set; } = -1;
-    public decimal? TotalProfit { get; set; } = -1;
 }
 
-public class SumRevenueStationByYearResponse
+public class SumRevenueStationByYearResponse : SumStationResponse
 {
-    public required int StationId { get; set; } = -1;
-    public required string StationName { get; set; } = "";
     public required string Year { get; set; } = "";
-    public decimal? TotalRevenue { get; set; } = -1;
-    public decimal? TotalProfit { get; set; } = -1;
 }

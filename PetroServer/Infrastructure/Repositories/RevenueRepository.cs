@@ -44,11 +44,11 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-    public async Task<SumRevenueResponse> GetTotalRevenueAsync()
+    public async Task<RevenueResponse> GetTotalRevenueAsync()
     {
         await using (var connection = dbRead.CreateConnection())
         {
-            var result = await connection.QueryFirstOrDefaultAsync<SumRevenueResponse>(RevenueQueries.SumRevenue);
+            var result = await connection.QueryFirstOrDefaultAsync<RevenueResponse>(RevenueQueries.SumRevenue);
             return result;
         }
     }

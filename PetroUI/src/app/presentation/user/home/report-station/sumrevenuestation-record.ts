@@ -49,3 +49,9 @@ export interface revenuetypemonth extends revenuetype {
 export interface revenuetypeyear extends revenuetype {
     Year: string;
 }
+
+// ===============================
+export interface Station{
+    StationId: number,
+    name: string,
+}

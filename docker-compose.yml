@@ -218,6 +218,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7159;http://0.0.0.0:5180"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -258,6 +259,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7160;http://0.0.0.0:5181"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -298,6 +300,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7161;http://0.0.0.0:5182"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"                                                                                                                                                                                                                                
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     healthcheck:

@@ -61,12 +61,17 @@ public static class LogQuery
         WHERE
             log_id = @LogId
     ";
+      public static readonly string UpdateLogTime = $@"
+        UPDATE {Schema}.log
+        SET 
+            time = date_trunc('day', CURRENT_DATE) + (time::time),
+            last_modified_date = now()
+    ";
     public static readonly string DeleteLog = $@"
         DELETE FROM {Schema}.log
         WHERE 
             log_id = @LogId
     ";
-
     public static readonly string SelectLogByStationId = $@"
         SELECT 
             dp.name AS Name, 
@@ -77,23 +82,26 @@ public static class LogQuery
             log.time AS Time,
             log.log_type AS LogType 
         FROM {Schema}.log as log
-        INNER JOIN {Schema}.dispenser as dp 
-        ON 
-            dp.dispenser_id = log.dispenser_id 
-        AND 
-            dp.station_id = @StationId
-        INNER JOIN {Schema}.fuel as fuel 
-        ON 
-            dp.fuel_id = fuel.fuel_id
-        WHERE DATE(log.time) = CURRENT_DATE
-        ORDER BY
-            log.time DESC 
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE DATE(log.time) = CURRENT_DATE AND dp.station_id = @StationId
+        ORDER BY log.time DESC 
+        LIMIT 30;    
     ";
-    public static readonly string UpdateLogTime = $@"
-        UPDATE {Schema}.log
-        SET 
-            time = date_trunc('day', CURRENT_DATE) + (time::time),
-            last_modified_date = now()
+   public static readonly string SelectFullLogByStationId = $@"
+        SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.time AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.log as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId
+        ORDER BY log.time DESC 
     ";
 
 }

@@ -48,6 +48,14 @@ public class LogRepository : ILogRepository
             return logs;
         }
     }
+    public async Task<IReadOnlyList<LogResponse>> GetFullLogByStationIdAsync(Station entity)
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<LogResponse> logs = (await connection.QueryAsync<LogResponse>(LogQuery.SelectFullLogByStationId, entity)).ToList();
+            return logs;
+        }
+    }
     public async Task<int> UpdateLogTimeAsync(LogResponse entity)
     {
         await using (var connection = dbWrite.CreateConnection())

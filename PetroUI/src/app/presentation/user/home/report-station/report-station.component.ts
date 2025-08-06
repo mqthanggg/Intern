@@ -5,9 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
-import { revenuestation, revenuestationday, revenuestationmonth, revenuestationyear } from './sumrevenuestation-record';
+import { revenuestation, revenuestationday, revenuestationmonth, revenuestationyear, Station } from './sumrevenuestation-record';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { FormsModule } from '@angular/forms';
+import { TitleService } from '../../../../infrastructure/services/title.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     standalone: true,
@@ -19,6 +21,12 @@ import { FormsModule } from '@angular/forms';
 export class ReportStationComponent implements OnInit, OnDestroy {
     @Input() id: number = -1;
     stationName: string [] = [];
+    options = {
+        observe: 'response' as const,
+        withCredentials: false
+    };
+    SName: string | undefined;
+
     revenuesocket: WebSocketSubject<revenuestation[]> | undefined;
     revstation: revenuestation[] = [];
     DataAccount: number[] = [];
@@ -86,9 +94,22 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     toggleDropdown() {
         this.dropdownOpen = !this.dropdownOpen;
     }
-    constructor(private router: Router) { }
+    constructor(private titleService: TitleService, private http: HttpClient, private router: Router) { }
     title: string = "";
+    
     ngOnInit(): void {
+                this.http.get<Station>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
+                    (res) => {
+                        console.log("data: ", res);
+                        console.log('StationName:', res.body?.name);
+                        this.SName = res.body?.name;
+                        this.titleService.updateTitle(this.SName || 'Station Name');
+                    },
+                    (error) => {
+                        console.error('Error:', error);
+                    }
+                );
+        
         this.revenuesocket = webSocket<revenuestation[]>(environment.wsServerURI + `/ws/station/${this.id}?token=${localStorage.getItem('jwt')}`)
         this.revenuesocket.subscribe({
             next: res => {
