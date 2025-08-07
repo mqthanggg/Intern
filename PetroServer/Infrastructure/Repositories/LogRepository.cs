@@ -56,6 +56,23 @@ public class LogRepository : ILogRepository
             return logs;
         }
     }
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetPageLogByStationIdAsync(Station entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectPageLogByStationId, new
+            {
+                StationId = entity.StationId,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+
+        return (logs.ToList(), totalCount);
+    }
+
     public async Task<int> UpdateLogTimeAsync(LogResponse entity)
     {
         await using (var connection = dbWrite.CreateConnection())
@@ -64,4 +81,5 @@ public class LogRepository : ILogRepository
             return affectedRows;
         }
     }
+    
 }

@@ -1,15 +1,24 @@
 export interface LogRecord {
-    StationId:number,
-    Name: number,
-    FuelName: string,
-    TotalLiters: number,
-    Price: number
-    TotalAmount: number,
-    Time: Date,
-    LogTypeName: string;
+    stationId:number,
+    name: number,
+    fuelName: string,
+    totalLiters: number,
+    price: number
+    totalAmount: number,
+    time: Date,
+    logTypeName: string;
+}
+
+export interface PagedResult<T> {
+  data: T[];
+  totalItems: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export interface Station{
-    StationId: number,
+    stationId: number,
     name: string,
 }
+

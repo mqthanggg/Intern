@@ -6,7 +6,7 @@ public class LogResponse
     public required int Price { get; set; } = -1;
     public required int TotalAmount { get; set; } = -1;
     public int? LogType { get; set; } = -1;
-     public string LogTypeName
+    public string LogTypeName
     {
         get
         {
@@ -21,4 +21,14 @@ public class LogResponse
         }
     }
     public required DateTime Time { get; set; }
+}
+
+public class LogFilterResponse
+{
+    public int StationId { get; set; }
+    public string? FuelName { get; set; }
+    public string? DispenserName { get; set; }
+    public DateTime? SelectedDate { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
 }
