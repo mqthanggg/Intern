@@ -16,6 +16,7 @@ var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
     app.MapController();
+    app.MapHealthChecks("/health");
     app.Run();
 }
 else{
