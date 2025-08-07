@@ -15,7 +15,7 @@ public static class Auth
             op.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
+                ValidIssuers = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_VALID_ISSUERS" : "PRODUCTION_VALID_ISSUERS").Split(";").ToArray(),
                 ValidAudience = Env.GetString(_env.IsDevelopment() ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
                 IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
                 {

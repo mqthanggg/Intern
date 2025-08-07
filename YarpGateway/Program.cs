@@ -17,6 +17,7 @@ builder.Services.AddCors(options =>
                .SetIsOriginAllowed(_ => true);
     });
 });
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 app.UseCors("AllowAll");
@@ -33,5 +34,6 @@ app.UseWebSockets(new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromSeconds(30)
 });
+app.MapHealthChecks("/health");
 app.MapReverseProxy();
 app.Run();

@@ -29,7 +29,7 @@ public class JWTService : IJWTService{
         var tokenValidationParameters = new TokenValidationParameters{
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUTHORITY" : "PRODUCTION_AUTHORITY"),
+            ValidIssuers = Env.GetString(_isDevelopment ? "DEVELOPMENT_VALID_ISSUERS" : "PRODUCTION_VALID_ISSUERS").Split(";").ToArray(),
             ValidAudience = Env.GetString(_isDevelopment ? "DEVELOPMENT_AUDIENCE" : "PRODUCTION_AUDIENCE"),
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => {
                 var httpClient = new HttpClient();
