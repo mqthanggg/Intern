@@ -10,3 +10,4 @@ YarpGateway/bin/Debug/net9.0/
 YarpGateway/obj
 YarpGateway/.vs
 .vs
+Mosquitto/simulator/payment_stats.txt
