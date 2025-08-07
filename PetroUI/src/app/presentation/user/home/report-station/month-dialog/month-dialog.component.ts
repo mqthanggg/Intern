@@ -7,7 +7,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../../../../../environments/environment';
 import { NgChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
-import { monthrevenuefuel, revenuetypemonth, WSmonthrevenuefuel, WSrevenuetypemonth } from './month-revenue-record';
+import { monthrevenuefuel, revenuetypemonth} from './month-revenue-record';
 @Component({
     selector: 'app-report-station-chart',
     standalone: true,
@@ -32,7 +32,6 @@ export class ReportMonthComponent implements OnChanges {
             }
         }
     };
-    piechartfuelmonthSocket: { [key: string]: WebSocketSubject<WSmonthrevenuefuel> } = {}
     piechartfuelmonthsocket: WebSocketSubject<monthrevenuefuel[]> | undefined;
     revfuelmonth: monthrevenuefuel[] = [];
     MonthFuelName: string[] = [];
@@ -40,7 +39,6 @@ export class ReportMonthComponent implements OnChanges {
     MonthTotalLiters: number[] = [];
     pieChartFuelMonthData: any = {};
 
-    piecharttypemonthSocket: { [key: string]: WebSocketSubject<WSrevenuetypemonth[]> } = {}
     piecharttypemonthsocket: WebSocketSubject<revenuetypemonth[]> | undefined;
     revtypemonth: revenuetypemonth[] = [];
     MonthTypeName: string[] = [];
@@ -59,20 +57,6 @@ export class ReportMonthComponent implements OnChanges {
                 this.revfuelmonth = res
                 console.log('Pie Chart month Websocket connected');
                 console.log("✔️ month data: ", res)
-                this.revfuelmonth.forEach((value, index) => {
-                    this.piechartfuelmonthSocket[value.StationId] = webSocket<WSmonthrevenuefuel>(environment.wsServerURI + `/ws/sumrenuename/getmonth/${this.id}/${mm}/${yy}?token=${localStorage.getItem('jwt')}`)
-                    this.piechartfuelmonthSocket[value.StationId].subscribe({
-                        next: (Datares: WSmonthrevenuefuel) => {
-                            res[index].FuelName = Datares.FuelName
-                            res[index].Month = Datares.Month
-                            res[index].TotalAmount = Datares.TotalAmount
-                            res[index].TotalLiters = Datares.TotalLiters
-                        },
-                        error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
-                        }
-                    })
-                })
                 this.MonthFuelName = this.revfuelmonth.map((item) => item.FuelName);
                 this.Monthpie = this.revfuelmonth.map((item) => item.Month);
                 this.MonthTotalLiters = this.revfuelmonth.map((item) => item.TotalLiters);
@@ -102,18 +86,6 @@ export class ReportMonthComponent implements OnChanges {
                 this.revtypemonth = res
                 console.log('✔️ Pie Chart month type Websocket connected');
                 console.log("month type data: ", res)
-                this.revtypemonth.forEach((value, index) => {
-                    this.piecharttypemonthSocket[value.StationId] = webSocket<WSrevenuetypemonth[]>(environment.wsServerURI + `/ws/sumrenuetype/getmonth/${this.id}/${mm}/${yy}?token=${localStorage.getItem('jwt')}`)
-                    this.piecharttypemonthSocket[value.StationId].subscribe({
-                        next: (Datares: WSrevenuetypemonth[]) => {
-                            res[index].LogTypeName = Datares[index].LogTypeName
-                            res[index].TotalAmount = Datares[index].TotalAmount
-                        },
-                        error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
-                        }
-                    })
-                })
                 this.MonthTypeName = this.revtypemonth.map((item) => item.LogTypeName);
                 this.MonthTotalAmount = this.revtypemonth.map((item) => item.TotalAmount);
                 this.pieChartTypeMonthData = {
@@ -135,10 +107,9 @@ export class ReportMonthComponent implements OnChanges {
                 console.error(err);
             }
         })
-
-
     }
-    ngOnChanges(changes: SimpleChanges): void {
-
+    ngOnChanges(): void {
+        this.piechartfuelmonthsocket?.complete;
+        this.piecharttypemonthsocket?.complete;
     }
 }

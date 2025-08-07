@@ -7,7 +7,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../../../../../environments/environment';
 import { NgChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
-import { revenuetypeyear, WSrevenuetypeyear, WSyearrevenuefuel, yearrevenuefuel } from './year-revenue-record';
+import { revenuetypeyear, yearrevenuefuel } from './year-revenue-record';
 @Component({
     selector: 'app-report-station-chart',
     standalone: true,
@@ -20,7 +20,7 @@ export class ReportYearComponent implements OnChanges {
     isOpenErrorModal = false
     @Input() id: number = -1;
     @Input() year: string = '';
-    stationName: string[]=[];
+    stationName: string[] = [];
     isUpdateLoading = false;
     public PieChartFuelOption: ChartOptions<'pie'> = {
         responsive: false,
@@ -32,7 +32,6 @@ export class ReportYearComponent implements OnChanges {
             }
         }
     };
-    piechartfuelyearSocket: { [key: string]: WebSocketSubject<WSyearrevenuefuel> } = {}
     piechartfuelyearsocket: WebSocketSubject<yearrevenuefuel[]> | undefined;
     revfuelyear: yearrevenuefuel[] = [];
     YearFuelName: string[] = [];
@@ -40,7 +39,6 @@ export class ReportYearComponent implements OnChanges {
     YearTotalLiters: number[] = [];
     pieChartFuelYearData: any = {};
 
-    piecharttypeyearSocket: { [key: string]: WebSocketSubject<WSrevenuetypeyear[]> } = {}
     piecharttypeyearsocket: WebSocketSubject<revenuetypeyear[]> | undefined;
     revtypeyear: revenuetypeyear[] = [];
     YearTypeName: string[] = [];
@@ -52,26 +50,12 @@ export class ReportYearComponent implements OnChanges {
     ngOnInit(): void {
         console.log("Year:", this.year);
         this.id = this.router.parent?.snapshot.params['id'] ?? '';
-        this.piechartfuelyearsocket = webSocket<yearrevenuefuel[]>(environment.wsServerURI + `/ws/year/name/${this.id}`);
+        this.piechartfuelyearsocket = webSocket<yearrevenuefuel[]>(environment.wsServerURI + `/ws/year/name/${this.id}?token=${localStorage.getItem('jwt')}`);
         this.piechartfuelyearsocket.subscribe({
             next: res => {
                 this.revfuelyear = res
                 console.log('Pie Chart year Websocket connected');
                 console.log("✔️ year data: ", res)
-                this.revfuelyear.forEach((value, index) => {
-                    this.piechartfuelyearSocket[value.StationId] = webSocket<WSyearrevenuefuel>(environment.wsServerURI + `/ws/year/name/${this.id}?token=${localStorage.getItem('jwt')}`)
-                    this.piechartfuelyearSocket[value.StationId].subscribe({
-                        next: (Datares: WSyearrevenuefuel) => {
-                            res[index].FuelName = Datares.FuelName
-                            res[index].Year = Datares.Year
-                            res[index].TotalAmount = Datares.TotalAmount
-                            res[index].TotalLiters = Datares.TotalLiters
-                        },
-                        error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
-                        }
-                    })
-                })
                 this.YearFuelName = this.revfuelyear.map((item) => item.FuelName);
                 this.Yearpie = this.revfuelyear.map((item) => item.Year);
                 this.YearTotalLiters = this.revfuelyear.map((item) => item.TotalLiters);
@@ -100,18 +84,6 @@ export class ReportYearComponent implements OnChanges {
                 this.revtypeyear = res
                 console.log('Pie Chart year type Websocket connected');
                 console.log("year type data: ", res)
-                this.revtypeyear.forEach((value, index) => {
-                    this.piecharttypeyearSocket[value.StationId] = webSocket<WSrevenuetypeyear[]>(environment.wsServerURI + `/ws/sumrenuetype/getyear/${this.id}/${this.year}?token=${localStorage.getItem('jwt')}`)
-                    this.piecharttypeyearSocket[value.StationId].subscribe({
-                        next: Datares => {
-                            res[index].LogTypeName = Datares[index].LogTypeName
-                            res[index].TotalAmount = Datares[index].TotalAmount
-                        },
-                        error: (err) => {
-                            console.error(`Error at station ${value.StationId}: ${err}`);
-                        }
-                    })
-                })
                 this.YearTypeName = this.revtypeyear.map((item) => item.LogTypeName);
                 this.YearTotalAmount = this.revtypeyear.map((item) => item.TotalAmount);
                 this.pieChartTypeYearData = {
@@ -133,7 +105,8 @@ export class ReportYearComponent implements OnChanges {
             }
         })
     }
-    ngOnChanges(changes: SimpleChanges): void {
-
+    ngOnChanges(): void {
+        this.piechartfuelyearsocket?.complete;
+        this.piecharttypeyearsocket?.complete;
     }
 }

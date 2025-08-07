@@ -1,5 +1,6 @@
 # version: "2.4"
 services:
+ # database
   postgres-common:
     &postgres-common
     image: postgres:17
@@ -111,7 +112,6 @@ services:
     depends_on:
       database-primary:
         condition: service_healthy
-
   pg-bouncer-replica:
     <<: *pg-bouncer-common
     depends_on:
@@ -182,7 +182,7 @@ services:
         condition: service_started
       mqtt:
         condition: service_started
-
+  # mqtt broken
   mqtt:
     restart: no
     networks:
@@ -195,6 +195,7 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
+  # Client
   server1:
     build:
       context: ./PetroServer
@@ -217,6 +218,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7159;http://0.0.0.0:5180"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -257,6 +259,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7160;http://0.0.0.0:5181"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     ports:
@@ -297,6 +300,7 @@ services:
       ASPNETCORE_URLS: "https://0.0.0.0:7161;http://0.0.0.0:5182"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
       ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      MQTT_HANDLER_URL: "http://mqtt-handler:5195/ws"                                                                                                                                                                                                                                
     volumes:
       - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     healthcheck:
@@ -314,7 +318,7 @@ services:
         condition: service_started
       mqtt-handler:
         condition: service_healthy
-
+ # UI
   fe:
     build:
       context: PetroUI
@@ -327,7 +331,6 @@ services:
     depends_on:
       server1:
         condition: service_healthy
-
 networks:
   petro-network:
     driver: bridge

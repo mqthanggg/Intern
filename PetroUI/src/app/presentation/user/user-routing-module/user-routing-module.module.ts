@@ -7,6 +7,7 @@ import { StationsComponent } from '../stations/stations.component';
 import { ReportComponent } from '../home/report-station/date-dialog/date-dialog.component';
 import { ReportMonthComponent } from '../home/report-station/month-dialog/month-dialog.component';
 import { ReportYearComponent } from '../home/report-station/year-dialog/year-dialog.component';
+import { StationLogComponent } from '../station/station-log/station-log.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
     path: "station/:id",
     title: "Station",
     component: StationComponent
+  },
+  {
+    path: "station/log/:id",
+    title: "Station-log",
+    component: StationLogComponent
   },
   {
     path: "home",
@@ -47,8 +53,6 @@ const routes: Routes = [
       },
     ]
   },
-  
-  
 ]
 
 @NgModule({

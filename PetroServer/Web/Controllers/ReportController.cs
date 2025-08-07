@@ -29,6 +29,7 @@ public static class ReportController
         app.MapGet("station/sumtyperevenueday/{id}/{date}", GetSumRevenueGetDayByType);
         app.MapGet("station/sumtyperevenuemonth/{id}/{month}/{year}", GetSumRevenuegetMonthByType);
         app.MapGet("station/sumtyperevenueyear/{id}/{year}", GetSumRevenuegetYearByType);
+        app.MapGet("station/log/{id}", GetFullLogByStationId);
 
         app.Map("ws/revenue", GetSumRevenueWS);
         app.Map("ws/station", GetSumStationWS);
@@ -49,19 +50,35 @@ public static class ReportController
         app.Map("ws/station/revenueday/{id}", GetSumRevenueByStationDayWS);
         app.Map("ws/station/revenuemonth/{id}", GetSumRevenueByStationMonthWS);
         app.Map("ws/station/revenueyear/{id}", GetSumRevenueByStationYearWS);
-
         app.Map("ws/sumrenuename/getdate/{id}/{date}", GetSumRevenuegetDayByNameWS);
         app.Map("ws/sumrenuetype/getdate/{id}/{date}", GetSumRevenuegetDayByTypeWS);
         app.Map("ws/sumrenuename/getmonth/{id}/{month}/{year}", GetSumRevenuegetMonthByNameWS);
         app.Map("ws/sumrenuetype/getmonth/{id}/{month}/{year}", GetSumRevenuegetMonthByTypeWS);
         app.Map("ws/sumrenuename/getyear/{id}/{year}", GetSumRevenuegetYearByNameWS);
         app.Map("ws/sumrenuetype/getyear/{id}/{year}", GetSumRevenuegetyearByTypeWS);
+        app.Map("ws/log/station/{id}", GetLogByStationWS);
+        app.Map("ws/fulllog/station/{id}",GetFullLogByStationWS);
         app.Map("ws/{device}/{id}", GetWS);
         return app;
     }
 
-    //===========================================================
     //======================== HTTP =============================
+    // [Authorize]
+    // [Permission("administrator")]
+    [ProducesResponseType(typeof(List<LogResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Retrieve full logs by station ID.",
+        Description = "Retrieve a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task<IResult> GetFullLogByStationId([FromRoute] int id, [FromServices] ILogRepository logRepository)
+    {
+        var res = await logRepository.GetFullLogByStationIdAsync(new Station { StationId = id });
+        return TypedResults.Ok(
+            res
+        );
+    }
+
     // [Authorize]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -324,7 +341,7 @@ public static class ReportController
     }
 
     // [Authorize]
-    [ProducesResponseType(typeof(List<SumRevenueResponse>), 200)]
+    [ProducesResponseType(typeof(List<RevenueResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report total of revenue",
@@ -564,6 +581,145 @@ public static class ReportController
             await hubService.StopAsync();
         }
     }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for logs by station ID.",
+        Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task GetFullLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository, [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await logRepository.GetFullLogByStationIdAsync(new Station { StationId = id });
+                logger.LogDebug($"Result: {JsonSerializer.Serialize(result)}");
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+   
+    [SwaggerOperation(
+        Summary = "Obtain web socket for limit logs by station ID.",
+        Description = "Return a web socket for a list of limit logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task GetLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository, [FromServices] ILogger<object> logger)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await logRepository.GetLogByStationIdAsync(new Station { StationId = id });
+                logger.LogDebug($"Result: {JsonSerializer.Serialize(result)}");
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+
+    [SwaggerOperation(
+        Summary = "Obtain web socket for logs by station ID.",
+        Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task GetByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository tanlRepository, [FromServices] ILogger<object> logger)
+    {
+        logger.LogInformation($"WebSocket text");
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await tanlRepository.GetLogByStationIdAsync(new Station { StationId = id });
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+
 
     [SwaggerOperation(
          Summary = "Obtain web socket for total name get year",
@@ -1396,10 +1552,8 @@ public static class ReportController
         Summary = "Obtain web socket for total name for shift",
         Description = "Return a web socket for total revenue statistics for the current shift by name"
     )]
-    public static async Task GetSumRevenueShiftByNameWS(HttpContext context,
-        [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository,
-        [FromServices] ILogger<object> logger)
+    public static async Task GetSumRevenueShiftByNameWS(HttpContext context, [FromRoute] int id,
+        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1745,5 +1899,4 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
-
 }

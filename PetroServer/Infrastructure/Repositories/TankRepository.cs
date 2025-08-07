@@ -28,7 +28,7 @@ public class TankRepository : ITankRepository{
     }
     public async Task<IReadOnlyList<TankResponse>> GetTanksByStationIdAsync(Station entity){
         await using (var connection = dbRead.CreateConnection()){
-            List<TankResponse> logs = (await connection.QueryAsync<TankResponse>(TankQuery.SelectTankByStationId,entity)).ToList();
+            List<TankResponse> logs = (await connection.QueryAsync<TankResponse>(TankQuery.SelectTankByStationId, entity)).ToList();
             return logs;
         }
     }

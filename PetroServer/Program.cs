@@ -27,6 +27,7 @@ if (report.Status == HealthStatus.Healthy){
         app.Swagger();
         app.MapSignup();
     }
+    app.UseWebSockets();
     app.MapPublicController();
     app.MapReport();
     app.Run();

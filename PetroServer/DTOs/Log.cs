@@ -6,5 +6,19 @@ public class LogResponse
     public required int Price { get; set; } = -1;
     public required int TotalAmount { get; set; } = -1;
     public int? LogType { get; set; } = -1;
+     public string LogTypeName
+    {
+        get
+        {
+            return LogType switch
+            {
+                1 => "Bán lẻ",
+                2 => "Công nợ",
+                3 => "Khuyến mãi",
+                4 => "Trả trước",
+                _ => "Không xác định"
+            };
+        }
+    }
     public required DateTime Time { get; set; }
 }

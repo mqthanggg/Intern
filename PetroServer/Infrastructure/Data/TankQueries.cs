@@ -55,7 +55,7 @@ public static class TankQuery{
             tank_id = @TankId
     ";
     public static readonly string SelectTankByStationId = $@"
-        SELECT 
+        SELECT
             t.tank_id,
             t.name, 
             f.short_name, 
