@@ -9,11 +9,5 @@ export interface TankRecord {
 }
 
 export interface WSTankRecord{
-    stationId: number,
-    tankId: number,
-    name: number,
-    shortName: string,
-    maxVolume: number,
-    currentVolume: number | undefined,
-    percentage: string | undefined
+    current_volume: number | undefined,
 }
