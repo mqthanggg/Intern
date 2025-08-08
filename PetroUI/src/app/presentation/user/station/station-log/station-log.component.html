@@ -34,14 +34,14 @@
         <label>To:</label>
         <input type="date" [(ngModel)]="endDate" class="border px-2 py-1 rounded" />
 
-        <button (click)="loadLogsByPeriod(1)" class="bg-blue-500 text-white px-4 py-1 rounded">
+        <button (click)="loadLogsByPeriodhttp(1)" class="bg-blue-500 text-white px-4 py-1 rounded">
             Filter
         </button>
     </div>
 
     <div class="flex items-center space-x-4 mb-4">
         <label>Select date:</label>
-        <input id="datePicker" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadLogsByDate($event)"
+        <input id="datePicker" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadLogsByDatehhttp(1)"
             class="border px-2 py-1 rounded" />
     </div>
     <button (click)="clearFilters()" class="bg-blue-700 px-3 py-2 rounded-xl text-white">Reset</button>

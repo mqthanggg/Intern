@@ -1,4 +1,18 @@
 declare let BigNumber: any;
+
+function convert(num: number) {
+    switch (num){
+      case 0:
+        return 'Idle'
+      case 2:
+        return 'Reset'
+      case 1:
+        return 'Pump'
+      default:
+        return ''
+  }
+}
+
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { environment } from './../../../../environments/environment';
@@ -10,7 +24,7 @@ import { TankRecord, WSTankRecord } from './tank-record';
 import { LogRecord, WSLogRecord } from './log-record';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
-import { FormsModule } from "@angular/forms";
+import { ControlEvent, FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { sumRevenueByLogType, sumRevenueByName } from './revenue-record';
 import { TitleService } from '../../../infrastructure/services/title.service';
@@ -33,8 +47,7 @@ export class StationComponent implements OnInit, OnDestroy {
   isDispenserLoading = false;
   isTankLoading = false;
 
-  dispenserSocket: { [key: string]: WebSocketSubject<WSDispenserRecord[]> } = {}
-  dispensersocket: WebSocketSubject<DispenserRecord[]> | undefined
+  dispenserSocket: { [key: string]: WebSocketSubject<WSDispenserRecord> } = {}
   dispenserList: DispenserRecord[] = [];
   Status: (string | undefined)[] = [];
   Liter: (number | undefined)[] = [];
@@ -43,8 +56,7 @@ export class StationComponent implements OnInit, OnDestroy {
   TotalPrice: (number | undefined)[] = [];
 
   tankList: TankRecord[] = [];
-  tankSocket: { [key: string]: WebSocketSubject<WSTankRecord[]> } = {}
-  tanksocket: WebSocketSubject<TankRecord[]> | undefined
+  tankSocket: { [key: string]: WebSocketSubject<WSTankRecord> } = {}
   TankName: number[]=[];
   TankShortName: string[]=[];
   Percentage: string[]=[];
@@ -173,12 +185,12 @@ export class StationComponent implements OnInit, OnDestroy {
       }) => {
         this.dispenserList = res.dispenser.body        
         this.dispenserList.forEach((value, index) => {
-          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord[]>(environment.wsServerURI + `/ws/dispenser/${this.id}?token=${localStorage.getItem('jwt')}`)
+          this.dispenserSocket[value.dispenserId] = webSocket<WSDispenserRecord>(environment.wsServerURI + `/ws/dispenser/${value.dispenserId}?token=${localStorage.getItem('jwt')}`)
           this.dispenserSocket[value.dispenserId].subscribe({
-            next: (res: WSDispenserRecord[]) => {
-              this.dispenserList[index].liter = res[index]?.liter
-              this.dispenserList[index].totalAmount = res[index]?.totalAmount
-              this.dispenserList[index].status = res[index]?.status
+            next: (res: WSDispenserRecord) => {
+              this.dispenserList[index].liter = res.liter
+              this.dispenserList[index].totalAmount = res.price
+              this.dispenserList[index].status = res.state ? convert(res.state) : this.dispenserList[index].status
             },
             error: (err) => {
               console.error(`Error at dispenser ${value.dispenserId}: ${err}`);
@@ -186,14 +198,14 @@ export class StationComponent implements OnInit, OnDestroy {
           })
         })
         this.tankList = res.tank.body
-        console.log("tank data: ", this.tankList)
         this.tankList.forEach((value, index) => {
-          this.tankSocket[value.tankId] = webSocket<WSTankRecord[]>(environment.wsServerURI + `/ws/tank/${this.id}?token=${localStorage.getItem('jwt')}`)
+          this.tankSocket[value.tankId] = webSocket<WSTankRecord>(environment.wsServerURI + `/ws/tank/${value.tankId}?token=${localStorage.getItem('jwt')}`)
           this.tankSocket[value.tankId].subscribe({
-            next: (res: WSTankRecord[]) => {
-              this.tankList[index].currentVolume = res[index]?.currentVolume
+            next: (res: WSTankRecord) => {
+              console.log(res)
+              this.tankList[index].currentVolume = res.current_volume
               const vMax = new BigNumber(this.tankList[index].maxVolume)
-              this.tankList[index].percentage = new BigNumber(res[index]?.currentVolume).dividedBy(vMax).times(100).toFixed(2).toString()
+              this.tankList[index].percentage = new BigNumber(res.current_volume).dividedBy(vMax).times(100).toFixed(2).toString()
             },
             error: (err) => {
               console.error(`Error at tank ${value.tankId}: ${err}`);

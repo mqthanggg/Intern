@@ -1,0 +1,10 @@
+=== MQTT Dispenser Payment Statistics ===
+
+Last Updated: 2025-08-08 09:21:34
+Active Dispensers: 120
+Active Tanks: 120
+Total Payments: 19155
+
+==================================================
+Session History:
+[2025-08-08 09:21:34] Session Duration: 0:18:35

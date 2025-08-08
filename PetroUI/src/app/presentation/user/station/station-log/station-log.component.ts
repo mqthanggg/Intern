@@ -151,7 +151,7 @@ export class StationLogComponent implements OnChanges {
     // ✅ load logs from period of time
     startDate: string = '';
     endDate: string = '';
-    loadLogsByPeriod(page: number): void {
+    loadLogsByPeriodhttp(page: number): void {
         page = page || 1;
         if (!this.startDate || !this.endDate) {
             console.warn('Start date or end date is missing');
@@ -172,7 +172,7 @@ export class StationLogComponent implements OnChanges {
 
     // ✅ load logs by date
     selectedDate: string = '';
-    loadLogsByDate(page: number): void {
+    loadLogsByDatehhttp(page: number): void {
         page = page || 1;
         if (!this.selectedDate) {
             console.warn('date is missing');
@@ -192,33 +192,38 @@ export class StationLogComponent implements OnChanges {
     }
 
     //==============================================
-    loadFilteredLogs(page: number): void {
-        page = page || 1;
-        const params: any = {
-            page,
-            pageSize: this.pageSize,
-        };
-        if (this.id) params.stationId = this.id;
-        if (this.startDate) params.startDate = this.startDate;
-        if (this.endDate) params.endDate = this.endDate;
-        if (this.selectedDispenserName) params.dispenserName = this.selectedDispenserName;
-        if (this.selectedFuelName) params.fuelName = this.selectedFuelName;
-        if (this.selectedLogType?.logType) params.logTypeId = this.selectedLogType.logType;
-        const queryString = new URLSearchParams(params).toString();
-        const url = `${environment.serverURI}/log/filter?${queryString}`;
-        this.http.get<PagedResult<LogRecord>>(url, this.options).subscribe(res => {
-            this.pagedList = res.body?.data ?? [];
-            console.log("Filtered log data: ", res.body);
-            this.totalItems = res.body?.totalItems ?? 0;
-            this.page = res.body?.page ?? 1;
-            this.pageSize = res.body?.pageSize ?? 10;
-            this.totalCount = res.body?.totalItems ?? 0;
-            this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
-        });
-    }
+    // loadFilteredLogs(page: number): void {
+    //     page = page || 1;
+    //     const params: any = {
+    //         page,
+    //         pageSize: this.pageSize,
+    //     };
+    //     if (this.id) params.stationId = this.id;
+    //     if (this.startDate) params.startDate = this.startDate;
+    //     if (this.endDate) params.endDate = this.endDate;
+    //     if (this.selectedDispenserName) params.dispenserName = this.selectedDispenserName;
+    //     if (this.selectedFuelName) params.fuelName = this.selectedFuelName;
+    //     if (this.selectedLogType?.logType) params.logTypeId = this.selectedLogType.logType;
+    // }
 
     onPageChange(newPage: number) {
-      this.loadFilteredLogs(newPage);
+        if(this.selectedDispenserName){
+            this.loaddispenserhttp(newPage);
+        }
+        else if(this.selectedFuelName){
+            this.loadfuelhttp(newPage);
+        }
+        else if(this.selectedLogType){
+            this.loadtypehttp(newPage);
+        }
+        else if(this.startDate || this.endDate){
+            this.loadLogsByPeriodhttp(newPage);
+        }
+        else if(this.selectedDate){
+            this.loadLogsByDatehhttp(newPage);
+        }
+        else
+      this.loadLogshttp(newPage);
     }
 
     getLogTypeClass(type: string): string {
