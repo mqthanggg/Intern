@@ -23,12 +23,28 @@ public class LogResponse
     public required DateTime Time { get; set; }
 }
 
-public class LogFilterResponse
+//-----------------------------------------------
+public class GetDispenserResponse
 {
-    public int StationId { get; set; }
-    public string? FuelName { get; set; }
-    public string? DispenserName { get; set; }
-    public DateTime? SelectedDate { get; set; }
-    public DateTime? FromDate { get; set; }
-    public DateTime? ToDate { get; set; }
+    public required int StationId { get; set; } = -1;
+    public required int Name { get; set; } = -1;
+}
+
+public class GetFuelResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required string FuelName { get; set; } = "";
+}
+
+public class GetLogTypeResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required int LogType { get; set; } = -1;
+}
+
+public class GetPeriodResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required DateTime FromDate { get; set; }
+    public required DateTime ToDate { get; set; }
 }

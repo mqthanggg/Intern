@@ -1,10 +1,12 @@
-public class FuelRepository : IFuelRepository{
+public class FuelRepository : IFuelRepository
+{
     private readonly IDbWriteConnection dbWrite;
     private readonly IDbReadConnection dbRead;
     public FuelRepository(
         IDbWriteConnection write,
         IDbReadConnection read
-    ){
+    )
+    {
         dbWrite = write;
         dbRead = read;
     }
@@ -33,11 +35,20 @@ public class FuelRepository : IFuelRepository{
         }
     }
 
-    public async Task<string> GetFuelShortNameByIdAsync(Fuel entity){
+    public async Task<string> GetFuelShortNameByIdAsync(Fuel entity)
+    {
         await using (var connection = dbRead.CreateConnection())
         {
-            Fuel fuel = await connection.QuerySingleAsync<Fuel>(FuelQuery.SelectFuelShortNameById,entity);
+            Fuel fuel = await connection.QuerySingleAsync<Fuel>(FuelQuery.SelectFuelShortNameById, entity);
             return fuel.ShortName ?? "";
+        }
+    }
+    public async Task<IReadOnlyList<FuelResponse>> GetFullFuel()
+    {
+        await using (var connection = dbRead.CreateConnection())
+        {
+            List<FuelResponse> fuels = (await connection.QueryAsync<FuelResponse>(FuelQuery.SelectFuel)).ToList();
+            return fuels;
         }
     }
 }

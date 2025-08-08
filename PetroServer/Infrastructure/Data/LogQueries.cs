@@ -129,7 +129,7 @@ public static class LogQuery
         WHERE dp.station_id = @StationId
     ";
     //==========================================
-    public static readonly string SelectDispenserByStationId = $@"
+    public static readonly string SelectDispenserNameByStationId = $@"
         SELECT DISTINCT 
             dp.name AS Name, 
             log.fuel_name AS FuelName, 
@@ -142,6 +142,10 @@ public static class LogQuery
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId
+        AND dp.name = @Name
+        ORDER BY log.time DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
     ";
     public static readonly string SelectFuelNameByStationId = $@"
         SELECT DISTINCT 
@@ -156,6 +160,10 @@ public static class LogQuery
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId
+        AND log.fuel_name = @FuelName
+        ORDER BY log.time DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
     ";
     public static readonly string SelectLogTypeByStationId = $@"
         SELECT DISTINCT 
@@ -170,6 +178,10 @@ public static class LogQuery
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId
+        AND log.log_type = @LogType
+        ORDER BY log.time DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
     ";
     public static readonly string SelectDateByStationId = $@"
         SELECT DISTINCT 
@@ -185,6 +197,9 @@ public static class LogQuery
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId 
         AND log.""time""::date = @Time
+        ORDER BY log.time DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
     ";
     public static readonly string SelectPeriodByStationId = $@"
         SELECT DISTINCT 
@@ -199,6 +214,9 @@ public static class LogQuery
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId 
-         AND log.""time"" BETWEEN @StartTime AND @EndTime
+        AND log.""time"" BETWEEN @ToDate AND @FromDate
+        ORDER BY log.time DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
     ";
 }

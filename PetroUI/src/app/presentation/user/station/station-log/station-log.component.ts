@@ -4,7 +4,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { NgChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
-import { LogRecord, PagedResult, Station } from './station-log-record';
+import { FuelRecord, LogRecord, PagedResult, StationRecord } from './station-log-record';
 import { TitleService } from '../../../../infrastructure/services/title.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,12 +31,10 @@ export class StationLogComponent implements OnChanges {
     };
     constructor(private titleService: TitleService, private http: HttpClient, private route: ActivatedRoute, private router: Router) { }
 
-    // ✅ Load table log 
+    // ✅ pagination
     logsocket: WebSocketSubject<LogRecord[]> | undefined
     logList: LogRecord[] = [];
     pagesocket: WebSocketSubject<PagedResult<LogRecord>> | undefined;
-
-    // ✅ pagination
     items = [];
     pagedList: LogRecord[] = [];
     totalCount: number = 0;
@@ -44,7 +42,7 @@ export class StationLogComponent implements OnChanges {
     totalItems: number = 1;
     pagedLogs: PagedResult<LogRecord> | undefined;
     loadLogshttp(page: number): void {
-        page= page || 1;
+        page = page || 1;
         this.http.get<PagedResult<LogRecord>>(`${environment.serverURI}/pagelog/station/${this.id}?page=${page}&pageSize=${this.pageSize}`, this.options)
             .subscribe(res => {
                 this.pagedList = res.body?.data ?? [];
@@ -58,45 +56,171 @@ export class StationLogComponent implements OnChanges {
 
     }
 
-    onPageChange(newPage: number) {
-        this.loadLogshttp(newPage);
+    // ✅ load logs from dispenser name
+    dislist: StationRecord[] = [];
+    dispenserName: string[] = [];
+    selectedDispenserName: string = '';
+    loadLogsByDispenserName() {
+        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`)
+            .subscribe(res => {
+                this.dislist = res;
+                this.dispenserName = this.dislist.map(d => d.name);
+                console.log("Dispenser Names: ", this.dispenserName);
+            });
+    }
+    loaddispenserhttp(page: number): void {
+        page = page || 1;
+        const selectedName = this.selectedDispenserName;
+        if (!selectedName) {
+            console.warn("No dispenser name selected");
+            return;
+        }
+        const encodedName = encodeURIComponent(selectedName);
+        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/dispenser/${this.id}/${encodedName}?page=${page}&pageSize=${this.pageSize}`, this.options)
+            .subscribe(res => {
+                this.pagedList = res.body?.data ?? [];
+                console.log("load dispenser data: ", res.body);
+                this.totalItems = res.body?.totalItems ?? 0;
+                this.page = res.body?.page ?? 1;
+                this.pageSize = res.body?.pageSize ?? 10;
+                this.totalCount = res.body?.totalItems ?? 0;
+                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
+            });
     }
 
-    ngOnInit(): void {
-        this.route.paramMap.subscribe(params => {
-            const page = +params.get('page')!;
-            this.loadLogshttp(page);
+    // ✅ load logs from fuel name
+    fuelList: FuelRecord[] = [];
+    selectedFuelName: string = '';
+    fuelNames: string[] = [];
+    loadLogsByFuelName() {
+        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`)
+            .subscribe(res => {
+                this.fuelList = res;
+                this.fuelNames = this.fuelList.map(d => d.shortName);
+                console.log("fuel Name: ", this.fuelNames);
+            });
+    }
+    loadfuelhttp(page: number): void {
+        page = page || 1;
+        const selectedName = this.selectedFuelName;
+        if (!selectedName) {
+            console.warn("No fuel name selected");
+            return;
+        }
+        const encodedName = encodeURIComponent(selectedName);
+        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/fuel/${this.id}/${encodedName}?page=${page}&pageSize=${this.pageSize}`, this.options)
+            .subscribe(res => {
+                this.pagedList = res.body?.data ?? [];
+                console.log("load fuel data: ", res.body);
+                this.totalItems = res.body?.totalItems ?? 0;
+                this.page = res.body?.page ?? 1;
+                this.pageSize = res.body?.pageSize ?? 10;
+                this.totalCount = res.body?.totalItems ?? 0;
+                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
+            });
+    }
+
+    // ✅ load logs from log type
+    logTypeList: { logType: number; logTypeName: string }[] = [
+        { logType: 1, logTypeName: 'Bán lẻ' },
+        { logType: 2, logTypeName: 'Công nợ' },
+        { logType: 3, logTypeName: 'Khuyến mãi' },
+        { logType: 4, logTypeName: 'Trả trước' }
+    ];
+    selectedLogType: { logType: number; logTypeName: string } | null = null;
+    loadtypehttp(page: number): void {
+        page = page || 1;
+        const logType = this.selectedLogType?.logType;
+        console.log("Selected log type: ", logType);
+        if (!logType) {
+            console.warn("No log type selected");
+            return;
+        }
+        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/type/${this.id}/${logType}?page=${page}&pageSize=${this.pageSize}`, this.options)
+            .subscribe(res => {
+                this.pagedList = res.body?.data ?? [];
+                console.log("load type data: ", res.body);
+                this.totalItems = res.body?.totalItems ?? 0;
+                this.page = res.body?.page ?? 1;
+                this.pageSize = res.body?.pageSize ?? 10;
+                this.totalCount = res.body?.totalItems ?? 0;
+                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
+            });
+    }
+
+    // ✅ load logs from period of time
+    startDate: string = '';
+    endDate: string = '';
+    loadLogsByPeriod(page: number): void {
+        page = page || 1;
+        if (!this.startDate || !this.endDate) {
+            console.warn('Start date or end date is missing');
+            return;
+        }
+        console.log(this.startDate, " - ", this.endDate);
+        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/period/${this.id}/${this.startDate}/${this.endDate}?page=${page}&pageSize=${this.pageSize}`, this.options)
+            .subscribe(res => {
+                this.pagedList = res.body?.data ?? [];
+                console.log("load log data by period: ", res.body);
+                this.totalItems = res.body?.totalItems ?? 0;
+                this.page = res.body?.page ?? 1;
+                this.pageSize = res.body?.pageSize ?? 10;
+                this.totalCount = res.body?.totalItems ?? 0;
+                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
+            });
+    }
+
+    // ✅ load logs by date
+    selectedDate: string = '';
+    loadLogsByDate(page: number): void {
+        page = page || 1;
+        if (!this.selectedDate) {
+            console.warn('date is missing');
+            return;
+        }
+        console.log("Selected date: ", this.selectedDate);
+        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/date/${this.id}/${this.selectedDate}?page=${1}&pageSize=${this.pageSize}`, this.options)
+            .subscribe(res => {
+                this.pagedList = res.body?.data ?? [];
+                console.log("load log data by date: ", res.body);
+                this.totalItems = res.body?.totalItems ?? 0;
+                this.page = res.body?.page ?? 1;
+                this.pageSize = res.body?.pageSize ?? 10;
+                this.totalCount = res.body?.totalItems ?? 0;
+                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
+            });
+    }
+
+    //==============================================
+    loadFilteredLogs(page: number): void {
+        page = page || 1;
+        const params: any = {
+            page,
+            pageSize: this.pageSize,
+        };
+        if (this.id) params.stationId = this.id;
+        if (this.startDate) params.startDate = this.startDate;
+        if (this.endDate) params.endDate = this.endDate;
+        if (this.selectedDispenserName) params.dispenserName = this.selectedDispenserName;
+        if (this.selectedFuelName) params.fuelName = this.selectedFuelName;
+        if (this.selectedLogType?.logType) params.logTypeId = this.selectedLogType.logType;
+        const queryString = new URLSearchParams(params).toString();
+        const url = `${environment.serverURI}/log/filter?${queryString}`;
+        this.http.get<PagedResult<LogRecord>>(url, this.options).subscribe(res => {
+            this.pagedList = res.body?.data ?? [];
+            console.log("Filtered log data: ", res.body);
+            this.totalItems = res.body?.totalItems ?? 0;
+            this.page = res.body?.page ?? 1;
+            this.pageSize = res.body?.pageSize ?? 10;
+            this.totalCount = res.body?.totalItems ?? 0;
+            this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
         });
-        this.http.get<Station>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
-            {
-                next: (res) => {
-                    console.log("data: ", res);
-                    console.log('StationName:', res.body?.name);
-                    this.stationName = res.body?.name;
-                    this.titleService.updateTitle(this.stationName || 'Station Name');
-                },
-                error: (error) => {
-                    console.error('Error:', error);
-                }
-            }
-        );
     }
 
-    // // ✅ Reset filter
-    // clearFilters() {
-    //     this.filter = { fromDate: '', toDate: '' };
-    //     this.filteredList = [...this.logList];
-    //     this.selectedTimeFilter = '';
-    // }
+    onPageChange(newPage: number) {
+      this.loadFilteredLogs(newPage);
+    }
 
-    // // ✅ filter
-    // selectedTimeFilter: string = '';
-    // onTimeFilterChange() {
-    //     if (this.selectedTimeFilter !== 'range') {
-    //         this.filter.fromDate = '';
-    //         this.filter.toDate = '';
-    //     }
-    // }
     getLogTypeClass(type: string): string {
         switch (type) {
             case 'Bán lẻ':
@@ -112,75 +236,40 @@ export class StationLogComponent implements OnChanges {
         }
     }
 
-    // // ✅ filter by period of time
-    // filter = {
-    //     fromDate: '',
-    //     toDate: ''
-    // };
-    // filteredList: LogRecord[] = [];
-    // applyDateFilter() {
-    //     const from = this.filter.fromDate ? new Date(this.filter.fromDate) : null;
-    //     const to = this.filter.toDate ? new Date(this.filter.toDate) : null;
-    //     this.filteredList = this.logList.filter(item => {
-    //         const itemDate = new Date(item.time);
-    //         if (from && itemDate < from) return false;
-    //         if (to && itemDate > to) return false;
-    //         return true;
-    //     });
-    // }
+    ngOnInit(): void {
+        this.loadLogsByDispenserName();
+        this.loadLogsByFuelName();
+        this.route.paramMap.subscribe(params => {
+            const page = +params.get('page')!;
+            this.loadLogshttp(page);
+        });
+        this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
+            {
+                next: (res) => {
+                    console.log("data: ", res);
+                    console.log('StationName:', res.body?.name);
+                    this.stationName = res.body?.name;
+                    this.titleService.updateTitle(this.stationName || 'Station Name');
+                },
+                error: (error) => {
+                    console.error('Error:', error);
+                }
+            }
+        );
+    }
 
-    // // ✅ filter by log type
-    // selectedLogType: string = '';
-    // logTypeList: string[] = [];
-    // applyLogTypeFilter() {
-    //     let filtered = [...this.logList];
-    //     // Fitter by LogName
-    //     if (this.selectedLogType) {
-    //         filtered = filtered.filter(item => item.logTypeName === this.selectedLogType);
-    //     }
-    //     this.filteredList = filtered;
-    // }
-
-    // // ✅ filter by fuel name
-    // fuelFilter: string = '';
-    // fuelList: string[] = [];
-    // filterByFuel() {
-    //     if (this.fuelFilter) {
-    //         this.filteredList = this.logList.filter(item =>
-    //             item.fuelName.toLowerCase().includes(this.fuelFilter.toLowerCase())
-    //         );
-    //     } else {
-    //         this.filteredList = this.logList;
-    //     }
-    // }
-
-    // //  ✅ filter by date
-    // selectedDate: string = '';
-    // filterBySingleDate() {
-    //     if (!this.selectedDate) {
-    //         this.filteredList = this.logList;
-    //     } else {
-    //         const selected = new Date(this.selectedDate);
-    //         this.filteredList = this.logList.filter(item => {
-    //             const itemDate = new Date(item.time);
-    //             return itemDate.getFullYear() === selected.getFullYear() &&
-    //                 itemDate.getMonth() === selected.getMonth() &&
-    //                 itemDate.getDate() === selected.getDate();
-    //         });
-    //     }
-    // }
-
-    // // ✅ filter by dispenser pump
-    // selectedPump: number | '' = '';
-    // pumpList: number[] = [];
-    // filterByPump() {
-    //     let filtered = [...this.pagedList];
-    //     if (this.selectedPump !== '') {
-    //         filtered = filtered.filter(item => item.name === this.selectedPump);
-    //     }
-    //     this.filteredList = filtered;
-    // }
-
+    // ✅ Reset filter
+    clearFilters() {
+        this.clearFilters = () => {
+            this.selectedDispenserName = '';
+            this.selectedFuelName = '';
+            this.selectedLogType = null;
+            this.startDate = '';
+            this.endDate = '';
+            this.selectedDate = '';
+            this.loadLogshttp(1);
+        }
+    }
 
     ngOnChanges(): void {
         this.logsocket?.complete();

@@ -17,8 +17,11 @@ export interface PagedResult<T> {
   totalPages: number;
 }
 
-export interface Station{
-    stationId: number,
-    name: string,
+export interface StationRecord{
+  stationId: number,
+  name: string,
 }
 
+export interface FuelRecord{
+  shortName: string,
+}

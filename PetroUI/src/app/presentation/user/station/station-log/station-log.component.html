@@ -1,57 +1,50 @@
 <div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
-    <!-- <div class="my-4 flex space-x-4">
-        <label class="block mb-1 font-bold text-lg">Select option:</label>
-        <select [(ngModel)]="selectedTimeFilter" class="border px-2 py-1 rounded" (change)="onTimeFilterChange()">
-            <option value="" class="items-center">---- All ----</option>
-            <option value="day">Select date</option>
-            <option value="range">Period of time</option>
-            <option value="logtype">Log type name</option>
-            <option value="fuelname">Fuel name</option>
-            <option value="dispenser">Dispenser name</option>
-        </select>
-        <div class="flex items-center">
-            <button (click)="clearFilters()"
-                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Reset</button>
-        </div>
-    </div>
-    <div *ngIf="selectedTimeFilter === 'range'" class="flex space-x-4 mb-4 items-center">
-        <label class="mb-1 inline-block align-middle font-medium">From date:</label>
-        <input datepicker type="date" [(ngModel)]="filter.fromDate" class="border px-2 py-1 rounded" />
-        <label class="block mb-1 font-medium">To date:</label>
-        <input type="date" [(ngModel)]="filter.toDate" class="border px-2 py-1 rounded" />
-        <div class="flex items-end">
-            <button (click)="applyDateFilter()" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                Filter
-            </button>
-        </div>
-    </div>
-    <div *ngIf="selectedTimeFilter === 'logtype'" class="flex space-x-4 mb-4">
-        <label class="block mb-1 font-medium">Filter by Log Name:</label>
-        <select [(ngModel)]="selectedLogType" (change)="applyLogTypeFilter()" class="border px-2 py-1 rounded w-48">
-            <option value="">All LogName</option>
-            <option *ngFor="let type of logTypeList" [value]="type">{{ type }}</option>
+    <div class="flex space-x-4 mb-4">
+        <label for="dispenser">Select dispenser: </label>
+        <select id="dispenser" [(ngModel)]="selectedDispenserName" (change)="loaddispenserhttp(1)"
+            class="border px-2 py-1 rounded w-48">
+            <option *ngFor="let name of dispenserName" [value]="name">
+                {{ name }}
+            </option>
         </select>
     </div>
-    <div *ngIf="selectedTimeFilter === 'fuelname'" class="flex space-x-4 mb-4">
-        <label class="block mb-1 font-medium">Filter by Fuel Name:</label>
-        <select [(ngModel)]="fuelFilter" (change)="filterByFuel()" class="border px-2 py-1">
-            <option value="">All fuel</option>
-            <option *ngFor="let fuel of fuelList" [value]="fuel">{{ fuel }}</option>
-        </select>
-    </div>
-    <div *ngIf="selectedTimeFilter === 'day'" class="flex space-x-4 mb-4">
-        <label class="block mb-1 font-medium">Select date:</label>
-         <input type="date" id="myDate" [(ngModel)]="selectedDate" (change)="filterBySingleDate()" -->
-        <!-- class="border px-2 py-1" />
-    </div>
-    <div *ngIf="selectedTimeFilter === 'dispenser'" class="flex space-x-4 mb-4">
-        <label class="block mb-1 font-medium">Dispenser name: </label>
-        <select [(ngModel)]="selectedPump" (change)="filterByPump()" class="border px-2 py-1 rounded w-48">
-            <option value="">All</option>
-            <option *ngFor="let pump of pumpList" [value]="pump">{{ pump }}</option>
-        </select>
-    </div> --> 
 
+    <div class="flex space-x-4 mb-4">
+        <label for="fuel">Select fuelName: </label>
+        <select id="fuel" [(ngModel)]="selectedFuelName" (change)="loadfuelhttp(1)"
+            class="border px-2 py-1 rounded w-48">
+            <option *ngFor="let name of fuelNames" [value]="name">
+                {{ name }}
+            </option>
+        </select>
+    </div>
+
+    <div class="flex space-x-4 mb-4">
+        <label for="logType">Select log type:</label>
+        <select id="logType" [(ngModel)]="selectedLogType" (change)="loadtypehttp(1)"
+            class="border px-2 py-1 rounded w-48">
+            <option *ngFor="let type of logTypeList" [ngValue]="type">{{ type.logTypeName }}</option>
+        </select>
+    </div>
+
+    <div class="flex items-center space-x-4 mb-4">
+        <label>From:</label>
+        <input type="date" [(ngModel)]="startDate" class="border px-2 py-1 rounded" />
+
+        <label>To:</label>
+        <input type="date" [(ngModel)]="endDate" class="border px-2 py-1 rounded" />
+
+        <button (click)="loadLogsByPeriod(1)" class="bg-blue-500 text-white px-4 py-1 rounded">
+            Filter
+        </button>
+    </div>
+
+    <div class="flex items-center space-x-4 mb-4">
+        <label>Select date:</label>
+        <input id="datePicker" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadLogsByDate($event)"
+            class="border px-2 py-1 rounded" />
+    </div>
+    <button (click)="clearFilters()" class="bg-blue-700 px-3 py-2 rounded-xl text-white">Reset</button>
     <table
         class=" w-full border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
         <thead class="sticky top-2 bg-gray-300 text-gray-800 font-semibold text-sm uppercase shadow-sm z-10">

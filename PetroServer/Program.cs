@@ -30,6 +30,7 @@ if (report.Status == HealthStatus.Healthy){
     app.UseWebSockets();
     app.MapPublicController();
     app.MapReport();
+    app.MapLogController();
     app.Run();
 }
 else{

@@ -181,7 +181,7 @@ public static class ReportController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report name get day",
-        Description = "Total revenue statistics for the current day by name get day"
+        Description = "Total revenue statistics for the day by name"
     )]
     public static async Task<IResult> GetSumRevenuegetDayByName([FromRoute] int id, [FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
     {
