@@ -31,6 +31,7 @@ if (report.Status == HealthStatus.Healthy){
     app.MapHealthChecks("/health");
     app.MapPublicController();
     app.MapReport();
+    app.MapLogController();
     app.Run();
 }
 else{
