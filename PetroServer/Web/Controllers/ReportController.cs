@@ -30,6 +30,7 @@ public static class ReportController
         app.MapGet("station/sumtyperevenuemonth/{id}/{month}/{year}", GetSumRevenuegetMonthByType);
         app.MapGet("station/sumtyperevenueyear/{id}/{year}", GetSumRevenuegetYearByType);
         app.MapGet("station/log/{id}", GetFullLogByStationId);
+        app.MapGet("pagelog/station/{id}", GetPagedLogs);
 
         app.Map("ws/revenue", GetSumRevenueWS);
         app.Map("ws/station", GetSumStationWS);
@@ -56,13 +57,37 @@ public static class ReportController
         app.Map("ws/sumrenuetype/getmonth/{id}/{month}/{year}", GetSumRevenuegetMonthByTypeWS);
         app.Map("ws/sumrenuename/getyear/{id}/{year}", GetSumRevenuegetYearByNameWS);
         app.Map("ws/sumrenuetype/getyear/{id}/{year}", GetSumRevenuegetyearByTypeWS);
-        app.Map("ws/log/station/{id}", GetLogByStationWS);
-        app.Map("ws/fulllog/station/{id}",GetFullLogByStationWS);
         app.Map("ws/{device}/{id}", GetWS);
+        // ===================================================
+        app.Map("ws/log/station/{id}", GetLogByStationWS);
+        app.Map("ws/fulllog/station/{id}", GetFullLogByStationWS);
+        app.Map("ws/pagelog/station/{id}", GetPageLogByStationWS);
         return app;
     }
 
     //======================== HTTP =============================
+    // [Authorize]
+    // [Permission("administrator")]
+    [ProducesResponseType(typeof(List<LogResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Retrieve device page a list of logs by station ID.",
+        Description = "Retrieve device page a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task<IResult> GetPagedLogs([FromRoute] int id, [FromServices] ILogRepository logRepository, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    {
+        var (logs, totalCount) = await logRepository.GetPageLogByStationIdAsync(new Station { StationId = id }, page, pageSize);
+        var result = new
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            Data = logs
+        };
+        return TypedResults.Ok(result);
+    }
+
     // [Authorize]
     // [Permission("administrator")]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
@@ -156,7 +181,7 @@ public static class ReportController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report name get day",
-        Description = "Total revenue statistics for the current day by name get day"
+        Description = "Total revenue statistics for the day by name"
     )]
     public static async Task<IResult> GetSumRevenuegetDayByName([FromRoute] int id, [FromRoute] DateTime date, [FromServices] IRevenueRepository revenueRepository)
     {
@@ -555,21 +580,24 @@ public static class ReportController
             var socket = await context.WebSockets.AcceptWebSocketAsync();
             var buffer = new byte[1024 * 4];
             await hubService.StartAsync();
-            await hubService.JoinDevice(device,id);
+            await hubService.JoinDevice(device, id);
             var connection = hubService.GetHubConnection();
-            var subscription = connection.On<byte[]>("SendMessage",async (message) => {
-                try{
-                    await socket.SendAsync(message,WebSocketMessageType.Text,true,CancellationToken.None);
+            var subscription = connection.On<byte[]>("SendMessage", async (message) =>
+            {
+                try
+                {
+                    await socket.SendAsync(message, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
-                catch (Exception e){
+                catch (Exception e)
+                {
                     Console.WriteLine($"Failed, why: {e.Message}");
                 }
-            }); 
+            });
             try
             {
                 while (socket.State == WebSocketState.Open)
                 {
-                    await socket.ReceiveAsync(buffer, CancellationToken.None);               
+                    await socket.ReceiveAsync(buffer, CancellationToken.None);
                 }
             }
             catch (WebSocketException e)
@@ -577,8 +605,55 @@ public static class ReportController
                 Console.WriteLine($"Websocket closed, reason: {e.Message}");
             }
             subscription.Dispose();
-            await connection.InvokeAsync("LeftDevice",device,id);
+            await connection.InvokeAsync("LeftDevice", device, id);
             await hubService.StopAsync();
+        }
+    }
+
+     [SwaggerOperation(
+        Summary = "Obtain web socket for logs by station ID.",
+        Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
+    )]
+    public static async Task GetPageLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository,
+        [FromServices] ILogger<object> logger, [FromQuery]int page = 1, [FromQuery] int pageSize = 50)
+    {
+        if (!context.WebSockets.IsWebSocketRequest)
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+        var socket = await context.WebSockets.AcceptWebSocketAsync();
+        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
+        var receiveBuffer = new byte[1024 * 4];
+        string? previousJson = null;
+        try
+        {
+            while (socket.State == WebSocketState.Open)
+            {
+                var result = await logRepository.GetPageLogByStationIdAsync(new Station { StationId = id }, page, pageSize);
+                logger.LogDebug($"Result: {JsonSerializer.Serialize(result)}");
+                var currentJson = JsonSerializer.Serialize(result);
+                if (currentJson != previousJson)
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+                    previousJson = currentJson;
+                }
+                if (socket.State != WebSocketState.Open)
+                    break;
+                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
 
@@ -627,7 +702,7 @@ public static class ReportController
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
         }
     }
-   
+
     [SwaggerOperation(
         Summary = "Obtain web socket for limit logs by station ID.",
         Description = "Return a web socket for a list of limit logs that are related to the dispensers belong to the given station."

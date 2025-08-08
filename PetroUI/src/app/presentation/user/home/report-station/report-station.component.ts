@@ -186,6 +186,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             console.log('➡️ total profit', clickedProfit);
 
             this.router.navigate(['user/home/report', clickedStationId,'day', clickedDate]);
+            console.log("url: ", this.router.url);
         }
     }
     loadBarChartMonth() {

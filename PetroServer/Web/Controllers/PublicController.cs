@@ -13,6 +13,7 @@ public static class PublicController
         app.MapGet("shifts", GetShift);
         app.MapGet("shift/{id}", GetShiftByShiftId);
         app.MapGet("assignments", GetAssignment);
+        app.MapGet("fuels", GetFuels);
         app.MapPost("assignments/station", GetAssignmentByStationIdAndDate);
 
         app.MapPost("login", Login);
@@ -35,6 +36,31 @@ public static class PublicController
             _ => "",
         };
     }
+
+    // [Authorize]
+    // [Permission("administrator")]
+    [ProducesResponseType(typeof(List<FuelResponse>), 200)]
+    [ProducesResponseType(500)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Get all fuels",
+        Description = "Obtain a list of all fuels"
+    )]
+    public static async Task<IResult> GetFuels(
+        [FromServices] IFuelRepository FuelRepository
+    )
+    {
+        try
+        {
+            var res = await FuelRepository.GetFullFuel();
+            return TypedResults.Ok(res);
+        }
+        catch (PostgresException)
+        {
+            return TypedResults.InternalServerError();
+        }
+    }
+
 
     // [Authorize]
     // [Permission("administrator")]

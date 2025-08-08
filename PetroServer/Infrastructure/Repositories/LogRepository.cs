@@ -56,6 +56,23 @@ public class LogRepository : ILogRepository
             return logs;
         }
     }
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetPageLogByStationIdAsync(Station entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectPageLogByStationId, new
+            {
+                StationId = entity.StationId,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+
+        return (logs.ToList(), totalCount);
+    }
+
     public async Task<int> UpdateLogTimeAsync(LogResponse entity)
     {
         await using (var connection = dbWrite.CreateConnection())
@@ -64,4 +81,90 @@ public class LogRepository : ILogRepository
             return affectedRows;
         }
     }
+    //==========================================
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByDispenserNameAsync(GetDispenserResponse entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectDispenserNameByStationId, new
+            {
+                StationId = entity.StationId,
+                Name= entity.Name,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+
+        return (logs.ToList(), totalCount);
+    }
+   
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByFuelNameAsync(GetFuelResponse entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectFuelNameByStationId, new
+            {
+                StationId = entity.StationId,
+                FuelName = entity.FuelName,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+        return (logs.ToList(), totalCount);
+    }
+
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByLogTypeAsync(GetLogTypeResponse entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectLogTypeByStationId, new
+            {
+                StationId = entity.StationId,
+                LogType = entity.LogType,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+        return (logs.ToList(), totalCount);
+    }
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByDateAsync(GetDateRevenue entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectDateByStationId, new
+            {
+                StationId = entity.StationId,
+                Time = entity.Time.Date,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+        return (logs.ToList(), totalCount);
+    }
+    public async Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByPeriodAsync(GetPeriodResponse entity, int page, int pageSize)
+    {
+        await using var connection = dbRead.CreateConnection();
+        var totalCount = await connection.ExecuteScalarAsync<int>(
+            LogQuery.CountLogByStationId, new { entity.StationId });
+        // Lấy dữ liệu phân trang
+        var logs = await connection.QueryAsync<LogResponse>(
+            LogQuery.SelectPeriodByStationId, new
+            {
+                StationId = entity.StationId,
+                toDate= entity.ToDate.Date,
+                fromDate= entity.FromDate.Date,
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
+        return (logs.ToList(), totalCount);
+    }
+   
 }

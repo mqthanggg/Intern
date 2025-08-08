@@ -1,4 +1,5 @@
-public static class FuelQuery{
+public static class FuelQuery
+{
     private static readonly string Schema = Env.GetString("SCHEMA");
     public static readonly string InsertFuel = $@"
         INSERT INTO {Schema}.fuel(
@@ -42,5 +43,8 @@ public static class FuelQuery{
         FROM {Schema}.fuel
         WHERE
             fuel_id = @FuelId
+    ";
+    public static readonly string SelectFuel = $@"
+        SELECT * FROM {Schema}.fuel
     ";
 }
