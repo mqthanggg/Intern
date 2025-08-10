@@ -40,12 +40,12 @@ public static class LogQuery
             @FuelName,
             @TotalLiters,
             @TotalAmount,
-            now(),
+            LOCALTIMESTAMP(0),
             @LogType,
             @CreatedBy,
-            now(),
+            LOCALTIMESTAMP(0),
             @LastModifiedBy,
-            now()
+            LOCALTIMESTAMP(0)
         )
     ";
     public static readonly string UpdateLog = $@"
@@ -130,7 +130,7 @@ public static class LogQuery
     ";
     //==========================================
     public static readonly string SelectDispenserNameByStationId = $@"
-        SELECT DISTINCT 
+        SELECT 
             dp.name AS Name, 
             log.fuel_name AS FuelName, 
             log.total_liters AS TotalLiters, 
@@ -148,7 +148,7 @@ public static class LogQuery
         LIMIT @PageSize
     ";
     public static readonly string SelectFuelNameByStationId = $@"
-        SELECT DISTINCT 
+        SELECT 
             dp.name AS Name, 
             log.fuel_name AS FuelName, 
             log.total_liters AS TotalLiters, 
@@ -166,7 +166,7 @@ public static class LogQuery
         LIMIT @PageSize
     ";
     public static readonly string SelectLogTypeByStationId = $@"
-        SELECT DISTINCT 
+        SELECT 
            dp.name AS Name, 
             log.fuel_name AS FuelName, 
             log.total_liters AS TotalLiters, 
@@ -184,38 +184,140 @@ public static class LogQuery
         LIMIT @PageSize
     ";
     public static readonly string SelectDateByStationId = $@"
-        SELECT DISTINCT 
-           dp.name AS Name, 
+        SELECT 
+            dp.name AS Name, 
             log.fuel_name AS FuelName, 
             log.total_liters AS TotalLiters, 
             fuel.price AS Price, 
             log.total_amount AS TotalAmount, 
-            log.time AS Time,
+            log.""time"" AS Time,
             log.log_type AS LogType 
-        FROM {Schema}.log as log
-        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
-        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
-        WHERE dp.station_id = @StationId 
+        FROM {Schema}.""log"" AS log
+        INNER JOIN {Schema}.dispenser AS dp ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel AS fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = 1 
         AND log.""time""::date = @Time
-        ORDER BY log.time DESC 
+        ORDER BY log.""time"" DESC
         OFFSET @Offset 
         LIMIT @PageSize
     ";
     public static readonly string SelectPeriodByStationId = $@"
-        SELECT DISTINCT 
-           dp.name AS Name, 
+        SELECT 
+            dp.name AS Name, 
             log.fuel_name AS FuelName, 
             log.total_liters AS TotalLiters, 
             fuel.price AS Price, 
             log.total_amount AS TotalAmount, 
-            log.time AS Time,
+            log.""time"" AS Time,
             log.log_type AS LogType 
-        FROM {Schema}.log as log
+        FROM {Schema}.""log"" as log
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
         WHERE dp.station_id = @StationId 
-        AND log.""time"" BETWEEN @ToDate AND @FromDate
-        ORDER BY log.time DESC 
+        AND log.""time"" BETWEEN @FromDate AND @ToDate
+        ORDER BY log.""time"" DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
+    ";
+    //==========================================
+    public static readonly string SelectPeriodDispenerFuelByStationId = $@"
+         SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.""time"" AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.""log"" as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId 
+        AND log.fuel_name = @FuelName
+        AND dp.name = @Name
+        AND log.""time"" BETWEEN @FromDate AND @ToDate
+        ORDER BY log.""time"" DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
+    ";
+    public static readonly string SelectPeriodDispenserLogByStationId = $@"
+        SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.""time"" AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.""log"" as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId 
+        AND log.log_type = @LogType
+        AND dp.name = @Name
+        AND log.""time"" BETWEEN @FromDate AND @ToDate
+        ORDER BY log.""time"" DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
+    ";
+    public static readonly string SelectPeriodFuelLogByStationId = $@"
+        SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.""time"" AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.""log"" as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId 
+        AND log.fuel_name = @FuelName
+        AND log.log_type = @LogType
+        AND log.""time"" BETWEEN @FromDate AND @ToDate
+        ORDER BY log.""time"" DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
+    ";
+        public static readonly string SelectDipenserFuelLogByStationId = $@"
+        SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.""time"" AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.""log"" as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId 
+        AND log.fuel_name = @FuelName
+        AND log.log_type = @LogType
+        AND dp.name = @Name
+        ORDER BY log.""time"" DESC 
+        OFFSET @Offset 
+        LIMIT @PageSize
+    ";
+    public static readonly string SelectFullConditionByStationId = $@"
+        SELECT 
+            dp.name AS Name, 
+            log.fuel_name AS FuelName, 
+            log.total_liters AS TotalLiters, 
+            fuel.price AS Price, 
+            log.total_amount AS TotalAmount, 
+            log.""time"" AS Time,
+            log.log_type AS LogType 
+        FROM {Schema}.""log"" as log
+        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+        WHERE dp.station_id = @StationId 
+        AND log.fuel_name = @FuelName
+        AND log.log_type = @LogType
+        AND dp.name = @Name
+        AND log.""time"" BETWEEN @FromDate AND @ToDate
+        ORDER BY log.""time"" DESC 
         OFFSET @Offset 
         LIMIT @PageSize
     ";

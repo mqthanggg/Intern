@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 public interface ILogRepository : IRepository<Log>
 {
     Task<IReadOnlyList<LogResponse>> GetLogByStationIdAsync(Station entity);
@@ -10,4 +12,11 @@ public interface ILogRepository : IRepository<Log>
     Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByDateAsync(GetDateRevenue entity, int page, int pageSize);
     Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByFuelNameAsync(GetFuelResponse entity, int page, int pageSize);
     Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByPeriodAsync(GetPeriodResponse entity, int page, int pageSize);
+    //=============================================================
+    Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByPeriodDispenerFuelAsync(GetPeriodDispenerFuelResponse entity, int page, int pageSize);
+    Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByPeriodDispenerLogAsync(GetPeriodDispenerLogResponse entity, int page, int pageSize);
+    Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetLogByPeriodLogFuelAsync(GetPeriodFuelLogResponse entity, int page, int pageSize);
+    Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetDispenserFuelLogAsync(GetDipenserFuelLogResponse entity, int page, int pageSize);
+    Task<(IReadOnlyList<LogResponse> Logs, int TotalCount)> GetFullConditionAsync(GetFullConditionResponse entity, int page, int pageSize);
+    
 }

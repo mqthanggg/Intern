@@ -25,3 +25,29 @@ export interface StationRecord{
 export interface FuelRecord{
   shortName: string,
 }
+
+// =========================================================
+export interface GetPeriodResponse {
+  stationId: number,
+  fromDate: Date,
+  toDate: Date,
+  page: number,
+  pageSize: number
+}
+export interface DispenserFuelRecord extends GetPeriodResponse{
+  name: string,
+  fuelName: string,
+}
+
+export interface DispenserLogTypeRecord {
+  name: number,
+  logType: number,
+}
+
+export interface FullConditionRecord extends GetPeriodResponse {
+  name: number,
+  fuelName: string,
+  logType: number,
+}
+
+

@@ -41,10 +41,45 @@ public class GetLogTypeResponse
     public required int StationId { get; set; } = -1;
     public required int LogType { get; set; } = -1;
 }
-
+//========================================================
 public class GetPeriodResponse
 {
     public required int StationId { get; set; } = -1;
     public required DateTime FromDate { get; set; }
     public required DateTime ToDate { get; set; }
 }
+
+public class GetPeriodDispenerFuelResponse : GetPeriodResponse
+{
+    public required int Name { get; set; } = -1;
+    public required string FuelName { get; set; } = "";
+}
+
+public class GetPeriodDispenerLogResponse : GetPeriodResponse
+{
+    public required int Name { get; set; } = -1;
+    public required int LogType { get; set; } = -1;
+}
+
+public class GetPeriodFuelLogResponse : GetPeriodResponse
+{
+    public required string FuelName { get; set; } = "";
+    public required int LogType { get; set; } = -1;
+}
+
+public class GetDipenserFuelLogResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required String FuelName { get; set; } = "";
+    public required int LogType { get; set; } = -1;
+    public required int Name { get; set; } = -1;
+}
+
+public class GetFullConditionResponse : GetPeriodResponse
+{
+    public required String FuelName { get; set; } = "";
+    public required int LogType { get; set; } = -1;
+    public required int Name { get; set; } = -1;
+}
+
+

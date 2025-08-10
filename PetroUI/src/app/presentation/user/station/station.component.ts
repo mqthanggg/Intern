@@ -217,7 +217,7 @@ export class StationComponent implements OnInit, OnDestroy {
         console.error(err.message);
       }
     })
-    window.onbeforeunload = () => this.ngOnDestroy()
+    // window.onbeforeunload = () => this.ngOnDestroy()
   }
 
   ngOnDestroy(): void {
@@ -229,5 +229,8 @@ export class StationComponent implements OnInit, OnDestroy {
     }
     this.sumRevenueByLogTypeSocket?.complete()
     this.sumRevenueByFuelNameSocket?.complete()
+    Object.values(this.dispenserSocket).forEach(socket => socket.complete?.());
+  Object.values(this.tankSocket).forEach(socket => socket.complete?.());
+    this.logsocket?.complete();
   }
 }

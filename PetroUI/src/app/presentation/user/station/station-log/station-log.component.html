@@ -1,50 +1,34 @@
 <div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
     <div class="flex space-x-4 mb-4">
-        <label for="dispenser">Select dispenser: </label>
-        <select id="dispenser" [(ngModel)]="selectedDispenserName" (change)="loaddispenserhttp(1)"
-            class="border px-2 py-1 rounded w-48">
+        <select id="dispenser" [(ngModel)]="selectedDispenserName" (change)="loaddispenserhttp(1)" class="border px-2 py-1 rounded w-48 h-10">
+            <option value="">Select dispenser</option>
             <option *ngFor="let name of dispenserName" [value]="name">
                 {{ name }}
             </option>
         </select>
-    </div>
-
-    <div class="flex space-x-4 mb-4">
-        <label for="fuel">Select fuelName: </label>
-        <select id="fuel" [(ngModel)]="selectedFuelName" (change)="loadfuelhttp(1)"
-            class="border px-2 py-1 rounded w-48">
+        <select id="fuel" [(ngModel)]="selectedFuelName" (change)="loadfuelhttp(1)" class="border px-2 py-1 rounded w-48 h-10">
+            <option value="">Select fuel</option>
             <option *ngFor="let name of fuelNames" [value]="name">
                 {{ name }}
             </option>
         </select>
-    </div>
-
-    <div class="flex space-x-4 mb-4">
-        <label for="logType">Select log type:</label>
-        <select id="logType" [(ngModel)]="selectedLogType" (change)="loadtypehttp(1)"
-            class="border px-2 py-1 rounded w-48">
+        <select id="logType" [(ngModel)]="selectedLogType" (change)="loadtypehttp(1)" class="border px-2 py-1 rounded w-48  h-10" aria-placeholder="Name">
+            <option [ngValue]="null">Select log type</option>
             <option *ngFor="let type of logTypeList" [ngValue]="type">{{ type.logTypeName }}</option>
         </select>
-    </div>
-
-    <div class="flex items-center space-x-4 mb-4">
-        <label>From:</label>
-        <input type="date" [(ngModel)]="startDate" class="border px-2 py-1 rounded" />
-
-        <label>To:</label>
-        <input type="date" [(ngModel)]="endDate" class="border px-2 py-1 rounded" />
-
-        <button (click)="loadLogsByPeriodhttp(1)" class="bg-blue-500 text-white px-4 py-1 rounded">
-            Filter
+        <button (click)="clearFilters()" class="bg-blue-500 text-white px-4 py-1 rounded">Reset</button>
+        <button (click)="onPageChange(1)" class="border-2 border-solid border-black text-white px-4 py-1 rounded">
+            <img width="50" height="30" src="https://img.icons8.com/ios-filled/100/filled-filter.png" alt="filled-filter"/>
         </button>
     </div>
-
+    
     <div class="flex items-center space-x-4 mb-4">
-        <label>Select date:</label>
-        <input id="datePicker" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadLogsByDatehhttp(1)"
-            class="border px-2 py-1 rounded" />
+        <label>From:</label>
+        <input type="date" [(ngModel)]="startDate" class="border px-2 py-1 rounded h-10"/>
+        <label>To:</label>
+        <input type="date" [(ngModel)]="endDate" class="border px-2 py-1 rounded h-10" />
+        <!-- <button (click)="loadLogsByPeriodhttp(1)" class="bg-blue-300 text-white px-4 py-1 rounded">filter</button> -->
     </div>
-    <button (click)="clearFilters()" class="bg-blue-700 px-3 py-2 rounded-xl text-white">Reset</button>
     <table
         class=" w-full border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
         <thead class="sticky top-2 bg-gray-300 text-gray-800 font-semibold text-sm uppercase shadow-sm z-10">
