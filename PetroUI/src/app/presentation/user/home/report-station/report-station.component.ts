@@ -23,7 +23,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     stationName: string [] = [];
     options = {
         observe: 'response' as const,
-        withCredentials: false
+        withCredentials: true
     };
     SName: string | undefined;
 

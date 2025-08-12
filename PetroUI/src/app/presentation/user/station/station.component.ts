@@ -168,8 +168,8 @@ export class StationComponent implements OnInit, OnDestroy {
 
     
     forkJoin({
-      dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: false }),
-      tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response", withCredentials: false }),
+      dispenser: this.http.get(environment.serverURI + `/dispenser/station/${this.id}`, { observe: "response", withCredentials: true }),
+      tank: this.http.get(environment.serverURI + `/tank/station/${this.id}`, { observe: "response", withCredentials: true }),
     }).
     pipe(
       mergeMap((res) => of(res).pipe(delay(1000))), //Simulating delay

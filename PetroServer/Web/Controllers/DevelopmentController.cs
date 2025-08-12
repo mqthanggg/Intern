@@ -7,11 +7,16 @@ public static class DevelopmentController{
     [ProducesResponseType(typeof(ErrorResponse),500)]
     [SwaggerOperation(
         Summary = "Signup a development account.",
-        Description = @"Signup development accounts.
+        Description = @"Signup development accounts with 20 more accounts for testing. These are the accounts for testing:
+
         - User: 
+
         + mqthanggg, admin123
+
         + linh, admin123
+
         - Administrator:
+
         + admin, admin123"
     )]
     public static async Task<IResult> SignupAccount(IHasher hasher, IUserRepository userRepository){
@@ -44,6 +49,17 @@ public static class DevelopmentController{
                     CreatedBy = "server",
                     LastModifiedBy = "server"
                 });
+                for(int i = 0; i < 20; i++){
+                   (hashedPassword, padding) = hasher.Hash(new object{},"admin123");
+                    _ = await userRepository.InsertAsync(new User{
+                        Username = $"test{i}",
+                        Password = hashedPassword,
+                        Role = 1,
+                        Padding = padding,
+                        CreatedBy = "server",
+                        LastModifiedBy = "server"
+                    }); 
+                }
             }
             catch (PostgresException e){
                 if (e.SqlState == "23505"){

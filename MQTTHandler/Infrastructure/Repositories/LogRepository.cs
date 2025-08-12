@@ -25,12 +25,12 @@ public class LogRepository : ILogRepository{
                         f.short_name,
                         @TotalLiters,
                         @TotalAmount,
-                        now(),
+                        LOCALTIMESTAMP(0),
                         @LogType,
                         @CreatedBy,
-                        now(),
+                        LOCALTIMESTAMP(0),
                         @LastModifiedBy,
-                        now()
+                        LOCALTIMESTAMP(0)
                     FROM {Env.GetString("SCHEMA")}.dispenser d
                     JOIN {Env.GetString("SCHEMA")}.fuel f 
                     ON 

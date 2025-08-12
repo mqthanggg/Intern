@@ -182,7 +182,7 @@ services:
         condition: service_started
       mqtt:
         condition: service_started
-  # mqtt broken
+  # mqtt broker
   mqtt:
     restart: no
     networks:
@@ -195,7 +195,6 @@ services:
       - ./Mosquitto/mosquitto/certs:/mosquitto/certs
     ports:
       - "8883:8883"
-  # Client
   server1:
     build:
       context: ./PetroServer
