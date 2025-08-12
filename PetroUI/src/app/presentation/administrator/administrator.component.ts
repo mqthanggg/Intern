@@ -4,6 +4,7 @@ import { Router, Event, RouterOutlet, RouterEvent, NavigationEnd, RouterLink } f
 import { TitleService } from '../../infrastructure/services/title.service';
 import { filter } from 'rxjs';
 import { LogoutService } from '../../infrastructure/services/logout.service';
+import { AccountService } from '../../infrastructure/services/account.service';
 
 @Component({
   selector: 'app-administrator',
@@ -24,7 +25,8 @@ export class AdministratorComponent implements OnInit{
     private titleService: TitleService, 
     private router:Router, 
     private location: Location,
-    private logoutService: LogoutService
+    private logoutService: LogoutService,
+    private account: AccountService
   ){
     this.logout = this.logoutService.logout
     this.titleService.title$.subscribe((title: string) => {

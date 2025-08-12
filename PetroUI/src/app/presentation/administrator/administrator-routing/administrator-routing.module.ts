@@ -3,14 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: "account",
+    path: "account/:page",
     title: "Account",
     loadComponent: () => import('../account/account.component').then(m => m.AccountComponent)
   },
   {
     path: "",
     pathMatch: "full",
-    redirectTo: "/administrator/account"
+    redirectTo: "/administrator/account/1"
   }
 ]
 

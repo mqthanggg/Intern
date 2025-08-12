@@ -1,5 +1,5 @@
 public class LogOutRequest{
-    public required String Token {get; set;} = "";
+    public required string Token {get; set;} = "";
 }
 
 public class TokenRequest{
