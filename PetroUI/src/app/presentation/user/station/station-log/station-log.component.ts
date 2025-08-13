@@ -52,7 +52,6 @@ export class StationLogComponent implements OnChanges {
         }
     }
 
-    // ✅ Load dropdown options
     dislist: StationRecord[] = [];
     dispenserName: string[] = [];
     loadLogsByDispenserName() {
@@ -82,23 +81,7 @@ export class StationLogComponent implements OnChanges {
         { logType: 4, logTypeName: 'Trả trước' }
     ];
 
-    // ✅ load logs from log type
     selectedLogType: { logType: number; logTypeName: string } | null = null;
-    loadLogshttp(page: number): void {
-        page = page || 1;
-        this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/pagelog/station/${this.id}?page=${page}&pageSize=${this.pageSize}`, this.options)
-            .subscribe(res => {
-                this.pagedList = res.body?.data ?? [];
-                console.log("load log data: ", res.body);
-                this.totalItems = res.body?.totalItems ?? 0;
-                this.page = res.body?.page ?? 1;
-                this.pageSize = res.body?.pageSize ?? 10;
-                this.totalCount = res.body?.totalItems ?? 0;
-                this.pages = Array.from({ length: res.body?.totalPages ?? 0 }, (_, i) => i + 1);
-            });
-
-    }
-    // ✅ 1 load logs from dispenser name
     selectedDispenserName: string = '';
     selectedFuelName: string = '';
     startDate: string = '';
@@ -137,7 +120,6 @@ export class StationLogComponent implements OnChanges {
         this.http.post<PagedResult<LogRecord>>(apiUrl, filter, this.options)
             .subscribe({
                 next: (res) => {
-                    console.log("API call success, raw response:", res);
                     this.pagedList = res.body?.data ?? [];
                     console.log("Loaded data: ", res.body);
                     this.totalItems = res.body?.totalItems ?? 0;
@@ -157,7 +139,7 @@ export class StationLogComponent implements OnChanges {
         this.loadLogsByFuelName();
         this.route.paramMap.subscribe(params => {
             const page = +params.get('page')!;
-            this.loadLogshttp(page);
+            this.loadLogsByFullFilter(page);
         });
         this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
             {
@@ -186,7 +168,7 @@ export class StationLogComponent implements OnChanges {
             this.endAmount = '';
             this.startLiter = '';
             this.endLiter = '';
-            this.loadLogshttp(1);
+            this.loadLogsByFullFilter(1);
         }
     }
     ngOnChanges(): void { }
