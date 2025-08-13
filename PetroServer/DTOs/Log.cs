@@ -41,14 +41,52 @@ public class GetLogTypeResponse
     public required int StationId { get; set; } = -1;
     public required int LogType { get; set; } = -1;
 }
-//========================================================
 public class GetPeriodResponse
 {
     public required int StationId { get; set; } = -1;
     public required DateTime FromDate { get; set; }
     public required DateTime ToDate { get; set; }
 }
+public class GetPriceLiterResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required int From { get; set; } = -1;
+    public required int To { get; set; } = -1;
+}
 
+//========================================================
+public class GetDispenerFuelResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required int Name { get; set; } = -1;
+    public required string FuelName { get; set; } = "";
+}
+public class GetDispenerLogResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required int Name { get; set; } = -1;
+    public required int LogType { get; set; } = -1;
+}
+public class GetPeriodDispenserResponse : GetPeriodResponse
+{
+    public required int Name { get; set; } = -1;
+}
+
+public class GetPeriodFuelResponse : GetPeriodResponse
+{
+    public required string FuelName { get; set; } = "";
+}
+public class GetPeriodLogResponse : GetPeriodResponse
+{
+    public required int LogType { get; set; } = -1;
+}
+public class GetFuelLogResponse
+{
+    public required int StationId { get; set; } = -1;
+    public required string FuelName { get; set; } = "";
+    public required int LogType { get; set; } = -1; 
+}
+//========================================================
 public class GetPeriodDispenerFuelResponse : GetPeriodResponse
 {
     public required int Name { get; set; } = -1;
@@ -63,7 +101,7 @@ public class GetPeriodDispenerLogResponse : GetPeriodResponse
 
 public class GetPeriodFuelLogResponse : GetPeriodResponse
 {
-    public required string FuelName { get; set; } = "";
+    public required String FuelName { get; set; } = "";
     public required int LogType { get; set; } = -1;
 }
 
@@ -77,9 +115,94 @@ public class GetDipenserFuelLogResponse
 
 public class GetFullConditionResponse : GetPeriodResponse
 {
-    public required String FuelName { get; set; } = "";
+    public required string FuelName { get; set; } = "";
     public required int LogType { get; set; } = -1;
     public required int Name { get; set; } = -1;
 }
+public class GetDipenserPriceLitterAmountResponse : GetPriceLiterResponse
+{
+    public required int Name { get; set; } = -1;
+}
+public class GetFuelPriceLitterAmountResponse : GetPriceLiterResponse
+{
+    public required string FuelName { get; set; } = "";
+}
+public class GeLogTypePriceLitterAmountResponse : GetPriceLiterResponse
+{
+    public required int LogType { get; set; } = -1;
+}
 
+public class GetPeriodPriceLitterAmountResponse : GetPriceLiterResponse
+{
+    public required DateTime FromDate { get; set; }
+    public required DateTime ToDate { get; set; }
+}
 
+public class GetPriceLitterAmountResponse : GetPriceLiterResponse
+{
+    public required int FromTotal { get; set; } = -1;
+    public required int ToTotal { get; set; } = -1;
+}
+//========================================================
+public class GetDipenserFuelPriceResponse : GetPriceLiterResponse
+{
+    public required int Name { get; set; } = -1;
+    public required string FuelName { get; set; } = "";
+}
+
+public class GetDipenserLogPriceResponse : GetPriceLiterResponse
+{
+    public required int Name { get; set; } = -1;
+    public required int LogType { get; set; } = -1;
+}
+
+public class GetPeriodDipenserPriceResponse : GetPeriodDispenserResponse
+{
+    public required int To { get; set; } = -1;
+    public required int From { get; set; } = -1;
+}
+
+public class GetDipenserPriceTotalResponse : GetPriceLiterResponse
+{
+    public required int Name { get; set; } = -1;
+    public required int ToTotal { get; set; } = -1;
+    public required int FromTotal { get; set; } = -1;
+}
+public class GetFuelLogPriceResponse : GetPriceLiterResponse
+{
+    public required string FuelName { get; set; } = "";
+    public required int LogType { get; set; } = -1;
+}
+
+public class GetPeriodFuelPriceResponse : GetPeriodFuelResponse
+{
+    public required int To { get; set; } = -1;
+    public required int From { get; set; } = -1;
+}
+public class GetFuelPriceTotalResponse : GetFuelPriceLitterAmountResponse
+{
+    public required int ToTotal { get; set; } = -1;
+    public required int FromTotal { get; set; } = -1;
+}
+public class GetPeriodLogPriceResponse : GetPeriodLogResponse
+{
+    public required int To { get; set; } = -1;
+    public required int From { get; set; } = -1;
+}
+public class GetLogPriceTotalResponse : GetPriceLiterResponse
+{
+    public required int LogType { get; set; } = -1;
+    public required int ToTotal { get; set; } = -1;
+    public required int FromTotal { get; set; } = -1;
+}
+
+public class GetPeriodPriceTotalResponse : GetPeriodPriceLitterAmountResponse
+{
+    public required int ToTotal { get; set; } = -1;
+    public required int FromTotal { get; set; } = -1;
+}
+public class GetPriceAmountLitersResponse : GetPriceLitterAmountResponse
+{
+    public required int ToAmount { get; set; } = -1;
+    public required int FromAmount { get; set; } = -1;
+}
