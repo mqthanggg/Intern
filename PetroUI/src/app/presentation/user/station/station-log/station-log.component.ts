@@ -56,9 +56,9 @@ export class StationLogComponent implements OnChanges {
     dislist: StationRecord[] = [];
     dispenserName: string[] = [];
     loadLogsByDispenserName() {
-        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`)
+        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`,this.options)
             .subscribe(res => {
-                this.dislist = res;
+                this.dislist = res.body ?? [];
                 this.dispenserName = this.dislist.map(d => d.name);
                 console.log("Dispenser Names: ", this.dispenserName);
             });
@@ -67,9 +67,9 @@ export class StationLogComponent implements OnChanges {
     fuelList: FuelRecord[] = [];
     fuelNames: string[] = [];
     loadLogsByFuelName() {
-        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`)
+        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`,this.options)
             .subscribe(res => {
-                this.fuelList = res;
+                this.fuelList = res.body ?? [];
                 this.fuelNames = this.fuelList.map(d => d.shortName);
                 console.log("fuel Name: ", this.fuelNames);
             });
