@@ -1,1 +1,213 @@
-<p>account works!</p>
+<div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] overflow-y-auto">
+    <table class="w-3/4 mx-auto mt-10 border-spacing-0 table-fixed border-collapse **:[thead>tr>th,tbody>tr>td]:h-14">
+        <thead>
+            <tr class="*:border-y *:py-2">
+                <th class="text-left pl-10" [formGroup]="filterForm">
+                    <div>Username</div>
+                    <div class="flex items-center bg-white space-x-2 rounded-md px-4">
+                        <input type="text" formControlName="username" class="font-normal py-2 bg-white w-full outline-none placeholder:italic placeholder:text-black/50" placeholder="No space">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                    </div>
+                </th>
+                <th [formGroup]="filterForm">
+                    <div>Role</div>
+                    <div class="bg-white px-2 py-1 flex items-center mx-auto rounded-md space-x-2 w-fit">
+                        <div class="relative">
+                            @switch(filterForm.get('role')?.value){
+                                @case (null){
+                                    <div class="flex py-1 px-5 items-center rounded-lg w-fit bg-green-200">
+                                        <span class="font-semibold text-green-600">All</span>
+                                    </div>
+                                }
+                                @case (1){
+                                    <div class="flex size-x-2 p-1 items-center rounded-lg w-fit bg-blue-200">
+                                        <span class="font-semibold text-blue-600">User</span>
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-7" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#0091ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                                    </div>
+                                }
+                                @case (2){
+                                    <div class="flex size-x-2 p-1 items-center rounded-lg w-fit bg-yellow-200">
+                                        <span class="font-semibold text-yellow-600">Admin</span>
+                                        <svg class="size-7" fill="#ffae00" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#ffae00"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M276.941 440.584v565.722c0 422.4 374.174 625.468 674.71 788.668l8.02 4.292 8.131-4.292c300.537-163.2 674.71-366.268 674.71-788.668V440.584l-682.84-321.657L276.94 440.584Zm682.73 1479.529c-9.262 0-18.523-2.372-26.993-6.89l-34.9-18.974C588.095 1726.08 164 1495.906 164 1006.306V404.78c0-21.91 12.65-41.788 32.414-51.162L935.727 5.42c15.134-7.228 32.866-7.228 48 0l739.313 348.2c19.765 9.374 32.414 29.252 32.414 51.162v601.525c0 489.6-424.207 719.774-733.779 887.943l-34.899 18.975c-8.47 4.517-17.731 6.889-27.105 6.889Zm467.158-547.652h-313.412l-91.595-91.482v-83.803H905.041v-116.78h-83.69l-58.503-58.504c-1.92.113-3.84.113-5.76.113-176.075 0-319.285-143.21-319.285-319.285 0-176.075 143.21-319.398 319.285-319.398 176.075 0 319.285 143.323 319.285 319.398 0 1.92 0 3.84-.113 5.647l350.57 350.682v313.412Zm-266.654-112.941h153.713v-153.713L958.462 750.155l3.953-37.27c1.017-123.897-91.595-216.621-205.327-216.621S550.744 588.988 550.744 702.72c0 113.845 92.612 206.344 206.344 206.344l47.21-5.309 63.811 63.7h149.873v116.78h116.781v149.986l25.412 25.299Zm-313.4-553.57c0 46.758-37.949 84.706-84.706 84.706-46.758 0-84.706-37.948-84.706-84.706s37.948-84.706 84.706-84.706c46.757 0 84.706 37.948 84.706 84.706" fill-rule="evenodd"></path> </g></svg>
+                                    </div>
+                                }
+                            }
+                            @if (isRoleDisplay){
+                                <div class="absolute space-y-2 bg-white p-2 -left-2">
+                                    <div (click)="changeRole(null)" class="flex hover:cursor-pointer py-1 px-5 items-center rounded-lg w-fit bg-green-200">
+                                        <span class="font-semibold text-green-600">All</span>
+                                    </div>
+                                    <div (click)="changeRole(2)" class="flex hover:cursor-pointer size-x-2 p-1 items-center rounded-lg w-fit bg-yellow-200">
+                                        <span class="font-semibold text-yellow-600">Admin</span>
+                                        <svg class="size-7" fill="#ffae00" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#ffae00"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M276.941 440.584v565.722c0 422.4 374.174 625.468 674.71 788.668l8.02 4.292 8.131-4.292c300.537-163.2 674.71-366.268 674.71-788.668V440.584l-682.84-321.657L276.94 440.584Zm682.73 1479.529c-9.262 0-18.523-2.372-26.993-6.89l-34.9-18.974C588.095 1726.08 164 1495.906 164 1006.306V404.78c0-21.91 12.65-41.788 32.414-51.162L935.727 5.42c15.134-7.228 32.866-7.228 48 0l739.313 348.2c19.765 9.374 32.414 29.252 32.414 51.162v601.525c0 489.6-424.207 719.774-733.779 887.943l-34.899 18.975c-8.47 4.517-17.731 6.889-27.105 6.889Zm467.158-547.652h-313.412l-91.595-91.482v-83.803H905.041v-116.78h-83.69l-58.503-58.504c-1.92.113-3.84.113-5.76.113-176.075 0-319.285-143.21-319.285-319.285 0-176.075 143.21-319.398 319.285-319.398 176.075 0 319.285 143.323 319.285 319.398 0 1.92 0 3.84-.113 5.647l350.57 350.682v313.412Zm-266.654-112.941h153.713v-153.713L958.462 750.155l3.953-37.27c1.017-123.897-91.595-216.621-205.327-216.621S550.744 588.988 550.744 702.72c0 113.845 92.612 206.344 206.344 206.344l47.21-5.309 63.811 63.7h149.873v116.78h116.781v149.986l25.412 25.299Zm-313.4-553.57c0 46.758-37.949 84.706-84.706 84.706-46.758 0-84.706-37.948-84.706-84.706s37.948-84.706 84.706-84.706c46.757 0 84.706 37.948 84.706 84.706" fill-rule="evenodd"></path> </g></svg>
+                                    </div>
+                                    <div (click)="changeRole(1)" class="flex hover:cursor-pointer size-x-2 p-1 items-center rounded-lg w-fit bg-blue-200">
+                                        <span class="font-semibold text-blue-600">User</span>
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-7" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#0091ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <svg (click)="toggleRole()" class="size-5 hover:cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#000000"></path> </g></svg>
+                    </div>
+                </th>
+                <th [formGroup]="filterForm">
+                    <div>Status</div>
+                    <div class="bg-white px-2 py-1 flex items-center mx-auto rounded-md space-x-2 w-fit">
+                        <div class="relative">
+                            @switch(filterForm.get('active')?.value){
+                                @case (null){
+                                    <div class="flex py-1 px-5 items-center rounded-lg w-fit bg-green-200">
+                                        <span class="font-semibold text-green-600">All</span>
+                                    </div>
+                                }
+                                @case (1){
+                                    <div class="mx-auto text-center w-fit font-medium px-3 py-2 text-green-600 bg-green-200">Active</div>
+                                }
+                                @case (0){
+                                    <div class="mx-auto text-center w-fit font-medium px-3 py-2 text-red-600 bg-red-200">Inactive</div>
+                                }
+                            }
+                            @if (isActiveDisplay){
+                                <div class="absolute space-y-2 bg-white p-2 -left-2">
+                                    <div (click)="changeActive(null)" class="flex hover:cursor-pointer py-1 px-5 items-center rounded-lg w-fit bg-green-200">
+                                        <span class="font-semibold text-green-600">All</span>
+                                    </div>
+                                    <div (click)="changeActive(1)" class="hover:cursor-pointer mx-auto text-center w-fit font-medium px-3 py-2 text-green-600 bg-green-200">Active</div>
+                                    <div (click)="changeActive(0)" class="hover:cursor-pointer mx-auto text-center w-fit font-medium px-3 py-2 text-red-600 bg-red-200">Inactive</div>
+                                </div>
+                            }
+                        </div>
+                        <svg (click)="toggleActive()" class="size-5 hover:cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#000000"></path> </g></svg>
+                    </div>
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b border-gray-400">
+                <td class="pl-10">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-10 hover:cursor-pointer" (click)="toggleSignUp()"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 8C11 7.44772 11.4477 7 12 7C12.5523 7 13 7.44771 13 8V11H16C16.5523 11 17 11.4477 17 12C17 12.5523 16.5523 13 16 13H13V16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16V13H8C7.44772 13 7 12.5523 7 12C7 11.4477 7.44771 11 8 11H11V8Z" fill="#0F0F0F"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M23 4C23 2.34315 21.6569 1 20 1H4C2.34315 1 1 2.34315 1 4V20C1 21.6569 2.34315 23 4 23H20C21.6569 23 23 21.6569 23 20V4ZM21 4C21 3.44772 20.5523 3 20 3H4C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H20C20.5523 21 21 20.5523 21 20V4Z" fill="#0F0F0F"></path> </g></svg>
+                </td>
+            </tr>
+            @for (user of userList; track user.username) {
+                <tr class="border-b border-gray-400">
+                    <td class="pl-10">{{user.username}}</td>
+                    <td class="*:mx-auto">
+                        @if (user.role == 2){
+                            <div class="flex size-x-2 p-1 items-center rounded-lg w-fit bg-yellow-200">
+                                <span class="font-semibold text-yellow-600">Admin</span>
+                                <svg class="size-7" fill="#ffae00" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg" stroke="#ffae00"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M276.941 440.584v565.722c0 422.4 374.174 625.468 674.71 788.668l8.02 4.292 8.131-4.292c300.537-163.2 674.71-366.268 674.71-788.668V440.584l-682.84-321.657L276.94 440.584Zm682.73 1479.529c-9.262 0-18.523-2.372-26.993-6.89l-34.9-18.974C588.095 1726.08 164 1495.906 164 1006.306V404.78c0-21.91 12.65-41.788 32.414-51.162L935.727 5.42c15.134-7.228 32.866-7.228 48 0l739.313 348.2c19.765 9.374 32.414 29.252 32.414 51.162v601.525c0 489.6-424.207 719.774-733.779 887.943l-34.899 18.975c-8.47 4.517-17.731 6.889-27.105 6.889Zm467.158-547.652h-313.412l-91.595-91.482v-83.803H905.041v-116.78h-83.69l-58.503-58.504c-1.92.113-3.84.113-5.76.113-176.075 0-319.285-143.21-319.285-319.285 0-176.075 143.21-319.398 319.285-319.398 176.075 0 319.285 143.323 319.285 319.398 0 1.92 0 3.84-.113 5.647l350.57 350.682v313.412Zm-266.654-112.941h153.713v-153.713L958.462 750.155l3.953-37.27c1.017-123.897-91.595-216.621-205.327-216.621S550.744 588.988 550.744 702.72c0 113.845 92.612 206.344 206.344 206.344l47.21-5.309 63.811 63.7h149.873v116.78h116.781v149.986l25.412 25.299Zm-313.4-553.57c0 46.758-37.949 84.706-84.706 84.706-46.758 0-84.706-37.948-84.706-84.706s37.948-84.706 84.706-84.706c46.757 0 84.706 37.948 84.706 84.706" fill-rule="evenodd"></path> </g></svg>
+                            </div>
+                        }
+                        @if (user.role == 1){
+                            <div class="flex size-x-2 p-1 items-center rounded-lg w-fit bg-blue-200">
+                                <span class="font-semibold text-blue-600">User</span>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-7" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#0091ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <div class="mx-auto text-center w-fit font-medium px-3 py-2"
+                        [ngClass]="{
+                            'text-green-600 bg-green-200': user.active,
+                            'text-red-600 bg-red-200': !user.active
+                        }"
+                        >{{user.active ? "Active" : "Inactive"}}</div>
+                    </td>
+                    <td class="flex justify-center items-center space-x-2">
+                        <div class="bg-blue-200 p-1">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" (click)="toggleEdit(user.userId)" class="size-7 hover:cursor-pointer"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12.4445 19.6875H20.9445M14.4443 5.68747L5.44587 14.6859C4.78722 15.3446 4.26719 16.1441 4.10888 17.062C3.94903 17.9888 3.89583 19.139 4.44432 19.6875C4.99281 20.236 6.14299 20.1828 7.0698 20.0229C7.98772 19.8646 8.78722 19.3446 9.44587 18.6859L18.4443 9.68747M14.4443 5.68747C14.4443 5.68747 17.4443 2.68747 19.4443 4.68747C21.4443 6.68747 18.4443 9.68747 18.4443 9.68747M14.4443 5.68747L18.4443 9.68747" stroke="#2b00ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                        </div>
+                        <div class="bg-red-200 p-1">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" (click)="toggleRemove(user.userId)" class="size-7 hover:cursor-pointer"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#ff3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#ff3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#ff3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#ff3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#ff3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="flex items-center justify-center mt-5 space-x-2">
+        <svg 
+        [ngClass]="{
+            'hover:cursor-pointer':getPage() > 1,
+            'select-none pointer-events-none': getPage() <= 1
+        }"
+        (click)="goBegin()" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" class="size-7 rotate-180"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="icomoon-ignore"> </g> <path d="M1.073 7.47v17.060l14.928-8.531-14.928-8.529zM2.139 9.307l11.712 6.692-11.712 6.693v-13.385z" fill="#000000"> </path> <path d="M16 7.47v17.060l14.928-8.531-14.928-8.529zM17.066 9.307l11.712 6.692-11.712 6.693v-13.385z" fill="#000000"> </path> </g></svg>
+        <svg 
+        [ngClass]="{
+            'hover:cursor-pointer':getPage() > 1,
+            'select-none pointer-events-none': getPage() <= 1
+        }"
+        (click)="goPreviousPage()" fill="#000000" viewBox="0 0 24 24" id="next" data-name="Line Color" xmlns="http://www.w3.org/2000/svg" class="rotate-180 size-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path id="primary" d="M17,12,5,21V3Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path></g></svg>
+        <input type="number" [formControl]="pageForm" class="px-5 py-2 [&::-webkit-outer-spin-button,&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button,&::-webkit-inner-spin-button]:m-0 w-36 outline-0 bg-white" [value]="pageForm.value">
+        <span>/</span>
+        <span>{{pages}}</span>
+        <svg 
+        [ngClass]="{
+            'hover:cursor-pointer':getPage() < pages,
+            'select-none pointer-events-none': getPage() >= pages
+        }"
+        (click)="goNextPage()" fill="#000000" viewBox="0 0 24 24" id="next" data-name="Line Color" xmlns="http://www.w3.org/2000/svg" class="size-5"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path id="primary" d="M17,12,5,21V3Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path></g></svg>
+        <svg
+        [ngClass]="{
+            'hover:cursor-pointer':getPage() < pages,
+            'select-none pointer-events-none': getPage() >= pages
+        }"
+        (click)="goEnd()" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000" class="size-7"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="icomoon-ignore"> </g> <path d="M1.073 7.47v17.060l14.928-8.531-14.928-8.529zM2.139 9.307l11.712 6.692-11.712 6.693v-13.385z" fill="#000000"> </path> <path d="M16 7.47v17.060l14.928-8.531-14.928-8.529zM17.066 9.307l11.712 6.692-11.712 6.693v-13.385z" fill="#000000"> </path> </g></svg>
+    </div>
+</div>
+@if(isEditDisplay){
+    <div class="absolute w-screen h-screen bg-gray-300/50 top-0 left-0">
+        <form class="absolute top-1/2 left-1/2 -translate-1/2 p-5 bg-white space-y-5 rounded-lg w-1/3" [formGroup]="editForm" (ngSubmit)="editFormSubmit()">
+            <div class="flex justify-between">
+                <div class="font-bold text-xl">{{"Change password of " + findUsernameById()}}</div>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" (click)="closeDialog()" class="size-5 hover:cursor-pointer"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8.00386 9.41816C7.61333 9.02763 7.61334 8.39447 8.00386 8.00395C8.39438 7.61342 9.02755 7.61342 9.41807 8.00395L12.0057 10.5916L14.5907 8.00657C14.9813 7.61605 15.6144 7.61605 16.0049 8.00657C16.3955 8.3971 16.3955 9.03026 16.0049 9.42079L13.4199 12.0058L16.0039 14.5897C16.3944 14.9803 16.3944 15.6134 16.0039 16.0039C15.6133 16.3945 14.9802 16.3945 14.5896 16.0039L12.0057 13.42L9.42097 16.0048C9.03045 16.3953 8.39728 16.3953 8.00676 16.0048C7.61624 15.6142 7.61624 14.9811 8.00676 14.5905L10.5915 12.0058L8.00386 9.41816Z" fill="#fe3434"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z" fill="#fe3434"></path> </g></svg>
+            </div>
+            <input formControlName="oldPassword" type="password" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic" placeholder="Old password">
+            <input formControlName="newPassword" type="password" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic hover:cursor-pointer" placeholder="New password">
+            <input formControlName="reTypePassword" type="password" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic hover:cursor-pointer" placeholder="Retype password">
+            <div class="flex mx-auto w-fit space-x-3">
+                <button class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-slate-200 bg-slate-300 shadow-xl" (click)="closeDialog()">Cancel</button>
+                <button type="submit" class=" px-5 py-3 w-fit rounded-md text-white font-semibold shadow-xl" [disabled]="editForm.invalid"
+                [ngClass]="{
+                    'bg-gray-500':editForm.invalid,
+                    'duration-150 hover:bg-green-400 hover:cursor-pointer bg-green-500': editForm.valid
+                }">Save</button>
+            </div>
+        </form>
+    </div>
+}
+@if(isRemoveDisplay){
+    <div class="absolute w-screen h-screen bg-gray-300/50 top-0 left-0">
+        <div class="absolute top-1/2 left-1/2 -translate-1/2 p-5 bg-white space-y-5 rounded-lg w-1/3">
+            <div class="text-xl font-semibold">Deleting user {{findUsernameById()}}.</div>
+            <div>Are you sure you want to delete <span class="font-bold">{{findUsernameById()}}</span>?</div>
+            <div>You can't undo this action.</div>
+            <div class="flex space-x-3 w-fit mx-auto">
+                <button class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-slate-200 bg-slate-300 shadow-xl" (click)="closeDialog()">No.</button>
+                <button class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-red-400 text-white bg-red-500 shadow-xl" (click)="removeSubmit()">Yes!</button>
+            </div>
+        </div>
+    </div>
+}
+@if(isSignUpDisplay){
+    <div class="absolute w-screen h-screen bg-gray-300/50 top-0 left-0">
+        <form class="absolute top-1/2 left-1/2 -translate-1/2 p-5 bg-white space-y-5 rounded-lg w-1/3" [formGroup]="signUpForm" (ngSubmit)="signUpSubmit()">
+            <div class="text-xl font-semibold">Sign up new user.</div>
+            <input formControlName="username" type="text" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic" placeholder="Username">
+            <input formControlName="password" type="password" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic" placeholder="Password">
+            <input formControlName="reTypePassword" type="password" class="outline-0 rounded-md px-2 py-1 border w-full text-xl placeholder:text-sm placeholder:italic" placeholder="Retype password">
+            <input type="radio" formControlName="role" class="accent-yellow-500" [value]="1"> User
+            <input type="radio" formControlName="role" class="accent-yellow-500" [value]="2"> Administrator
+            <div class="flex space-x-3 w-fit mx-auto">
+                <button class="rounded-md font-semibold w-fit px-5 py-2 hover:cursor-pointer duration-200 hover:bg-slate-200 bg-slate-300 shadow-xl" (click)="closeDialog()">Cancel</button>
+                <button type="submit" class=" px-5 py-3 w-fit rounded-md text-white font-semibold shadow-xl" [disabled]="signUpForm.invalid"
+                [ngClass]="{
+                    'bg-gray-500':signUpForm.invalid,
+                    'duration-150 hover:bg-green-400 hover:cursor-pointer bg-green-500': signUpForm.valid
+                }">Save</button>
+            </div>
+        </form>
+    </div>
+}

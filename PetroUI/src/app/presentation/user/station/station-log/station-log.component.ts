@@ -27,7 +27,7 @@ export class StationLogComponent implements OnChanges {
     stationName: string | undefined;
     options = {
         observe: 'response' as const,
-        withCredentials: false
+        withCredentials: true
     };
     constructor(private titleService: TitleService, private http: HttpClient, private route: ActivatedRoute, private router: Router) { }
     items = [];
@@ -100,6 +100,14 @@ export class StationLogComponent implements OnChanges {
     }
     // ✅ 1 load logs from dispenser name
     selectedDispenserName: string = '';
+    loadLogsByDispenserName() {
+        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`,this.options)
+            .subscribe(res => {
+                this.dislist = res.body ?? [];
+                this.dispenserName = this.dislist.map(d => d.name);
+                console.log("Dispenser Names: ", this.dispenserName);
+            });
+    }
     loaddispenserhttp(page: number): void {
         if (this.selectedDispenserName) {
             this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/dispenser/${this.id}/${encodeURIComponent(this.selectedDispenserName)}?page=${page}&pageSize=${this.pageSize}`, this.options)
@@ -117,6 +125,15 @@ export class StationLogComponent implements OnChanges {
     }
     // ✅ 2 load logs from fuel name
     selectedFuelName: string = '';
+    fuelNames: string[] = [];
+    loadLogsByFuelName() {
+        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`,this.options)
+            .subscribe(res => {
+                this.fuelList = res.body ?? [];
+                this.fuelNames = this.fuelList.map(d => d.shortName);
+                console.log("fuel Name: ", this.fuelNames);
+            });
+    }
     loadfuelhttp(page: number): void {
         if (this.selectedFuelName) {
             this.http.get<PagedResult<LogRecord>>(environment.serverURI + `/log/fuel/${this.id}/${encodeURIComponent(this.selectedFuelName?.trim())}?page=${page}&pageSize=${this.pageSize}`, this.options)
