@@ -58,7 +58,6 @@ public static class ReportController
         app.Map("ws/sumrenuename/getyear/{id}/{year}", GetSumRevenuegetYearByNameWS);
         app.Map("ws/sumrenuetype/getyear/{id}/{year}", GetSumRevenuegetyearByTypeWS);
         app.Map("ws/{device}/{id}", GetWS);
-        // ===================================================
         app.Map("ws/log/station/{id}", GetLogByStationWS);
         app.Map("ws/fulllog/station/{id}", GetFullLogByStationWS);
         app.Map("ws/pagelog/station/{id}", GetPageLogByStationWS);
@@ -250,7 +249,7 @@ public static class ReportController
 
 
     // [Authorize]
-    [ProducesResponseType(typeof(SumRevenueStationByDateResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SumRevenueByDateResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report revenue with day of each station",

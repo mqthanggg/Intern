@@ -1,6 +1,5 @@
 
 var builder = WebApplication.CreateBuilder(args);
-// var modelBuilder = new ODataConventionModelBuilder();
 builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 builder.Services.AddOutputCache(options =>
 {
@@ -14,11 +13,6 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddHealthChecks();
-
-// modelBuilder.EntitySet<Log>("log");
-// builder.Services.AddControllers().AddOData(
-//     options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null)
-//     .AddRouteComponents(routePrefix: "odata", model: modelBuilder.GetEdmModel()));
 
 var app = builder.Build();
 app.UseCors("AllowAll");

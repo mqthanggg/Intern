@@ -50,11 +50,6 @@ public class SumRevenueByDateResponse : SumStationResponse
     public required string Date { get; set; } = "";
 }
 
-public class SumRevenueStationByDateResponse : SumStationResponse
-{
-    public required string Date { get; set; } = "";
-}
-
 public class SumRevenueStationByMonthResponse : SumStationResponse
 {
     public required string Month { get; set; } = "";
