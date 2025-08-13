@@ -4,25 +4,11 @@ CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD 'admin123';
 
 SELECT pg_create_physical_replication_slot('replication_slot');
 
-ALTER TABLE IF EXISTS petro_application.attendance DROP CONSTRAINT IF EXISTS attendance_pkey;
-
-ALTER TABLE IF EXISTS petro_application.attendance DROP CONSTRAINT IF EXISTS attendance_staff_id_fkey;
-
-ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_shift_id_fkey;
-
-ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_staff_id_fkey;
-
-ALTER TABLE IF EXISTS petro_application.assignment DROP CONSTRAINT IF EXISTS assignment_station_id_fkey;
-
 ALTER TABLE IF EXISTS petro_application.detailreceipt DROP CONSTRAINT IF EXISTS detailreceipt_receipt_id_fkey ;
 
 ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_supplier_id_fkey;
 
 ALTER TABLE IF EXISTS petro_application.receipt DROP CONSTRAINT IF EXISTS receipt_station_id_fkey;
-
-DROP TABLE IF EXISTS petro_application.shift;
-
-DROP TABLE IF EXISTS petro_application.staff;
 
 DROP TABLE IF EXISTS petro_application.dispenser CASCADE;
 
@@ -42,50 +28,12 @@ DROP TABLE IF EXISTS petro_application.receipt;
 
 DROP TABLE IF EXISTS petro_application.detailreceipt;
 
-DROP TABLE IF EXISTS petro_application.assignment;
-
-DROP TABLE IF EXISTS petro_application.attendance;
 
 DROP SCHEMA IF EXISTS petro_application;
 
 CREATE SCHEMA petro_application;
 
 SET search_path TO petro_application, public;
-
-CREATE TABLE IF NOT EXISTS petro_application.shift
-(
-    shift_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    shift_type integer NOT NULL,
-    CHECK (shift_type IN (1,2,3)),
-    start_time time without time zone NOT NULL,
-    end_time time without time zone NOT NULL,
-    created_by character varying(255),
-    created_date timestamp(0) with time zone DEFAULT now(),
-    last_modified_by character varying(255),
-    last_modified_date timestamp(0) with time zone DEFAULT now(),
-    CONSTRAINT shift_pkey PRIMARY KEY (shift_id)
-);
-
-COMMENT ON TABLE petro_application.shift
-    IS 'for shiff''s information. shift_type: 1 -> sang, 2 -> trua, 3 -> toi';
-
-CREATE TABLE IF NOT EXISTS petro_application.staff
-(
-    staff_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    staff_name character varying(30) NOT NULL,
-    date_birth date NOT NULL,
-    phone character varying(10) NOT NULL,
-    address character varying(50) NOT NULL,
-    email character varying(255) NOT NULL,
-    created_by character varying(255),
-    created_date timestamp(0) with time zone DEFAULT now(),
-    last_modified_by character varying(255),
-    last_modified_date timestamp(0) with time zone DEFAULT now(),
-    CONSTRAINT staff_pkey PRIMARY KEY (staff_id)
-);
-
-COMMENT ON TABLE petro_application.staff
-    IS 'for staff''s information';
 
 CREATE TABLE IF NOT EXISTS petro_application.dispenser
 (
@@ -244,67 +192,6 @@ CREATE TABLE IF NOT EXISTS petro_application.detailreceipt (
 
 COMMENT ON TABLE petro_application.detailreceipt
     IS 'the import detail receipt information of each fuel';
-
-
-CREATE TABLE IF NOT EXISTS petro_application.assignment
-(
-    assignment_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    shift_id integer NOT NULL,
-    staff_id integer NOT NULL,
-    station_id integer NOT NULL ,
-	work_date date NOT NULL, 
-    created_by character varying(255),
-    created_date timestamp(0) with time zone DEFAULT now(),
-    last_modified_by character varying(255),
-    last_modified_date timestamp(0) with time zone DEFAULT now(),
-    CONSTRAINT assignment_pkey PRIMARY KEY (assignment_id)
-);
-
-COMMENT ON TABLE petro_application.assignment
-    IS 'for staff '' work schedule in each station';
-
-CREATE TABLE IF NOT EXISTS petro_application.attendance
-(
-    attendance_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
-    staff_id integer NOT NULL,
-    attendance_date date,
-    check_in_time timestamp(0) without time zone,
-    check_in_status character varying(10) COLLATE pg_catalog."default" DEFAULT 'n/a'::character varying,
-    check_out_time timestamp(0) without time zone,
-    check_out_status character varying(10) COLLATE pg_catalog."default" DEFAULT 'n/a'::character varying,
-    note character varying(255) COLLATE pg_catalog."default",
-    created_by character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    created_date timestamp(0) with time zone NOT NULL DEFAULT now(),
-    last_modified_by character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    last_modified_date timestamp(0) with time zone NOT NULL DEFAULT now(),
-    CONSTRAINT attendance_pkey PRIMARY KEY (attendance_id),
-    CONSTRAINT attendance_staff_id_fkey FOREIGN KEY (staff_id)
-        REFERENCES petro_application.staff (staff_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-);
-
-COMMENT ON TABLE petro_application.attendance
-    IS 'Table for storing staff''s attendance';
-
-ALTER TABLE IF EXISTS petro_application.assignment
-    ADD CONSTRAINT assignment_shift_id_fkey FOREIGN KEY(shift_id)
-    REFERENCES petro_application.shift (shift_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-ALTER TABLE IF EXISTS petro_application.assignment
-    ADD CONSTRAINT assignment_staff_id_fkey FOREIGN KEY (staff_id)
-    REFERENCES petro_application.staff (staff_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS petro_application.assignment
-    ADD CONSTRAINT assignment_station_id_fkey FOREIGN KEY (station_id)
-    REFERENCES petro_application.station (station_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
 
 ALTER TABLE IF EXISTS petro_application.dispenser
     ADD FOREIGN KEY (station_id)
@@ -490,89 +377,6 @@ INSERT INTO petro_application.log (dispenser_id, fuel_name, log_type, total_lite
 ( 1, 'DO1', 4, 14.8, 36733, TIMESTAMP(0) '2025-06-30 11:20:00', 'admin', 'admin'),
 ( 2, 'DO1', 4, 14.4, 35395, TIMESTAMP(0) '2025-06-23 14:03:00', 'admin', 'admin'),
 ( 1, 'A95', 1, 8.8, 20099, TIMESTAMP(0) '2025-06-08 09:09:00', 'admin', 'admin');
-
-INSERT INTO petro_application.shift (shift_type, start_time, end_time, created_by, last_modified_by) 
-VALUES 
-(1, '06:00:00', '14:00:00','admin', 'admin'),
-(2, '14:00:00', '22:00:00','admin', 'admin'),
-(3, '22:00:00', '06:00:00','admin', 'admin');
-
-INSERT INTO petro_application.staff (staff_name, date_birth, phone, address, email, created_by, last_modified_by) 
-values 
-('Nguyễn Yến Linh', '2004-01-01', '0331231588', '102 Nguyễn Quý Anh', 'yenlinh@gmail.com','admin', 'admin'), 
-('Nguyễn Văn An', '1990-05-15', '0901234567', '123 Lê Duẩn, Quận 1, TP.HCM', 'annguyen@gmail.com','admin', 'admin'),
-('Trần Thị Bích', '1988-09-20', '0912345678', '456 Nguyễn Trãi, Quận 5, TP.HCM', 'bichtran@gmail.com','admin', 'admin'),
-('Lê Hoàng Nam', '1995-12-10', '0923456789', '789 Cách Mạng Tháng 8, Quận 3, TP.HCM', 'namle@gmail.com','admin', 'admin'),
-('Phạm Minh Châu', '1992-07-25', '0934567890', '12 Hai Bà Trưng, Quận 1, TP.HCM', 'chaupham@gmail.com','admin', 'admin'),
-('Võ Thanh Tùng', '1985-03-05', '0945678901', '345 Phan Đình Phùng, Phú Nhuận, TP.HCM', 'tungvo@gmail.com','admin', 'admin');
-
-INSERT INTO petro_application.assignment (shift_id, staff_id, station_id, work_date, created_by, last_modified_by) VALUES
--- August 1
-(1, 1, 1, '2025-08-01', 'admin', 'admin'),
-(1, 2, 1, '2025-08-01', 'admin', 'admin'),
-(1, 3, 1, '2025-08-01', 'admin', 'admin'),
-
-(2, 4, 2, '2025-08-01', 'admin', 'admin'),
-(2, 5, 2, '2025-08-01', 'admin', 'admin'),
-(2, 6, 2, '2025-08-01', 'admin', 'admin'),
-
-(3, 1, 1, '2025-08-01', 'admin', 'admin'),
-(3, 4, 2, '2025-08-01', 'admin', 'admin'),
-(3, 6, 1, '2025-08-01', 'admin', 'admin'),
-
--- August 2
-(1, 2, 1, '2025-08-02', 'admin', 'admin'),
-(1, 5, 1, '2025-08-02', 'admin', 'admin'),
-(1, 6, 2, '2025-08-02', 'admin', 'admin'),
-
-(2, 1, 2, '2025-08-02', 'admin', 'admin'),
-(2, 3, 2, '2025-08-02', 'admin', 'admin'),
-(2, 4, 1, '2025-08-02', 'admin', 'admin'),
-
-(3, 2, 2, '2025-08-02', 'admin', 'admin'),
-(3, 3, 1, '2025-08-02', 'admin', 'admin'),
-(3, 5, 1, '2025-08-02', 'admin', 'admin'),
-
--- August 3
-(1, 1, 1, '2025-08-03', 'admin', 'admin'),
-(1, 3, 2, '2025-08-03', 'admin', 'admin'),
-(1, 6, 1, '2025-08-03', 'admin', 'admin'),
-
-(2, 2, 2, '2025-08-03', 'admin', 'admin'),
-(2, 4, 1, '2025-08-03', 'admin', 'admin'),
-(2, 5, 1, '2025-08-03', 'admin', 'admin'),
-
-(3, 1, 2, '2025-08-03', 'admin', 'admin'),
-(3, 2, 1, '2025-08-03', 'admin', 'admin'),
-(3, 3, 2, '2025-08-03', 'admin', 'admin'),
-
--- August 4
-(1, 2, 1, '2025-08-04', 'admin', 'admin'),
-(1, 4, 2, '2025-08-04', 'admin', 'admin'),
-(1, 6, 1, '2025-08-04', 'admin', 'admin'),
-(1, 1, 2, '2025-08-04', 'admin', 'admin'),
-
-(2, 3, 1, '2025-08-04', 'admin', 'admin'),
-(2, 5, 1, '2025-08-04', 'admin', 'admin'),
-(2, 6, 2, '2025-08-04', 'admin', 'admin'),
-
-(3, 2, 2, '2025-08-04', 'admin', 'admin'),
-(3, 4, 1, '2025-08-04', 'admin', 'admin'),
-(3, 5, 2, '2025-08-04', 'admin', 'admin'),
-
--- August 5
-(1, 3, 1, '2025-08-05', 'admin', 'admin'),
-(1, 4, 2, '2025-08-05', 'admin', 'admin'),
-(1, 6, 1, '2025-08-05', 'admin', 'admin'),
-
-(2, 1, 1, '2025-08-05', 'admin', 'admin'),
-(2, 2, 2, '2025-08-05', 'admin', 'admin'),
-(2, 5, 2, '2025-08-05', 'admin', 'admin'),
-
-(3, 3, 2, '2025-08-05', 'admin', 'admin'),
-(3, 4, 1, '2025-08-05', 'admin', 'admin'),
-(3, 6, 2, '2025-08-05', 'admin', 'admin');
-
 
 INSERT INTO petro_application.supplier (supplier_name, phone, address, email, created_by, last_modified_by) VALUES
 ('Petrolimex Sài Gòn', 0283822888, '15 Lê Duẩn, Quận 1, TP.HCM', 'contact@petrolimex.com.vn','admin', 'admin'),

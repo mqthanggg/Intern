@@ -24,6 +24,10 @@ public static class PublicController
         app.MapDelete("station/{id}", DeleteStationFromId);
         app.MapPut("station/{id}", UpdateStationFromId);
         app.MapPut("log/update", UpdateLogTime);
+        app.MapPost("accounts/{page}", GetAccounts);
+        app.MapPut("account/{id}",ChangeAccountPassword);
+        app.MapDelete("account/{id}",RemoveAccount);
+        app.MapPost("account",SignUpAccount);
         return app;
     }
 
@@ -401,8 +405,9 @@ public static class PublicController
             }
             return TypedResults.Unauthorized();
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            Console.WriteLine($"Failed, why: {e}");
             return TypedResults.NotFound();
         }
     }
@@ -690,6 +695,180 @@ public static class PublicController
         catch (Exception ex)
         {
             logger.LogError(ex, $"WebSocket error for stationId: {id}");
+        }
+    }
+
+    // [Authorize]
+    // [Permission("administrator")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(List<UserResponse>), 200)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Obtain accounts list.",
+        Description = "Obtain a list of all accounts."
+    )]
+    public static async Task<IResult> GetAccounts(
+        [FromServices] IUserRepository userRepository,
+        [FromRoute] int page,
+        [FromBody] UserRequestFilter body
+    ){
+        try
+        {
+            var PaginationSetting = new PaginationSetting(
+                15, page
+            );
+            var users = await userRepository.GetUserWithActiveAsync(
+                new UserRequestFilterWithPagination{
+                    Limit = PaginationSetting.Limit,
+                    Offset = PaginationSetting.Offset,
+                    Username = body.Username + "%",
+                    Role = body.Role,
+                    Active = body.Active
+                }
+            );
+            var counts = await userRepository.GetUserCountWithFilterAsync(
+                body
+            );
+            return TypedResults.Ok(
+                new UserResponseWithPage{
+                    Users = users,
+                    PageNumber = Convert.ToInt32(Math.Ceiling(counts / 15.0))
+                }
+            );
+        }
+        catch (PostgresException ex)
+        {
+            Console.WriteLine($"Failed, why: {ex}");
+            return TypedResults.InternalServerError();
+        }       
+    }
+
+    [Authorize]
+    [Permission("administrator")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Change account password.",
+        Description = "Change account with a given id password"
+    )]
+    public static async Task<IResult> ChangeAccountPassword(
+        [FromServices] IUserRepository userRepository,
+        [FromServices] IHasher hasher,
+        [FromRoute] int id,
+        [FromBody] UserChangePasswordRequest body
+    ){
+        try
+        {
+            if (body.NewPassword != body.ReTypePassword)
+                return TypedResults.Unauthorized();
+            var user = await userRepository.GetUserByIdAsync(
+                new User{
+                    UserId = id
+                }
+            );
+            if (user == null)
+                return TypedResults.NotFound("UserId not found");
+            if (hasher.Verify(
+                user,
+                body.OldPassword + user.Padding,
+                user.Password ?? ""
+            )){
+                (string NewHashedPassword, string NewPadding) = hasher.Hash(new object{},body.NewPassword);
+                int affectedRows = await userRepository.UpdateUserPasswordAsync(
+                    new User{
+                        UserId = id,
+                        Password = NewHashedPassword,
+                        Padding = NewPadding
+                    }
+                );
+                if (affectedRows != 1){
+                    throw new Exception("Cannot update user's password");
+                }
+                else{
+                    return TypedResults.Ok();
+                }
+            }
+            return TypedResults.Unauthorized();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed, why: {ex}");
+            return TypedResults.InternalServerError();
+        }
+    }
+    [Authorize]
+    [Permission("administrator")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(string),404)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Remove an account.",
+        Description = "Remove an account from the given id."
+    )]
+    public static async Task<IResult> RemoveAccount(
+        [FromRoute] int id,
+        [FromServices] IUserRepository userRepository,
+        [FromServices] IHasher hasher
+    ){
+        try
+        {
+            int affectedRows = await userRepository.DeleteAsync(
+                new User{
+                    UserId = id
+                }
+            );
+            if (affectedRows != 1){
+                return TypedResults.NotFound("UserId not found.");            
+            }
+            return TypedResults.Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed, why {ex}");
+            return TypedResults.InternalServerError();
+        }
+    }
+    [Authorize]
+    [Permission("administrator")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [Produces("application/json")]
+    [SwaggerOperation(
+        Summary = "Signup an account.",
+        Description = "Signup a new account from the given information."
+    )]
+    public static async Task<IResult> SignUpAccount(
+        [FromServices] IUserRepository userRepository,
+        [FromServices] IHasher hasher,
+        [FromBody] UserSignUpRequest body
+    ){
+        try
+        {
+            if (body.Password != body.ReTypePassword)
+                return TypedResults.Unauthorized();
+            (string HashedPassword, string Padding) = hasher.Hash(new object{},body.Password);
+            int affectedRows = await userRepository.InsertAsync(
+                new User{
+                    Username = body.Username,
+                    Password = HashedPassword,
+                    Padding = Padding,
+                    Role = body.Role
+                }
+            );
+            if (affectedRows != 1){
+                throw new Exception("Cannot insert new user.");
+            }
+            return TypedResults.Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed, why: {e}");
+            return TypedResults.InternalServerError();
         }
     }
 }
