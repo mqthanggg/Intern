@@ -1,50 +1,89 @@
 <div class="py-2 px-5 w-full max-h-[calc(100%-5rem)] h-[calc(100%-5rem)] relative overflow-y-scroll bg-[#F5F5F5]">
-    <div class="flex space-x-4 mb-4">
-        <label for="dispenser">Select dispenser: </label>
-        <select id="dispenser" [(ngModel)]="selectedDispenserName" (change)="loaddispenserhttp(1)"
-            class="border px-2 py-1 rounded w-48">
-            <option *ngFor="let name of dispenserName" [value]="name">
-                {{ name }}
-            </option>
-        </select>
+    <div class="p-6 bg-white rounded-lg shadow-md space-y-6">
+
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div>
+      <label class="block mb-1 font-semibold">Dispenser</label>
+      <select id="dispenser" [(ngModel)]="selectedDispenserName" (change)="loaddispenserhttp(1)"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">Select dispenser</option>
+        <option *ngFor="let name of dispenserName" [value]="name">{{ name }}</option>
+      </select>
     </div>
-
-    <div class="flex space-x-4 mb-4">
-        <label for="fuel">Select fuelName: </label>
-        <select id="fuel" [(ngModel)]="selectedFuelName" (change)="loadfuelhttp(1)"
-            class="border px-2 py-1 rounded w-48">
-            <option *ngFor="let name of fuelNames" [value]="name">
-                {{ name }}
-            </option>
-        </select>
+    <div>
+      <label class="block mb-1 font-semibold">Fuel</label>
+      <select id="fuel" [(ngModel)]="selectedFuelName" (change)="loadfuelhttp(1)"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">Select fuel</option>
+        <option *ngFor="let name of fuelNames" [value]="name">{{ name }}</option>
+      </select>
     </div>
-
-    <div class="flex space-x-4 mb-4">
-        <label for="logType">Select log type:</label>
-        <select id="logType" [(ngModel)]="selectedLogType" (change)="loadtypehttp(1)"
-            class="border px-2 py-1 rounded w-48">
-            <option *ngFor="let type of logTypeList" [ngValue]="type">{{ type.logTypeName }}</option>
-        </select>
+    <div>
+      <label class="block mb-1 font-semibold">Log Type</label>
+      <select id="logType" [(ngModel)]="selectedLogType" (change)="loadtypehttp(1)"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option [ngValue]="null">Select log type</option>
+        <option *ngFor="let type of logTypeList" [ngValue]="type">{{ type.logTypeName }}</option>
+      </select>
     </div>
-
-    <div class="flex items-center space-x-4 mb-4">
-        <label>From:</label>
-        <input type="date" [(ngModel)]="startDate" class="border px-2 py-1 rounded" />
-
-        <label>To:</label>
-        <input type="date" [(ngModel)]="endDate" class="border px-2 py-1 rounded" />
-
-        <button (click)="loadLogsByPeriodhttp(1)" class="bg-blue-500 text-white px-4 py-1 rounded">
-            Filter
-        </button>
+    <div class="flex items-end">
+      <button (click)="clearFilters()" class="w-50% bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Reset</button>
+      <button (click)="onPageChange(1)"
+        class="ml-5 w-50% flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        <img width="24" height="24" src="https://img.icons8.com/ios-filled/100/filled-filter.png"
+          alt="filled-filter" />
+      </button>
     </div>
+  </div>
 
-    <div class="flex items-center space-x-4 mb-4">
-        <label>Select date:</label>
-        <input id="datePicker" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadLogsByDatehhttp(1)"
-            class="border px-2 py-1 rounded" />
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div>
+      <label class="block mb-1 font-semibold">From Date</label>
+      <input type="date" [(ngModel)]="startDate"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
-    <button (click)="clearFilters()" class="bg-blue-700 px-3 py-2 rounded-xl text-white">Reset</button>
+    <div>
+      <label class="block mb-1 font-semibold">To Date</label>
+      <input type="date" [(ngModel)]="endDate"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+    <div>
+      <label class="block mb-1 font-semibold">From Price</label>
+      <input type="text" [(ngModel)]="startPrice"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+    <div>
+      <label class="block mb-1 font-semibold">To Price</label>
+      <input type="text" [(ngModel)]="endPrice"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div>
+      <label class="block mb-1 font-semibold">From Total Amount</label>
+      <input type="text" [(ngModel)]="startAmount"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+    <div>
+      <label class="block mb-1 font-semibold">To Total Amount</label>
+      <input type="text" [(ngModel)]="endAmount"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+    <div>
+      <label class="block mb-1 font-semibold">From Total Liters</label>
+      <input type="text" [(ngModel)]="startLiter"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+    <div>
+      <label class="block mb-1 font-semibold">To Total Liters</label>
+      <input type="text" [(ngModel)]="endLiter"
+        class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
+  </div>
+
+</div>
+
     <table
         class=" w-full border-t border-t-black border-separate border-spacing-0 **:[thead>tr>th,tbody>tr>td]:border-b **:[thead>tr>th,tbody>tr>td]:py-3 **:[thead>tr>th,tbody>tr>td]:whitespace-nowrap **:[thead>tr>th,tbody>tr>td]:select-none mx-auto">
         <thead class="sticky top-2 bg-gray-300 text-gray-800 font-semibold text-sm uppercase shadow-sm z-10">
