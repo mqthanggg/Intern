@@ -25,9 +25,11 @@ public static class PublicController
         app.MapPut("station/{id}", UpdateStationFromId);
         app.MapPut("log/update", UpdateLogTime);
         app.MapPost("accounts/{page}", GetAccounts);
-        app.MapPut("account/{id}",ChangeAccountPassword);
-        app.MapDelete("account/{id}",RemoveAccount);
-        app.MapPost("account",SignUpAccount);
+        app.MapPut("account/{id}", ChangeAccountPassword);
+        app.MapDelete("account/{id}", RemoveAccount);
+        app.MapPost("account", SignUpAccount);
+        app.MapPost("get/fulltime/filter/{id}", GetFullLogByFilterConditions);
+        app.MapPost("get/full/filter/{id}", GetLogByFilterConditions);
         return app;
     }
 
@@ -711,14 +713,16 @@ public static class PublicController
         [FromServices] IUserRepository userRepository,
         [FromRoute] int page,
         [FromBody] UserRequestFilter body
-    ){
+    )
+    {
         try
         {
             var PaginationSetting = new PaginationSetting(
                 15, page
             );
             var users = await userRepository.GetUserWithActiveAsync(
-                new UserRequestFilterWithPagination{
+                new UserRequestFilterWithPagination
+                {
                     Limit = PaginationSetting.Limit,
                     Offset = PaginationSetting.Offset,
                     Username = body.Username + "%",
@@ -726,11 +730,14 @@ public static class PublicController
                     Active = body.Active
                 }
             );
+
             var counts = await userRepository.GetUserCountWithFilterAsync(
                 body
             );
+
             return TypedResults.Ok(
-                new UserResponseWithPage{
+                new UserResponseWithPage
+                {
                     Users = users,
                     PageNumber = Convert.ToInt32(Math.Ceiling(counts / 15.0))
                 }
@@ -740,7 +747,7 @@ public static class PublicController
         {
             Console.WriteLine($"Failed, why: {ex}");
             return TypedResults.InternalServerError();
-        }       
+        }
     }
 
     [Authorize]
@@ -759,13 +766,15 @@ public static class PublicController
         [FromServices] IHasher hasher,
         [FromRoute] int id,
         [FromBody] UserChangePasswordRequest body
-    ){
+    )
+    {
         try
         {
             if (body.NewPassword != body.ReTypePassword)
                 return TypedResults.Unauthorized();
             var user = await userRepository.GetUserByIdAsync(
-                new User{
+                new User
+                {
                     UserId = id
                 }
             );
@@ -775,19 +784,23 @@ public static class PublicController
                 user,
                 body.OldPassword + user.Padding,
                 user.Password ?? ""
-            )){
-                (string NewHashedPassword, string NewPadding) = hasher.Hash(new object{},body.NewPassword);
+            ))
+            {
+                (string NewHashedPassword, string NewPadding) = hasher.Hash(new object { }, body.NewPassword);
                 int affectedRows = await userRepository.UpdateUserPasswordAsync(
-                    new User{
+                    new User
+                    {
                         UserId = id,
                         Password = NewHashedPassword,
                         Padding = NewPadding
                     }
                 );
-                if (affectedRows != 1){
+                if (affectedRows != 1)
+                {
                     throw new Exception("Cannot update user's password");
                 }
-                else{
+                else
+                {
                     return TypedResults.Ok();
                 }
             }
@@ -799,11 +812,12 @@ public static class PublicController
             return TypedResults.InternalServerError();
         }
     }
+
     [Authorize]
     [Permission("administrator")]
     [ProducesResponseType(500)]
     [ProducesResponseType(200)]
-    [ProducesResponseType(typeof(string),404)]
+    [ProducesResponseType(typeof(string), 404)]
     [Produces("application/json")]
     [SwaggerOperation(
         Summary = "Remove an account.",
@@ -813,16 +827,19 @@ public static class PublicController
         [FromRoute] int id,
         [FromServices] IUserRepository userRepository,
         [FromServices] IHasher hasher
-    ){
+    )
+    {
         try
         {
             int affectedRows = await userRepository.DeleteAsync(
-                new User{
+                new User
+                {
                     UserId = id
                 }
             );
-            if (affectedRows != 1){
-                return TypedResults.NotFound("UserId not found.");            
+            if (affectedRows != 1)
+            {
+                return TypedResults.NotFound("UserId not found.");
             }
             return TypedResults.Ok();
         }
@@ -846,21 +863,24 @@ public static class PublicController
         [FromServices] IUserRepository userRepository,
         [FromServices] IHasher hasher,
         [FromBody] UserSignUpRequest body
-    ){
+    )
+    {
         try
         {
             if (body.Password != body.ReTypePassword)
                 return TypedResults.Unauthorized();
-            (string HashedPassword, string Padding) = hasher.Hash(new object{},body.Password);
+            (string HashedPassword, string Padding) = hasher.Hash(new object { }, body.Password);
             int affectedRows = await userRepository.InsertAsync(
-                new User{
+                new User
+                {
                     Username = body.Username,
                     Password = HashedPassword,
                     Padding = Padding,
                     Role = body.Role
                 }
             );
-            if (affectedRows != 1){
+            if (affectedRows != 1)
+            {
                 throw new Exception("Cannot insert new user.");
             }
             return TypedResults.Ok();
@@ -870,5 +890,53 @@ public static class PublicController
             Console.WriteLine($"Failed, why: {e}");
             return TypedResults.InternalServerError();
         }
+    }
+
+    // [Authorize]
+    [ProducesResponseType(typeof(LogResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report log get filter log condition",
+        Description = "Return filter all log conditions by station id"
+    )]
+    public static async Task<IResult> GetFullLogByFilterConditions([FromServices] ILogRepository logRepository,
+        [FromBody] GetFullNullConditionFilterResponse body, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    {
+        if (page <= 0) page = 1;
+        if (pageSize <= 0) pageSize = 20;
+        var (logs, totalCount) = await logRepository.GetFullNullConditionAsync(body, page, pageSize);
+        var result = new
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            Data = logs
+        };
+        return TypedResults.Ok(result);
+    }
+
+    // [Authorize]
+    [ProducesResponseType(typeof(LogResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Report log get filter log condition not time",
+        Description = "Return filter all log conditions by station id"
+    )]
+    public static async Task<IResult> GetLogByFilterConditions([FromServices] ILogRepository logRepository,
+        [FromBody] GetFullNullConditionFilterResponse body, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    {
+        if (page <= 0) page = 1;
+        if (pageSize <= 0) pageSize = 20;
+        var (logs, totalCount) = await logRepository.GetFullLogConditionAsync(body, page, pageSize);
+        var result = new
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+            Data = logs
+        };
+        return TypedResults.Ok(result);
     }
 }

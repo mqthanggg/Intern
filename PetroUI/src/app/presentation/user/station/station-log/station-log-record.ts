@@ -51,3 +51,17 @@ export interface FullConditionRecord extends GetPeriodResponse {
 }
 
 
+export interface LogFilterRecord {
+    stationId: number,
+    name: number,
+    fuelName: string,
+    logType: number,
+    fromLiter: number,
+    toLiter: number,
+    fromPrice:number,
+    toPrice: number,
+    fromAmount: number,
+    toAmount: number,
+    fromDate: Date,
+    toDate: Date,
+}

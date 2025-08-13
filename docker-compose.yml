@@ -232,7 +232,7 @@ services:
       retries: 3
     depends_on:
       haproxy:
-        condition: service_started
+        condition: vice_started
       mqtt:
         condition: service_started
       mqtt-handler:
