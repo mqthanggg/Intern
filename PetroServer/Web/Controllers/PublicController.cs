@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 public static class PublicController
 {
     public static WebApplication MapPublicController(this WebApplication app)
@@ -8,13 +10,7 @@ public static class PublicController
         app.MapGet(".well-known/jwks.json", GetJWKs);
         app.MapGet("stations", GetStations);
         app.MapGet("station/{id}", GetStationByStationId);
-        app.MapGet("staff/{id}", GetStaffByStaffId);
-        app.MapGet("staffs", GetStaffs);
-        app.MapGet("shifts", GetShift);
-        app.MapGet("shift/{id}", GetShiftByShiftId);
-        app.MapGet("assignments", GetAssignment);
         app.MapGet("fuels", GetFuels);
-        app.MapPost("assignments/station", GetAssignmentByStationIdAndDate);
 
         app.MapPost("login", Login);
         app.MapPost("register", RegisterAccount);
@@ -43,8 +39,8 @@ public static class PublicController
         };
     }
 
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("administrator")]
     [ProducesResponseType(typeof(List<FuelResponse>), 200)]
     [ProducesResponseType(500)]
     [Produces("application/json")]
@@ -68,8 +64,8 @@ public static class PublicController
     }
 
 
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("administrator")]
     [ProducesResponseType(201)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 404)]
@@ -122,9 +118,9 @@ public static class PublicController
         }
     }
 
-    // [Authorize]
-    // [Permission("user")]
-    // [RequireAntiforgeryToken]
+    [Authorize]
+    [Permission("user")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
     [SwaggerOperation(
@@ -144,120 +140,8 @@ public static class PublicController
         return TypedResults.Ok();
     }
 
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(typeof(StaffResponse), 200)]
-    [ProducesResponseType(404)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Get staff by ID",
-        Description = "Returns staff information by ID"
-    )]
-    public static async Task<IResult> GetStaffByStaffId(
-        [FromRoute] int id,
-        [FromServices] IStaffRepository StaffRepository
-    )
-    {
-        var res = await StaffRepository.GetStaffByIdAsync(new Staff { StaffId = id });
-        if (res == null)
-            return Results.NotFound();
-        return TypedResults.Ok(res);
-    }
-
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(typeof(List<StaffResponse>), 200)]
-    [ProducesResponseType(500)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Get all staffs",
-        Description = "Obtain a list of all staffs"
-    )]
-    public static async Task<IResult> GetStaffs(
-        [FromServices] IStaffRepository StaffRepository
-    )
-    {
-        try
-        {
-            var res = await StaffRepository.GetAllStaffResponseAsync();
-            return TypedResults.Ok(res);
-        }
-        catch (PostgresException)
-        {
-            return TypedResults.InternalServerError();
-        }
-    }
-
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(500)]
-    [ProducesResponseType(typeof(List<ShiftResponse>), 200)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Obtain shifts.",
-        Description = "Obtain a list of all shifts."
-    )]
-    public static async Task<IResult> GetShift(
-        [FromServices] IShiftRepository shiftRepository
-    )
-    {
-        try
-        {
-            var res = await shiftRepository.GetAllShiftResponseAsync();
-            return TypedResults.Ok(res);
-        }
-        catch (PostgresException)
-        {
-            return TypedResults.InternalServerError();
-        }
-    }
-
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(typeof(ShiftResponse), 200)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Obtain a shift by id",
-        Description = "Obtain a shift by id"
-    )]
-    public static async Task<IResult> GetShiftByShiftId(
-        [FromRoute] int id,
-        [FromServices] IShiftRepository ShiftRepository
-    )
-    {
-        var res = await ShiftRepository.GetShiftById(new Shift { ShiftId = id });
-        if (res == null)
-            return Results.NotFound();
-        return TypedResults.Ok(res);
-    }
-
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(500)]
-    [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Obtain assignment.",
-        Description = "Obtain a list of all Assignments."
-    )]
-    public static async Task<IResult> GetAssignment(
-        [FromServices] IAssignmentRepository AssignmentRepository
-    )
-    {
-        try
-        {
-            var res = await AssignmentRepository.GetAllAssignmentResponseAsync();
-            return TypedResults.Ok(res);
-        }
-        catch (PostgresException)
-        {
-            return TypedResults.InternalServerError();
-        }
-    }
-
-    // [Authorize]
-    // [Permission("user")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -275,8 +159,8 @@ public static class PublicController
         );
     }
 
-    // [Authorize]
-    // [Permission("user")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<DispenserResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -294,8 +178,8 @@ public static class PublicController
         );
     }
 
-    // [Authorize]
-    // [Permission("user")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<TankResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -413,9 +297,9 @@ public static class PublicController
             return TypedResults.NotFound();
         }
     }
-    // [Authorize]
-    // [Permission("user")]
-    // [RequireAntiforgeryToken]
+    [Authorize]
+    [Permission("user")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
     [SwaggerOperation(
@@ -441,9 +325,9 @@ public static class PublicController
         return TypedResults.NotFound();
     }
 
-    // [Authorize]
-    // [Permission("user")]
-    // [RequireAntiforgeryToken]
+    [Authorize]
+    [Permission("user")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(404)]
     [ProducesResponseType(200)]
     [SwaggerOperation(
@@ -470,8 +354,8 @@ public static class PublicController
         return TypedResults.NotFound();
     }
 
-    // [Authorize]
-    // [Permission("user")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(400)]
     [ProducesResponseType(typeof(List<StationResponse>), 200)]
     [Produces("application/json")]
@@ -496,8 +380,8 @@ public static class PublicController
     }
 
 
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("administrator")]
     [ProducesResponseType(400)]
     [ProducesResponseType(typeof(ShiftResponse), 200)]
     [Produces("application/json")]
@@ -627,81 +511,8 @@ public static class PublicController
         }
     }
 
-    // [Authorize]
-    // [Permission("administrator")]
-    [ProducesResponseType(500)]
-    [ProducesResponseType(typeof(List<AssignmentResponse>), 200)]
-    [Produces("application/json")]
-    [SwaggerOperation(
-        Summary = "Obtain assignments by station id.",
-        Description = "Obtain a list of all assignments by station id."
-    )]
-    public static async Task<IResult> GetAssignmentByStationIdAndDate(
-        [FromServices] IAssignmentRepository AssignmentRepository,
-        [FromBody] AssignmentRequest body
-    )
-    {
-        try
-        {
-            var res = await AssignmentRepository.GetAllAssignmentResponseByStationIdAndDateAsync(new Assignment { StationId = body.StationId, WorkDate = body.WorkDate });
-            return TypedResults.Ok(res);
-        }
-        catch (PostgresException e)
-        {
-            Console.WriteLine($"why: {e.Message}");
-            return TypedResults.InternalServerError();
-        }
-    }
-
-    //==============================================
-    [SwaggerOperation(
-        Summary = "Obtain web socket for report total of each station",
-        Description = "Return a web socket for total revenue for each station, such as liters, revenue, import, profit"
-    )]
-    public static async Task GetStationByStationWS(HttpContext context, [FromRoute] int id,
-        [FromServices] IStationRepository stationRepository, [FromServices] ILogger<object> logger)
-    {
-        if (!context.WebSockets.IsWebSocketRequest)
-        {
-            context.Response.StatusCode = 400;
-            return;
-        }
-        var socket = await context.WebSockets.AcceptWebSocketAsync();
-        logger.LogInformation($"WebSocket connection opened for stationId: {id}");
-        var receiveBuffer = new byte[1024 * 4];
-        string? previousJson = null;
-        try
-        {
-            while (socket.State == WebSocketState.Open)
-            {
-                var result = await stationRepository.GetStationById(new Station { StationId = id });
-                var currentJson = JsonSerializer.Serialize(result);
-                if (currentJson != previousJson)
-                {
-                    var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
-                    await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-                    previousJson = currentJson;
-                }
-                if (socket.State != WebSocketState.Open)
-                    break;
-                var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
-                if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
-                {
-                    logger.LogInformation($"WebSocket connection closed by client for stationId: {id}");
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
-                    break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, $"WebSocket error for stationId: {id}");
-        }
-    }
-
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("administrator")]
     [ProducesResponseType(500)]
     [ProducesResponseType(typeof(List<UserResponse>), 200)]
     [Produces("application/json")]
@@ -752,6 +563,7 @@ public static class PublicController
 
     [Authorize]
     [Permission("administrator")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(500)]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
@@ -815,6 +627,7 @@ public static class PublicController
 
     [Authorize]
     [Permission("administrator")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(500)]
     [ProducesResponseType(200)]
     [ProducesResponseType(typeof(string), 404)]
@@ -851,6 +664,7 @@ public static class PublicController
     }
     [Authorize]
     [Permission("administrator")]
+    [RequireAntiforgeryToken]
     [ProducesResponseType(500)]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
@@ -892,7 +706,8 @@ public static class PublicController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(LogResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -916,7 +731,8 @@ public static class PublicController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(LogResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(

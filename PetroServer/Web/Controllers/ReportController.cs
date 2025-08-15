@@ -65,8 +65,8 @@ public static class ReportController
     }
 
     //======================== HTTP =============================
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -87,8 +87,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
-    // [Permission("administrator")]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<LogResponse>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -103,7 +103,8 @@ public static class ReportController
         );
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -121,7 +122,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -139,7 +141,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -157,7 +160,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -175,7 +179,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -193,7 +198,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -211,7 +217,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueStationByYearResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -229,7 +236,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueStationByMonthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -248,7 +256,8 @@ public static class ReportController
     }
 
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByDateResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -266,7 +275,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumStationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -284,7 +294,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<SumRevenueByDateResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -304,7 +315,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<SumRevenueByNameResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -324,7 +336,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -344,7 +357,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<SumRevenueByTypeResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -364,7 +378,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<RevenueResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -384,7 +399,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<SumStationResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -404,7 +420,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report total stations",
@@ -423,7 +440,8 @@ public static class ReportController
         }
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -441,7 +459,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -459,7 +478,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -477,7 +497,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -495,7 +516,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -513,7 +535,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -531,7 +554,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByTypeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -549,7 +573,8 @@ public static class ReportController
         return TypedResults.Ok(result);
     }
 
-    // [Authorize]
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(SumRevenueByNameResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -572,7 +597,14 @@ public static class ReportController
        Summary = "Obtain web socket for devices",
        Description = "Return a web socket for the device with corresponding id for real-time data streaming."
    )]
-    public static async Task GetWS(HttpContext context, [FromRoute] string device, [FromRoute] int id, [FromQuery] string token, [FromServices] IWebSocketHubService hubService, ILogger<object> logger, IJWTService jWTService)
+    public static async Task GetWS(
+        HttpContext context, 
+        [FromRoute] string device, 
+        [FromRoute] int id, 
+        [FromQuery] string token, 
+        [FromServices] IWebSocketHubService hubService, 
+        [FromServices] ILogger<object> logger, 
+        [FromServices] IJWTService jWTService)
     {
         if (context.WebSockets.IsWebSocketRequest && jWTService.Verify(token))
         {
@@ -613,8 +645,13 @@ public static class ReportController
         Summary = "Obtain web socket for logs by station ID.",
         Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
     )]
-    public static async Task GetPageLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository,
-        [FromServices] ILogger<object> logger, [FromQuery]int page = 1, [FromQuery] int pageSize = 50)
+    public static async Task GetPageLogByStationWS(
+        HttpContext context, 
+        [FromRoute] int id, 
+        [FromServices] ILogRepository logRepository,
+        [FromServices] ILogger<object> logger, 
+        [FromQuery]int page = 1, 
+        [FromQuery] int pageSize = 50)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
