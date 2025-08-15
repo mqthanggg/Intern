@@ -168,7 +168,7 @@ export class HomeComponent implements OnInit {
     });
 
     // ✅ Load sum revenue 
-    this.revenuesocket = webSocket<totalrevenue>(environment.wsServerURI + '/ws/revenue');
+    this.revenuesocket = webSocket<totalrevenue>(environment.wsServerURI + `/ws/revenue?token=${localStorage.getItem('jwt')}`);
     this.revenuesocket.subscribe({
       next: (data: totalrevenue) => {
         this.revenueData = {
@@ -184,7 +184,7 @@ export class HomeComponent implements OnInit {
     })
 
     // ✅ Load sum station
-    this.stationsocket = new WebSocket(environment.wsServerURI + '/ws/station');
+    this.stationsocket = new WebSocket(environment.wsServerURI + `/ws/station?token=${localStorage.getItem('jwt')}`);
     this.stationsocket.onopen = () => console.log('Station Websocket connected');
     this.stationsocket.onmessage = (event) => {
       const SumStation = JSON.parse(event.data);
@@ -239,7 +239,7 @@ export class HomeComponent implements OnInit {
 
     // ✅ Load chart line sum revenue name
     const defaultColors = ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350', '#AB47BC', '#FFEB3B', '#26C6DA', '#8D6E63'];
-    this.linecharsocket = webSocket<totalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday`);
+    this.linecharsocket = webSocket<totalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday?token=${localStorage.getItem('jwt')}`);
     this.linecharsocket.subscribe({
       next: res => {
         this.totalDate = res
@@ -288,7 +288,7 @@ export class HomeComponent implements OnInit {
     })
 
     // ✅ Load chart bar y sum revenue by type
-    this.barycharsocket = webSocket<totalLogType[]>(environment.wsServerURI + `/ws/sumrenuetype`);
+    this.barycharsocket = webSocket<totalLogType[]>(environment.wsServerURI + `/ws/sumrenuetype?token=${localStorage.getItem('jwt')}`);
     this.barycharsocket.subscribe({
       next: res => {
         this.totalLog = res
