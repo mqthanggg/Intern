@@ -35,6 +35,23 @@ CREATE SCHEMA petro_application;
 
 SET search_path TO petro_application, public;
 
+CREATE TABLE IF NOT EXISTS petro_application.shift
+(
+    shift_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    shift_type integer NOT NULL,
+    CHECK (shift_type IN (1,2,3)),
+    start_time time without time zone NOT NULL,
+    end_time time without time zone NOT NULL,
+    created_by character varying(255),
+    created_date timestamp(0) with time zone DEFAULT now(),
+    last_modified_by character varying(255),
+    last_modified_date timestamp(0) with time zone DEFAULT now(),
+    CONSTRAINT shift_pkey PRIMARY KEY (shift_id)
+);
+
+COMMENT ON TABLE petro_application.shift
+    IS 'for shiff''s information. shift_type: 1 -> sang, 2 -> trua, 3 -> toi';
+
 CREATE TABLE IF NOT EXISTS petro_application.dispenser
 (
     dispenser_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
@@ -411,6 +428,11 @@ VALUES
 (5, 3, 3000, 22800, 68400000, 'admin', 'admin'),
 (5, 1, 2500, 21000, 52500000, 'admin', 'admin');
 
+INSERT INTO petro_application.shift (shift_type, start_time, end_time, created_by, last_modified_by) 
+VALUES 
+(1, '06:00:00', '14:00:00','admin', 'admin'),
+(2, '14:00:00', '22:00:00','admin', 'admin'),
+(3, '22:00:00', '06:00:00','admin', 'admin');
 
 DO $$ 
 BEGIN 
