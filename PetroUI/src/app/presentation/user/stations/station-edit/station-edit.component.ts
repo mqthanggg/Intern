@@ -34,7 +34,7 @@ export class StationEditComponent implements OnInit {
   }
   formSubmit(){
     this.isUpdateLoading = true
-    this.http.put(`${environment.serverURI}/station/${this.stationId}`,this.stationForm.getRawValue(),{
+    this.http.put(`${environment.serverURI}/station/${this.stationId}?token=${localStorage.getItem('jwt')}`,this.stationForm.getRawValue(),{
       observe: 'response',
       withCredentials: true
     }).pipe(

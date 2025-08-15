@@ -197,6 +197,8 @@ public static class PublicController
         );
     }
 
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(List<JsonWebKey>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -212,6 +214,8 @@ public static class PublicController
       );
     }
 
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(typeof(LoginResponse), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -297,6 +301,7 @@ public static class PublicController
             return TypedResults.NotFound();
         }
     }
+
     [Authorize]
     [Permission("user")]
     [RequireAntiforgeryToken]
@@ -399,7 +404,9 @@ public static class PublicController
             return Results.NotFound();
         return TypedResults.Ok(res);
     }
-
+    
+    [Authorize]
+    [Permission("administrator")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
@@ -456,8 +463,10 @@ public static class PublicController
             }
             return TypedResults.InternalServerError();
         }
-
     }
+
+    [Authorize]
+    [Permission("user")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -510,7 +519,7 @@ public static class PublicController
             return TypedResults.InternalServerError();
         }
     }
-
+    
     [Authorize]
     [Permission("administrator")]
     [ProducesResponseType(500)]

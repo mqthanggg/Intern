@@ -1,15 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { WebSocketSubject } from 'rxjs/webSocket';
 import { NgChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
-import { FuelRecord, LogFilterRecord, LogRecord, PagedResult, StationRecord } from './station-log-record';
+import { FuelRecord, LogRecord, PagedResult, StationRecord } from './station-log-record';
 import { TitleService } from '../../../../infrastructure/services/title.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxPaginationModule } from "ngx-pagination";
-import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-report-station-chart',
@@ -55,7 +53,7 @@ export class StationLogComponent implements OnChanges {
     dislist: StationRecord[] = [];
     dispenserName: string[] = [];
     loadLogsByDispenserName() {
-        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`, this.options)
+        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}?token=${localStorage.getItem('jwt')}`, this.options)
             .subscribe(res => {
                 this.dislist = res.body ?? [];
                 this.dispenserName = this.dislist.map(d => d.name);
@@ -66,7 +64,7 @@ export class StationLogComponent implements OnChanges {
     fuelList: FuelRecord[] = [];
     fuelNames: string[] = [];
     loadLogsByFuelName() {
-        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`, this.options)
+        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels?token=${localStorage.getItem('jwt')}`, this.options)
             .subscribe(res => {
                 this.fuelList = res.body ?? [];
                 this.fuelNames = this.fuelList.map(d => d.shortName);
@@ -113,9 +111,9 @@ export class StationLogComponent implements OnChanges {
         };
         let apiUrl: string;
         if (this.startDate && this.endDate) {
-            apiUrl = environment.serverURI + `/get/fulltime/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
+            apiUrl = environment.serverURI + `/get/fulltime/filter/${this.id}?page=${page}&pageSize=${this.pageSize}?token=${localStorage.getItem('jwt')}`;
         } else {
-            apiUrl = environment.serverURI + `/get/full/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
+            apiUrl = environment.serverURI + `/get/full/filter/${this.id}?page=${page}&pageSize=${this.pageSize}?token=${localStorage.getItem('jwt')}`;
         }
         this.http.post<PagedResult<LogRecord>>(apiUrl, filter, this.options)
             .subscribe({
@@ -141,7 +139,7 @@ export class StationLogComponent implements OnChanges {
             const page = +params.get('page')!;
             this.loadLogsByFullFilter(page);
         });
-        this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
+        this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}?token=${localStorage.getItem('jwt')}`, this.options).subscribe(
             {
                 next: (res) => {
                     console.log("data: ", res);

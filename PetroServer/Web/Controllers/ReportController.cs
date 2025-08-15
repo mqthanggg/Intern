@@ -649,11 +649,13 @@ public static class ReportController
         HttpContext context, 
         [FromRoute] int id, 
         [FromServices] ILogRepository logRepository,
-        [FromServices] ILogger<object> logger, 
-        [FromQuery]int page = 1, 
+        [FromServices] ILogger<object> logger,
+        [FromQuery] string token,  
+        [FromServices] IJWTService jWTService,
+        [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 50)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -697,9 +699,15 @@ public static class ReportController
         Summary = "Obtain web socket for logs by station ID.",
         Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
     )]
-    public static async Task GetFullLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository, [FromServices] ILogger<object> logger)
+    public static async Task GetFullLogByStationWS(
+        HttpContext context,
+        [FromRoute] int id,
+        [FromServices] ILogRepository logRepository,
+        [FromServices] ILogger<object> logger,
+        [FromServices] IJWTService jWTService,        
+        [FromQuery] string token)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -743,9 +751,15 @@ public static class ReportController
         Summary = "Obtain web socket for limit logs by station ID.",
         Description = "Return a web socket for a list of limit logs that are related to the dispensers belong to the given station."
     )]
-    public static async Task GetLogByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository logRepository, [FromServices] ILogger<object> logger)
+    public static async Task GetLogByStationWS(
+        HttpContext context,
+        [FromRoute] int id,
+        [FromQuery] string token, 
+         [FromServices] IJWTService jWTService,
+        [FromServices] ILogRepository logRepository,
+        [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -789,10 +803,16 @@ public static class ReportController
         Summary = "Obtain web socket for logs by station ID.",
         Description = "Return a web socket for a list of logs that are related to the dispensers belong to the given station."
     )]
-    public static async Task GetByStationWS(HttpContext context, [FromRoute] int id, [FromServices] ILogRepository tanlRepository, [FromServices] ILogger<object> logger)
+    public static async Task GetByStationWS(
+        HttpContext context,
+        [FromRoute] int id,
+        [FromQuery] string token,
+        [FromServices] IJWTService jWTService,
+        [FromServices] ILogRepository tanlRepository,
+        [FromServices] ILogger<object> logger)
     {
         logger.LogInformation($"WebSocket text");
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -836,10 +856,10 @@ public static class ReportController
          Summary = "Obtain web socket for total name get year",
          Description = "Return a web socket for total revenue statistics get year by name"
     )]
-    public static async Task GetSumRevenuegetYearByNameWS(HttpContext context, [FromRoute] int id,
-         [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+    public static async Task GetSumRevenuegetYearByNameWS(HttpContext context, [FromRoute] int id,[FromQuery] string token, 
+        [FromServices] IJWTService jWTService, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -883,9 +903,9 @@ public static class ReportController
         Description = "Return a web socket for total revenue statistics get logtype by name"
      )]
     public static async Task GetSumRevenuegetyearByTypeWS(HttpContext context, [FromRoute] int id, [FromRoute] int year,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -929,9 +949,9 @@ public static class ReportController
         Description = "Return a web socket for total revenue statistics get month by name"
     )]
     public static async Task GetSumRevenuegetMonthByNameWS(HttpContext context, [FromRoute] int id, [FromRoute] int month,
-         [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+        [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromRoute] int year, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -975,9 +995,9 @@ public static class ReportController
         Description = "Return a web socket for total revenue statistics get logtype by month"
     )]
     public static async Task GetSumRevenuegetMonthByTypeWS(HttpContext context, [FromRoute] int id, [FromRoute] int month, [FromRoute] int year,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1021,9 +1041,9 @@ public static class ReportController
          Description = "Return a web socket for total revenue statistics get day by name"
      )]
     public static async Task GetSumRevenuegetDayByNameWS(HttpContext context, [FromRoute] int id, [FromRoute] DateTime date,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1085,9 +1105,9 @@ public static class ReportController
          Description = "Return a web socket for total revenue statistics get logtype by name"
      )]
     public static async Task GetSumRevenuegetDayByTypeWS(HttpContext context, [FromRoute] int id, [FromRoute] DateTime date,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1131,9 +1151,9 @@ public static class ReportController
         Description = "Return a web socket for total revenue for each station, such as liters, revenue, import, profit"
     )]
     public static async Task GetSumRevenueByStationWS(HttpContext context, [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1176,10 +1196,10 @@ public static class ReportController
         Summary = "Obtain web socket for total station by day",
         Description = "Return a web socket for total station of each stations by day in the system."
     )]
-    public static async Task GetSumRevenueByStationDayWS(HttpContext context, [FromRoute] int id,
+    public static async Task GetSumRevenueByStationDayWS(HttpContext context, [FromRoute] int id, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1223,9 +1243,9 @@ public static class ReportController
         Description = "Return a web socket for total station of each stations by month in the system."
     )]
     public static async Task GetSumRevenueByStationMonthWS(HttpContext context, [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
+       [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1268,10 +1288,10 @@ public static class ReportController
       Summary = "Obtain web socket for total station by year",
       Description = "Return a web socket for total station of each stations by year in the system."
     )]
-    public static async Task GetSumRevenueByStationYearWS(HttpContext context, [FromRoute] int id,
+    public static async Task GetSumRevenueByStationYearWS(HttpContext context, [FromRoute] int id, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1314,9 +1334,9 @@ public static class ReportController
        Summary = "Obtain web socket for report revenue with year of each station",
        Description = "Return a web socket for report total of revenue in each station by year, such as liters, revenue, import, profit"
    )]
-    public static async Task GetSumRevenueWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetSumRevenueWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository, [FromQuery] string token,  [FromServices] IJWTService jWTService)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1357,9 +1377,9 @@ public static class ReportController
         Summary = "Obtain web socket for total stations",
         Description = "Return a web socket for total the number of stations for the current in table station"
     )]
-    public static async Task GetTotalRevenueStationWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueStationWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository, [FromQuery] string token,  [FromServices] IJWTService jWTService)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1400,9 +1420,9 @@ public static class ReportController
         Summary = "Obtain web socket for total stations",
         Description = "Return a web socket for total the number of stations for the current in table station"
     )]
-    public static async Task GetSumStationWS(HttpContext context, [FromServices] IStationRepository stationRepository)
+    public static async Task GetSumStationWS(HttpContext context, [FromServices] IStationRepository stationRepository, [FromQuery] string token,  [FromServices] IJWTService jWTService)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1443,7 +1463,7 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by type",
         Description = "Return a web socket for total of revenue in 7 days by type, such as Ban le, Cong no, Khuyen mai, Tra truoc"
     )]
-    public static async Task GetTotalRevenueByType7dayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueByType7dayWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1455,7 +1475,7 @@ public static class ReportController
         string? previousJson = null;
         try
         {
-            while (socket.State == WebSocketState.Open)
+            while (socket.State == WebSocketState.Open && !jWTService.Verify(token))
             {
                 var result = await revenueRepository.GetTotalRevenueByType7dayAsync();
                 var currentJson = JsonSerializer.Serialize(result);
@@ -1486,9 +1506,9 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by name",
         Description = "Return a web socket for total of revenue by name"
     )]
-    public static async Task GetTotalRevenueByNameWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueByNameWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1529,9 +1549,9 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by type",
         Description = "Return a web socket for total of revenue by type"
     )]
-    public static async Task GetTotalRevenueByTypeWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueByTypeWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1572,7 +1592,7 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by day",
         Description = "Return a web socket for total of revenue by day"
     )]
-    public static async Task GetTotalRevenueDayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueDayWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -1594,7 +1614,7 @@ public static class ReportController
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                     previousJson = currentJson;
                 }
-                if (socket.State != WebSocketState.Open)
+                if (socket.State != WebSocketState.Open && !jWTService.Verify(token))
                     break;
                 var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
@@ -1615,7 +1635,7 @@ public static class ReportController
         Summary = "Obtain web socket for total type for shift",
         Description = "Return a web socket for total revenue statistics for the current shift by type"
     )]
-    public static async Task GetSumRevenueShiftByTypeWS(HttpContext context,
+    public static async Task GetSumRevenueShiftByTypeWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,
         [FromServices] ILogger<object> logger)
@@ -1641,7 +1661,7 @@ public static class ReportController
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                     previousJson = currentJson;
                 }
-                if (socket.State != WebSocketState.Open)
+                if (socket.State != WebSocketState.Open && !jWTService.Verify(token))
                     break;
                 var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
@@ -1663,10 +1683,10 @@ public static class ReportController
         Summary = "Obtain web socket for total name for shift",
         Description = "Return a web socket for total revenue statistics for the current shift by name"
     )]
-    public static async Task GetSumRevenueShiftByNameWS(HttpContext context, [FromRoute] int id,
+    public static async Task GetSumRevenueShiftByNameWS(HttpContext context, [FromRoute] int id, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1709,12 +1729,12 @@ public static class ReportController
          Summary = "Obtain web socket for total name for day",
          Description = "Return a web socket for total revenue statistics for the current day by name"
      )]
-    public static async Task GetSumRevenueDayByNameWS(HttpContext context,
+    public static async Task GetSumRevenueDayByNameWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,
         [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1757,12 +1777,12 @@ public static class ReportController
        Summary = "Obtain web socket for total type for day",
        Description = "Return a web socket for total revenue statistics for the current day by type"
    )]
-    public static async Task GetSumRevenueDayByTypeWS(HttpContext context,
+    public static async Task GetSumRevenueDayByTypeWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
        [FromRoute] int id,
        [FromServices] IRevenueRepository revenueRepository,
        [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1805,12 +1825,12 @@ public static class ReportController
         Summary = "Obtain web socket for total name for month",
         Description = "Return a web socket for total revenue statistics for the current month by name"
     )]
-    public static async Task GetSumRevenueMonthByNameWS(HttpContext context,
+    public static async Task GetSumRevenueMonthByNameWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
        [FromRoute] int id,
        [FromServices] IRevenueRepository revenueRepository,
        [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1854,11 +1874,11 @@ public static class ReportController
        Description = "Return a web socket for total revenue statistics for the current month by type"
    )]
     public static async Task GetSumRevenueMonthByTypeWS(HttpContext context,
-        [FromRoute] int id,
+        [FromRoute] int id, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromServices] IRevenueRepository revenueRepository,
         [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1901,12 +1921,12 @@ public static class ReportController
         Summary = "Obtain web socket for total name for year",
         Description = "Return a web socket for total revenue statistics for the current year by name"
     )]
-    public static async Task GetSumRevenueYearByNameWS(HttpContext context,
+    public static async Task GetSumRevenueYearByNameWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
        [FromRoute] int id,
        [FromServices] IRevenueRepository revenueRepository,
        [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1949,7 +1969,7 @@ public static class ReportController
            Summary = "Obtain web socket for total type for year",
            Description = "Return a web socket for total revenue statistics for the current year by type"
        )]
-    public static async Task GetSumRevenueYearByTypeWS(HttpContext context,
+    public static async Task GetSumRevenueYearByTypeWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
         [FromRoute] int id,
         [FromServices] IRevenueRepository revenueRepository,
         [FromServices] ILogger<object> logger)
@@ -1975,7 +1995,7 @@ public static class ReportController
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                     previousJson = currentJson;
                 }
-                if (socket.State != WebSocketState.Open)
+                if (socket.State != WebSocketState.Open && !jWTService.Verify(token))
                     break;
                 try
                 {
