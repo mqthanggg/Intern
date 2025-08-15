@@ -1,6 +1,4 @@
-# version: "2.4"
 services:
- # database
   postgres-common:
     &postgres-common
     image: postgres:17
@@ -323,7 +321,40 @@ services:
         condition: service_started
       mqtt-handler:
         condition: service_healthy
- # UI
+  yarp:
+    build: 
+      context: ./YarpGateway
+      dockerfile: Dockerfile
+    networks:
+      - petro-network
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://0.0.0.0:7149;http://0.0.0.0:5170"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+    volumes:
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5170/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5170:5170"
+      - "7149:7149"
+    depends_on:
+      haproxy:
+        condition: service_started
+      mqtt:
+        condition: service_started
+      mqtt-handler:
+        condition: service_healthy
+      server1:
+        condition: service_healthy
+      server2:
+        condition: service_healthy
+      server3:
+        condition: service_healthy
   fe:
     build:
       context: PetroUI
@@ -334,8 +365,9 @@ services:
       - petro-network
     restart: no
     depends_on:
-      server1:
+      yarp:
         condition: service_healthy
+
 networks:
   petro-network:
     driver: bridge
