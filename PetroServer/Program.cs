@@ -20,7 +20,6 @@ var healthCheckService = app.Services.GetRequiredService<HealthCheckService>();
 var report = await healthCheckService.CheckHealthAsync();
 
 if (report.Status == HealthStatus.Healthy){
-    
     app.UseMiddlewares();
     if (app.Environment.IsDevelopment()){
         IdentityModelEventSource.ShowPII = true; 

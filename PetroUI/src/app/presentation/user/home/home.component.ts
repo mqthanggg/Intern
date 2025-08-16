@@ -137,7 +137,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.showLogs = true;
-    this.titleService.updateTitle("Home")
+    setTimeout(() => {
+      this.titleService.updateTitle("Home")
+    },0)
     this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
     this.barsocket.subscribe({
       next: (res) => {
