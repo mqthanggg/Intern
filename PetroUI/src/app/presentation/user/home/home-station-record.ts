@@ -18,10 +18,11 @@ export interface WStotalFuelName {
 
 //==================================
 export interface totalrevenue7day {
-    Date: string;
+    Date: string,
     StationId: number,
-    StationName: string;
-    TotalAmount: number;
+    StationName: string,
+    TotalRevenue: number,
+    totalLiters: number
 }
 
 //==================================

@@ -12,8 +12,8 @@ public static class ReportController
         app.MapGet("month/name/{id}", GetSumRevenueMonthByName);
         app.MapGet("year/type/{id}", GetSumRevenueYearByType);
         app.MapGet("year/name/{id}", GetSumRevenueYearByName);
-        app.MapGet("sumstation", GetSumStation);
-        app.MapGet("sumrevenuestation", GetTotalRevenueStation);
+        app.MapGet("sumstation", GetSumStation);   
+        app.MapGet("sumrevenuestation", GetTotalRevenueStation); 
         app.MapGet("sumrevenue", GetSumRevenue);
         app.MapGet("sumrevenuetype7day", GetTotalRevenueByType7day);
         app.MapGet("sumrevenuebyname", GetTotalRevenueFullByName);

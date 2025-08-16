@@ -13,12 +13,12 @@ import { TitleService } from '../../../infrastructure/services/title.service';
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
-  imports: [ CommonModule, CurrencyPipe, NgChartsModule ]
+  imports: [CommonModule, CurrencyPipe, NgChartsModule]
 })
 
 export class HomeComponent implements OnInit {
   constructor(
-    private router: Router,private titleService: TitleService
+    private router: Router, private titleService: TitleService
   ) { }
 
   stationData: any = {};
@@ -138,7 +138,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.showLogs = true;
     this.titleService.updateTitle("Home")
-    this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
+    this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue?token=${localStorage.getItem('jwt')}`);
     this.barsocket.subscribe({
       next: (res) => {
         console.log('bar Chart date Websocket connected');
@@ -148,7 +148,7 @@ export class HomeComponent implements OnInit {
         this.station = filtered.map(item => item.StationName);
         this.revenue = filtered.map(item => item.TotalRevenue);
         this.profit = filtered.map(item => item.TotalProfit);
-        
+
         this.barChartData = {
           labels: this.station,
           datasets: [
@@ -239,30 +239,39 @@ export class HomeComponent implements OnInit {
 
     // ✅ Load chart line sum revenue name
     const defaultColors = ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350', '#AB47BC', '#FFEB3B', '#26C6DA', '#8D6E63'];
+
     this.linecharsocket = webSocket<totalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday?token=${localStorage.getItem('jwt')}`);
     this.linecharsocket.subscribe({
       next: res => {
-        this.totalDate = res
+        this.totalDate = res;
         console.log('Line Chart date Websocket connected');
-        console.log("✔️ line data: ", res)
+        console.log("✔️ line data: ", res);
+
         const dateSet = new Set<string>();
         this.totalDate.forEach(item => dateSet.add(item.Date));
         const sortedDates = Array.from(dateSet).sort();
         this.DataLable = sortedDates.map(date =>
           new Date(date).toLocaleDateString('vi-VN')
         );
-        const stationMap = new Map<string, { [date: string]: number }>();
+        console.log("Data lable", this.DataLable);
+        //===============
+        const stationMap = new Map<string, { [DataLable: string]: number }>();
         this.totalDate.forEach(item => {
+          const normalizedDate = new Date(item.Date).toISOString().split("T")[0];
           if (!stationMap.has(item.StationName)) {
             stationMap.set(item.StationName, {});
           }
-          stationMap.get(item.StationName)![item.Date] = item.TotalAmount;
+          stationMap.get(item.StationName)![normalizedDate] = item.TotalRevenue;
         });
+
+        console.log("==> stationMap: ", stationMap);
+        console.log("==> total date: ", this.totalDate);
         const datasets = Array.from(stationMap.entries()).map(([station, values], index) => {
           const data = sortedDates.map(date => {
             const value = values[date];
-            return value === 0 || value === undefined ? null : value;
+            return value === undefined ? null : value;
           });
+          // console.log("data", data);
           return {
             label: station,
             data,
@@ -276,16 +285,16 @@ export class HomeComponent implements OnInit {
             spanGaps: true
           };
         });
+        console.log("labels:", this.DataLable);
+        console.log("datasets:", datasets);
         this.lineChartData = {
           labels: this.DataLable,
-          datasets
+          datasets: datasets
         };
       },
       complete: () => console.log("WebSocket connection closed"),
-      error: err => {
-        console.error(err);
-      }
-    })
+      error: err => { console.error(err); }
+    });
 
     // ✅ Load chart bar y sum revenue by type
     this.barycharsocket = webSocket<totalLogType[]>(environment.wsServerURI + `/ws/sumrenuetype?token=${localStorage.getItem('jwt')}`);

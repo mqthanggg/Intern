@@ -2,24 +2,28 @@ import { Routes } from '@angular/router';
 import { userGuard } from './infrastructure/guards/user-guard.guard';
 import { administratorGuard } from './infrastructure/guards/administrator-guard.guard';
 import { autoRedirection } from './infrastructure/services/auto-redirection.service';
+import { UserComponent } from './presentation/user/user.component';
+import { ErrorComponent } from './presentation/error/error.component';
+import { LoginComponent } from './presentation/login/login.component';
+import { AdministratorComponent } from './presentation/administrator/administrator.component';
 
 export const routes: Routes = [
     {
         path: "login",
         title: "Login",
-        loadComponent: () => import('./presentation/login/login.component').then(m => m.LoginComponent)
+        component: LoginComponent
     },
     {
         path: "error",
         title: "Error",
-        loadComponent: () => import('./presentation/error/error.component').then(m => m.ErrorComponent)  
+        component: ErrorComponent
     },
     {
         path: "user",
         title: "User",
         canActivateChild: [userGuard],
         canActivate: [userGuard],
-        loadComponent: ()=>import('./presentation/user/user.component').then(m => m.UserComponent),
+        component: UserComponent,
         loadChildren: () => import('./presentation/user/user-routing-module/user-routing-module.module').then(m=>m.UserRoutingModule)
     },
     {
@@ -27,7 +31,7 @@ export const routes: Routes = [
         title: "Administrator",
         canActivateChild: [administratorGuard],
         canActivate: [administratorGuard],
-        loadComponent: () => import('./presentation/administrator/administrator.component').then(m => m.AdministratorComponent),
+        component: AdministratorComponent,
         loadChildren: () => import('./presentation/administrator/administrator-routing/administrator-routing.module').then(m=>m.AdministratorRoutingModule)
     },
     {
