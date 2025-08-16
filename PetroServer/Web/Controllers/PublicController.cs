@@ -197,8 +197,7 @@ public static class PublicController
         );
     }
 
-    [Authorize]
-    [Permission("user")]
+
     [ProducesResponseType(typeof(List<JsonWebKey>), 200)]
     [Produces("application/json")]
     [SwaggerOperation(
@@ -214,8 +213,6 @@ public static class PublicController
       );
     }
 
-    [Authorize]
-    [Permission("user")]
     [ProducesResponseType(typeof(LoginResponse), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]

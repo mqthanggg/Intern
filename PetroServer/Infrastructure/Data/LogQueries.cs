@@ -40,12 +40,12 @@ public static class LogQuery
             @FuelName,
             @TotalLiters,
             @TotalAmount,
-            LOCALTIMESTAMP(0),
+            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00',
             @LogType,
             @CreatedBy,
-            LOCALTIMESTAMP(0),
+            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00',
             @LastModifiedBy,
-            LOCALTIMESTAMP(0)
+            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00'
         )
     ";
     public static readonly string UpdateLog = $@"
