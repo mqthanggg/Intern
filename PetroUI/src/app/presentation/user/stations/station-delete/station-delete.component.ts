@@ -25,7 +25,7 @@ export class StationDeleteComponent implements OnInit{
   }
   deleteStation(){
     this.isDeleting = true
-    this.http.delete(`${environment.serverURI}/station/${this.stationId}?token=${localStorage.getItem('jwt')}`,{
+    this.http.delete(`${environment.serverURI}/station/${this.stationId}`,{
       observe: 'response',
       withCredentials: true
     }).pipe(

@@ -59,3 +59,13 @@ public class SumRevenueStationByYearResponse : SumStationResponse
 {
     public required string Year { get; set; } = "";
 }
+
+public class SumRevenueStation7DayResponse
+{
+    public required string Date { get; set; } = "";
+    public required int StationId { get; set; } = -1;
+    public required string StationName { get; set; } = "";
+    public decimal? TotalRevenue { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
+     
+}

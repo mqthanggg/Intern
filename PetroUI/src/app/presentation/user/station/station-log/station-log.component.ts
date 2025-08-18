@@ -53,7 +53,7 @@ export class StationLogComponent implements OnChanges {
     dislist: StationRecord[] = [];
     dispenserName: string[] = [];
     loadLogsByDispenserName() {
-        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}?token=${localStorage.getItem('jwt')}`, this.options)
+        this.http.get<StationRecord[]>(`${environment.serverURI}/dispenser/station/${this.id}`, this.options)
             .subscribe(res => {
                 this.dislist = res.body ?? [];
                 this.dispenserName = this.dislist.map(d => d.name);
@@ -64,7 +64,7 @@ export class StationLogComponent implements OnChanges {
     fuelList: FuelRecord[] = [];
     fuelNames: string[] = [];
     loadLogsByFuelName() {
-        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels?token=${localStorage.getItem('jwt')}`, this.options)
+        this.http.get<FuelRecord[]>(`${environment.serverURI}/fuels`, this.options)
             .subscribe(res => {
                 this.fuelList = res.body ?? [];
                 this.fuelNames = this.fuelList.map(d => d.shortName);
@@ -111,9 +111,9 @@ export class StationLogComponent implements OnChanges {
         };
         let apiUrl: string;
         if (this.startDate && this.endDate) {
-            apiUrl = environment.serverURI + `/get/fulltime/filter/${this.id}?page=${page}&pageSize=${this.pageSize}?token=${localStorage.getItem('jwt')}`;
+            apiUrl = environment.serverURI + `/get/fulltime/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
         } else {
-            apiUrl = environment.serverURI + `/get/full/filter/${this.id}?page=${page}&pageSize=${this.pageSize}?token=${localStorage.getItem('jwt')}`;
+            apiUrl = environment.serverURI + `/get/full/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
         }
         this.http.post<PagedResult<LogRecord>>(apiUrl, filter, this.options)
             .subscribe({
@@ -139,7 +139,7 @@ export class StationLogComponent implements OnChanges {
             const page = +params.get('page')!;
             this.loadLogsByFullFilter(page);
         });
-        this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}?token=${localStorage.getItem('jwt')}`, this.options).subscribe(
+        this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
             {
                 next: (res) => {
                     console.log("data: ", res);

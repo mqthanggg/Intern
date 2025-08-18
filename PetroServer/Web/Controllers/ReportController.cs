@@ -64,6 +64,27 @@ public static class ReportController
         return app;
     }
 
+    // [Authorize]
+    // [Permission("user")]
+    // [ProducesResponseType(typeof(List<SumRevenueStation7Day>), 200)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // [SwaggerOperation(
+    //     Summary = "Report total of revenue by day",
+    //     Description = "Report total of revenue by day"
+    // )]
+    // public static async Task<IResult> GetTotalRevenue7Day(IRevenueRepository revenueRepository)
+    // {
+    //     try
+    //     {
+    //         var res = await revenueRepository.GetRevenue7dayAsync();
+    //         return TypedResults.Ok(res);
+    //     }
+    //     catch (PostgresException)
+    //     {
+    //         return TypedResults.InternalServerError();
+    //     }
+    // }
+
     //======================== HTTP =============================
     [Authorize]
     [Permission("user")]
@@ -296,7 +317,7 @@ public static class ReportController
 
     [Authorize]
     [Permission("user")]
-    [ProducesResponseType(typeof(List<SumRevenueByDateResponse>), 200)]
+    [ProducesResponseType(typeof(List<SumRevenueStation7DayResponse>), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Report total of revenue by day",
@@ -309,8 +330,9 @@ public static class ReportController
             var res = await revenueRepository.GetTotalRevenueByDayAsync();
             return TypedResults.Ok(res);
         }
-        catch (PostgresException)
+        catch (PostgresException ex)
         {
+            Console.WriteLine(ex);
             return TypedResults.InternalServerError();
         }
     }
@@ -1592,7 +1614,8 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by day",
         Description = "Return a web socket for total of revenue by day"
     )]
-    public static async Task GetTotalRevenueDayWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenueDayWS(HttpContext context, [FromQuery] string token,
+        [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {

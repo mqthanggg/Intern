@@ -65,3 +65,12 @@ public class RevenueByType : Entity
     public decimal? TotalLiters { get; set; } = null;
 
 }
+public class SumRevenueStation7Day : Entity
+{
+    public required string Date { get; set; } = "";
+    public required int StationId { get; set; } = -1;
+    public required string StationName { get; set; } = "";
+    public decimal? TotalRevenue { get; set; } = -1;
+    public decimal? TotalLiters { get; set; } = -1;
+     
+}
