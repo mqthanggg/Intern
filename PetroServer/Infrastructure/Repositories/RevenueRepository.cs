@@ -101,11 +101,11 @@ public class RevenueRepository : IRevenueRepository
             return revenue;
         }
     }
-    public async Task<IReadOnlyList<SumRevenueByDateResponse>> GetTotalRevenueByDayAsync()
+    public async Task<IReadOnlyList<SumRevenueStation7DayResponse>> GetTotalRevenueByDayAsync()
     {
         await using (var connection = dbRead.CreateConnection())
         {
-            List<SumRevenueByDateResponse> revenue = (await connection.QueryAsync<SumRevenueByDateResponse>(RevenueQueries.SumRevenueByDay)).ToList();
+            List<SumRevenueStation7DayResponse> revenue = (await connection.QueryAsync<SumRevenueStation7DayResponse>(RevenueQueries.SumRevenueByDay)).ToList();
             return revenue;
         }
     }
@@ -143,7 +143,7 @@ public class RevenueRepository : IRevenueRepository
         }
     }
     //=================================
-     public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNamegetMonthAsync(GetMonthRevenue ren)
+    public async Task<IReadOnlyList<SumRevenueByNameResponse>> GetTotalRevenueByNamegetMonthAsync(GetMonthRevenue ren)
     {
         await using (var connection = dbRead.CreateConnection())
         {
@@ -217,4 +217,5 @@ public class RevenueRepository : IRevenueRepository
             return affectedRows;
         }
     }
+
 }

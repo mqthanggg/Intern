@@ -139,8 +139,8 @@ export class HomeComponent implements OnInit {
     this.showLogs = true;
     setTimeout(() => {
       this.titleService.updateTitle("Home")
-    },0)
-    this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue`);
+    }, 0)
+    this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue?token=${localStorage.getItem('jwt')}`);
     this.barsocket.subscribe({
       next: (res) => {
         console.log('bar Chart date Websocket connected');
@@ -248,16 +248,20 @@ export class HomeComponent implements OnInit {
         this.totalDate = res;
         console.log('Line Chart date Websocket connected');
         console.log("✔️ line data: ", res);
-
         const dateSet = new Set<string>();
-        this.totalDate.forEach(item => dateSet.add(item.Date));
-        const sortedDates = Array.from(dateSet).sort();
-        this.DataLable = sortedDates.map(date =>
-          new Date(date).toLocaleDateString('vi-VN')
-        );
-        console.log("Data lable", this.DataLable);
-        //===============
-        const stationMap = new Map<string, { [DataLable: string]: number }>();
+        this.totalDate.forEach(item => {
+          if (!item.Date) return;
+          const datePart = item.Date.split(' ')[0];
+          const [month, day, year] = datePart.split('/');
+          if (!month || !day || !year) return;
+          const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          dateSet.add(isoString);
+        });
+        const sortedDates = Array.from(dateSet).sort((a, b) => {
+          return new Date(a).getTime() - new Date(b).getTime();
+        });
+        this.DataLable = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
+        const stationMap = new Map<string, { [date: string]: number }>();
         this.totalDate.forEach(item => {
           const normalizedDate = new Date(item.Date).toISOString().split("T")[0];
           if (!stationMap.has(item.StationName)) {
@@ -265,15 +269,11 @@ export class HomeComponent implements OnInit {
           }
           stationMap.get(item.StationName)![normalizedDate] = item.TotalRevenue;
         });
-
-        console.log("==> stationMap: ", stationMap);
-        console.log("==> total date: ", this.totalDate);
         const datasets = Array.from(stationMap.entries()).map(([station, values], index) => {
           const data = sortedDates.map(date => {
             const value = values[date];
             return value === undefined ? null : value;
           });
-          // console.log("data", data);
           return {
             label: station,
             data,
@@ -287,12 +287,12 @@ export class HomeComponent implements OnInit {
             spanGaps: true
           };
         });
-        console.log("labels:", this.DataLable);
-        console.log("datasets:", datasets);
+
         this.lineChartData = {
           labels: this.DataLable,
           datasets: datasets
         };
+
       },
       complete: () => console.log("WebSocket connection closed"),
       error: err => { console.error(err); }

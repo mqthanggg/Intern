@@ -51,7 +51,7 @@ export class ReportMonthComponent implements OnChanges {
         const [mm, yy] = this.month.split("-");
         console.log("Tháng:", mm, "-", yy);
         this.id = this.router.parent?.snapshot.params['id'] ?? '';
-        this.piechartfuelmonthsocket = webSocket<monthrevenuefuel[]>(environment.wsServerURI + `/ws/sumrenuename/getmonth/${this.id}/${mm}/${yy}`);
+        this.piechartfuelmonthsocket = webSocket<monthrevenuefuel[]>(environment.wsServerURI + `/ws/sumrenuename/getmonth/${this.id}/${mm}/${yy}?token=${localStorage.getItem('jwt')}`);
         this.piechartfuelmonthsocket.subscribe({
             next: res => {
                 this.revfuelmonth = res
@@ -80,7 +80,7 @@ export class ReportMonthComponent implements OnChanges {
             }
         })
 
-        this.piecharttypemonthsocket = webSocket<revenuetypemonth[]>(environment.wsServerURI + `/ws/sumrenuetype/getmonth/${this.id}/${mm}/${yy}`);
+        this.piecharttypemonthsocket = webSocket<revenuetypemonth[]>(environment.wsServerURI + `/ws/sumrenuetype/getmonth/${this.id}/${mm}/${yy}?token=${localStorage.getItem('jwt')}`);
         this.piecharttypemonthsocket.subscribe({
             next: res => {
                 this.revtypemonth = res

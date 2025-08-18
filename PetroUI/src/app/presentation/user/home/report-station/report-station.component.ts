@@ -190,7 +190,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
         }
     }
     loadBarChartMonth() {
-        this.revenuemonthsocket = webSocket<revenuestationmonth[]>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}`)
+        this.revenuemonthsocket = webSocket<revenuestationmonth[]>(environment.wsServerURI + `/ws/station/revenuemonth/${this.id}?token=${localStorage.getItem('jwt')}`)
         this.revenuemonthsocket.subscribe({
             next: res => {
                 this.revstationmonth = res

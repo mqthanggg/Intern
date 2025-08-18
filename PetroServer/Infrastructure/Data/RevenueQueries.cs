@@ -91,9 +91,9 @@ public static class RevenueQueries
         FROM petro_application.log l
         JOIN petro_application.dispenser d ON d.dispenser_id = l.dispenser_id
         JOIN petro_application.station s ON s.station_id = d.station_id
-        WHERE l.""time""::date >= CURRENT_DATE - INTERVAL '6 days'
-        GROUP BY DATE(l.""time""), s.name
-        ORDER BY DATE(l.""time""), s.name;
+        WHERE l.""time""::ate >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY DATE(l.""time""), s.name, s.station_id
+        ORDER BY DATE(l.""time""), s.name, s.station_id;
     ";
 
     // Report sum revenue of each stations in the system
