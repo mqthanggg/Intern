@@ -72,8 +72,9 @@ public static class RevenueQueries
     ";
     public static readonly string SumRevenueBytype7day = $@"
         SELECT 
+            station
             log_type AS LogType,
-            SUM(total_amount) AS TotalAmount,
+            SUM(total_amount) AS TotalRevenue,
             SUM(total_liters) AS TotalLiters
         FROM petro_application.log
         WHERE ""time""::date >= CURRENT_DATE - INTERVAL '7 days'
@@ -83,8 +84,9 @@ public static class RevenueQueries
     public static readonly string SumRevenueByDay = $@"
         SELECT 
             DATE(l.""time"") AS Date,
+            s.station_id AS StationId,
             s.name AS StationName,
-            SUM(l.total_amount) AS TotalAmount,
+            SUM(l.total_amount) AS TotalRevenue,
             SUM(l.total_liters) AS TotalLiters
         FROM petro_application.log l
         JOIN petro_application.dispenser d ON d.dispenser_id = l.dispenser_id

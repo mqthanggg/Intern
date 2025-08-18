@@ -10,7 +10,7 @@ services:
       retries: 3
     networks:
       - petro-network
-  
+
   pg-bouncer-common:
     &pg-bouncer-common
     image: edoburu/pgbouncer
