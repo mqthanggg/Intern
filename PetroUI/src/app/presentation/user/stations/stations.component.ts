@@ -22,7 +22,7 @@ export class StationsComponent implements OnInit{
     setTimeout(() => {
       this.isStationLoading = true
       this.titleService.updateTitle("Stations")
-      this.http.get(environment.serverURI + `/stations?token=${localStorage.getItem('jwt')}`,{
+      this.http.get(environment.serverURI + `/stations`,{
         observe: "response",
         withCredentials: true
       }).pipe(

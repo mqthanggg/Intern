@@ -1,6 +1,4 @@
-# version: "2.4"
 services:
- # database
   postgres-common:
     &postgres-common
     image: postgres:17
@@ -26,6 +24,8 @@ services:
       POSTGRES_DB: "Intern"
       POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      TZ: "Asia/Bangkok"
+      PGTZ: "Asia/Bangkok"
     command: |
       postgres 
       -c wal_level=replica 
@@ -52,6 +52,7 @@ services:
       DB_PASSWORD: "admin"
       DB_HOST: "database-primary"
       DB_NAME: "Intern"
+      TZ: "Asia/Bangkok"
     volumes:
       - ./Database/PgBouncer/pgbouncer_primary.ini:/etc/pgbouncer/pgbouncer.ini
       - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
@@ -71,6 +72,8 @@ services:
       PGPORT: 5433
       PGUSER: "replicator"
       PGPASSWORD: "admin123"
+      TZ: "Asia/Bangkok"
+      PGTZ: "Asia/Bangkok"
     command: |
       sh -c "
         echo 'Starting base backup from primary...'
@@ -127,6 +130,7 @@ services:
     environment:
       DB_USER: "replicator"
       DB_PASSWORD: "admin123"
+      TZ: "Asia/Bangkok"
     volumes:
       - ./Database/PgBouncer/pgbouncer_replica.ini:/etc/pgbouncer/pgbouncer.ini
       - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
@@ -136,6 +140,8 @@ services:
     image: haproxy:alpine
     volumes:
       - ./Database/HAProxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    environment:
+      TZ: "Asia/Bangkok"
     ports:
       - "6001:6001"
       - "6002:6002"
@@ -155,8 +161,9 @@ services:
     networks:
       - petro-network
     environment:
+      TZ: "Asia/Bangkok"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
       CLIENT_PFX_PATH: "certs/certificate.pfx"
       CLIENT_PFX_PASSWORD: "admin123"
       MOSQUITTO_USERNAME: "mqthanggg"
@@ -202,9 +209,10 @@ services:
     networks:
       - petro-network
     environment:
+      TZ: "Asia/Bangkok"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
       DEVELOPMENT_AUTHORITY: "http://localhost:5180"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7159"
@@ -245,9 +253,10 @@ services:
     networks:
       - petro-network
     environment:
+      TZ: "Asia/Bangkok"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
       DEVELOPMENT_AUTHORITY: "http://localhost:5181"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7160"
@@ -288,9 +297,10 @@ services:
     networks:
       - petro-network
     environment:
+      TZ: "Asia/Bangkok"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
       DEVELOPMENT_AUTHORITY: "http://localhost:5182"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7161"
@@ -323,7 +333,44 @@ services:
         condition: service_started
       mqtt-handler:
         condition: service_healthy
- # UI
+  yarp:
+    build: 
+      context: ./YarpGateway
+      dockerfile: Dockerfile
+    networks:
+      - petro-network
+    environment:
+      TZ: "Asia/Bangkok"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://0.0.0.0:7149;http://0.0.0.0:5170"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      ReverseProxy__Clusters__cluster1__Destinations__cluster1/destination1__Address: "http://server1:5180"
+      ReverseProxy__Clusters__cluster1__Destinations__cluster1/destination2__Address: "http://server2:5181"
+      ReverseProxy__Clusters__cluster1__Destinations__cluster1/destination3__Address: "http://server3:5182"
+    volumes:
+      - ./PetroServer/certs/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5170/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5170:5170"
+      - "7149:7149"
+    depends_on:
+      haproxy:
+        condition: service_started
+      mqtt:
+        condition: service_started
+      mqtt-handler:
+        condition: service_healthy
+      server1:
+        condition: service_healthy
+      server2:
+        condition: service_healthy
+      server3:
+        condition: service_healthy
   fe:
     build:
       context: PetroUI
@@ -333,9 +380,12 @@ services:
     networks:
       - petro-network
     restart: no
+    environment:
+      TZ: "Asia/Bangkok"
     depends_on:
-      server1:
+      yarp:
         condition: service_healthy
+
 networks:
   petro-network:
     driver: bridge
