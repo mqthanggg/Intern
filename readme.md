@@ -1,3 +1,4 @@
+
 # Gas station management software
 A simple gas station management system designed for monitoring stations and its related devices such as dispensers, tanks.
 ## Hardware (simulator)
@@ -32,6 +33,18 @@ A simple gas station management system designed for monitoring stations and its 
     - Live transaction logs.
     - Shift data visualizations.
 - Interactive dashboard for administrators:
-    - Managing staff's attendance.
     - Managing staff's accounts.
-...
+
+## System architecture
+![Screenshot of the system architecture](./Architecture.png)
+
+-   **Client access**
+    -   Requests pass through a YARP gateway with caching.
+    -   Load is balanced across three business service instances.
+-   **Database**
+    -   Master–replica architecture with failover support.
+    -   PgBouncer and HAProxy manage connections and routing between primary and replica nodes.
+-   **Real-time communication**
+    -   SignalR hub is integrated into the MQTT handler service.
+    -   Devices and simulators publish data through an MQTT broker.
+    -   Data is distributed to the realtime service and client connections.
