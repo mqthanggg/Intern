@@ -462,7 +462,6 @@ public static class PublicController
         }
     }
 
-    [Authorize]
     [Permission("user")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -610,7 +609,7 @@ public static class PublicController
                     {
                         UserId = id,
                         Password = NewHashedPassword,
-                        Padding = NewPadding
+                        Padding = NewPadding,
                     }
                 );
                 if (affectedRows != 1)
