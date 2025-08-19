@@ -24,8 +24,8 @@ public static class PublicController
         app.MapPut("account/{id}", ChangeAccountPassword);
         app.MapDelete("account/{id}", RemoveAccount);
         app.MapPost("account", SignUpAccount);
-        app.MapPost("get/fulltime/filter/{id}", GetFullLogByFilterConditions);
-        app.MapPost("get/full/filter/{id}", GetLogByFilterConditions);
+        app.MapPost("get/fulltime/filter", GetFullLogByFilterConditions);
+        app.MapPost("get/full/filter", GetLogByFilterConditions);
         return app;
     }
 
