@@ -143,8 +143,8 @@ export class HomeComponent implements OnInit {
     this.barsocket = webSocket<totalStationName[]>(environment.wsServerURI + `/ws/sumrevenue?token=${localStorage.getItem('jwt')}`);
     this.barsocket.subscribe({
       next: (res) => {
-        console.log('bar Chart date Websocket connected');
-        console.log("✔️ bar data: ", res);
+        // console.log('bar Chart date Websocket connected');
+        // console.log("✔️ bar data: ", res);
         const filtered = res.filter(s => s.TotalRevenue > 0 || s.TotalProfit > 0);
         this.stationId = filtered.map(item => item.StationId);
         this.station = filtered.map(item => item.StationName);
@@ -178,7 +178,7 @@ export class HomeComponent implements OnInit {
           TotalRevenue: data.TotalRevenue,
           TotalProfit: data.TotalProfit
         };
-        console.log('✔️ Received data:', this.revenueData);
+        // console.log('✔️ Received data:', this.revenueData);
       },
       error: (err) => {
         console.error('WebSocket error:', err);
@@ -190,7 +190,7 @@ export class HomeComponent implements OnInit {
     this.stationsocket.onopen = () => console.log('Station Websocket connected');
     this.stationsocket.onmessage = (event) => {
       const SumStation = JSON.parse(event.data);
-      console.log('✔️ Total stations:', SumStation);
+      // console.log('✔️ Total stations:', SumStation);
       this.stationData = SumStation;
     };
     this.stationsocket.onerror = (error) => console.error('Station Websocket error:', error);
@@ -201,8 +201,8 @@ export class HomeComponent implements OnInit {
     this.piecharsocket.subscribe({
       next: res => {
         this.totalNameData = res
-        console.log('Pie Chart date Websocket connected');
-        console.log("✔️ date data: ", res);
+        // console.log('Pie Chart date Websocket connected');
+        // console.log("✔️ date data: ", res);
         this.fuelname = this.totalNameData.map((item) => item.FuelName);
         this.totalamount = this.totalNameData.map((item) => item.TotalAmount);
         this.totalliters = this.totalNameData.map((item) => item.TotalLiters);
@@ -241,39 +241,32 @@ export class HomeComponent implements OnInit {
 
     // ✅ Load chart line sum revenue name
     const defaultColors = ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350', '#AB47BC', '#FFEB3B', '#26C6DA', '#8D6E63'];
-
     this.linecharsocket = webSocket<totalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday?token=${localStorage.getItem('jwt')}`);
+    console.log("url: ", this.linecharsocket);
     this.linecharsocket.subscribe({
       next: res => {
         this.totalDate = res;
         console.log('Line Chart date Websocket connected');
         console.log("✔️ line data: ", res);
         const dateSet = new Set<string>();
+        const stationMap = new Map<string, { [date: string]: number }>();
         this.totalDate.forEach(item => {
-          if (!item.Date) return;
+          if (!item.Date || !item.StationName) return; 
           const datePart = item.Date.split(' ')[0];
           const [month, day, year] = datePart.split('/');
           if (!month || !day || !year) return;
           const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           dateSet.add(isoString);
-        });
-        const sortedDates = Array.from(dateSet).sort((a, b) => {
-          return new Date(a).getTime() - new Date(b).getTime();
-        });
-        this.DataLable = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
-        const stationMap = new Map<string, { [date: string]: number }>();
-        this.totalDate.forEach(item => {
-          const normalizedDate = new Date(item.Date).toISOString().split("T")[0];
           if (!stationMap.has(item.StationName)) {
             stationMap.set(item.StationName, {});
           }
-          stationMap.get(item.StationName)![normalizedDate] = item.TotalRevenue;
+          stationMap.get(item.StationName)![isoString] = item.TotalRevenue;
         });
+        const sortedDates = Array.from(dateSet).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+        this.DataLable = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
+        console.log("data label: ", this.DataLable);
         const datasets = Array.from(stationMap.entries()).map(([station, values], index) => {
-          const data = sortedDates.map(date => {
-            const value = values[date];
-            return value === undefined ? null : value;
-          });
+          const data = sortedDates.map(date => values[date] ?? null); 
           return {
             label: station,
             data,
@@ -287,15 +280,14 @@ export class HomeComponent implements OnInit {
             spanGaps: true
           };
         });
-
         this.lineChartData = {
           labels: this.DataLable,
-          datasets: datasets
+          datasets
         };
-
+        console.log("==> stationMap: ", stationMap);
       },
       complete: () => console.log("WebSocket connection closed"),
-      error: err => { console.error(err); }
+      error: err => console.error(err)
     });
 
     // ✅ Load chart bar y sum revenue by type
@@ -303,8 +295,8 @@ export class HomeComponent implements OnInit {
     this.barycharsocket.subscribe({
       next: res => {
         this.totalLog = res
-        console.log('bar y Chart date Websocket connected');
-        console.log("✔️ bary data: ", res)
+        // console.log('bar y Chart date Websocket connected');
+        // console.log("✔️ bary data: ", res)
         this.chartBaryLogName = this.totalLog.map(item => item.LogTypeName);
         this.chartBaryDataAccounts = this.totalLog.map(item => item.TotalAmount);
         this.baryData = {

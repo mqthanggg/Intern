@@ -104,7 +104,7 @@ export class StationComponent implements OnInit, OnDestroy {
     this.sumRevenueByFuelNameSocket = webSocket<sumRevenueByName[]>(environment.wsServerURI + `/ws/shift/name/${this.id}?token=${localStorage.getItem('jwt')}`)
     this.sumRevenueByFuelNameSocket.subscribe({
       next: res => {
-        console.log("Received data:", res);
+        console.log("chart fuel data:", res);
          this.showLogs = true;
         this.chartLabels = res.map(item => item.FuelName);
         this.chartDataFuel = res.map(item => item.TotalLiters);
@@ -128,10 +128,10 @@ export class StationComponent implements OnInit, OnDestroy {
     this.sumRevenueByLogTypeSocket = webSocket<sumRevenueByLogType[]>(environment.wsServerURI + `/ws/shift/type/${this.id}?token=${localStorage.getItem('jwt')}`)
     this.sumRevenueByLogTypeSocket.subscribe({
       next: res => {
+        console.log("chart log data: ", res);
         this.showLogs = true;
         this.chartLabels = res.map(item => item.LogTypeName);
         this.chartDataAccount = res.map(item => item.TotalAmount);
-        this.chartDataFuel = res.map(item => item.TotalLiters);
         this.revenueChartData = {
           labels: this.chartLabels,
           datasets: [{

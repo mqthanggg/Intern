@@ -20,7 +20,7 @@ import { HttpClient } from '@angular/common/http';
 
 export class ReportStationComponent implements OnInit, OnDestroy {
     @Input() id: number = -1;
-    stationName: string [] = [];
+    stationName: string[] = [];
     options = {
         observe: 'response' as const,
         withCredentials: true
@@ -96,20 +96,18 @@ export class ReportStationComponent implements OnInit, OnDestroy {
     }
     constructor(private titleService: TitleService, private http: HttpClient, private router: Router) { }
     title: string = "";
-    
+
     ngOnInit(): void {
-                this.http.get<Station>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
-                    (res) => {
-                        console.log("data: ", res);
-                        console.log('StationName:', res.body?.name);
-                        this.SName = res.body?.name;
-                        this.titleService.updateTitle(this.SName || 'Station Name');
-                    },
-                    (error) => {
-                        console.error('Error:', error);
-                    }
-                );
-        
+        this.http.get<Station>(`${environment.serverURI}/station/${this.id}?token=${localStorage.getItem('jwt')}`, this.options).subscribe(
+            (res) => {
+                this.SName = res.body?.name;
+                this.titleService.updateTitle(this.SName || 'Station Name');
+            },
+            (error) => {
+                console.error('Error:', error);
+            }
+        );
+
         this.revenuesocket = webSocket<revenuestation[]>(environment.wsServerURI + `/ws/station/${this.id}?token=${localStorage.getItem('jwt')}`)
         this.revenuesocket.subscribe({
             next: res => {
@@ -121,7 +119,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 this.TotalLitters = this.DataLitters.reduce((acc, val) => acc + val, 0);
                 this.DataProfit = this.revstation.map((item) => item.TotalProfit);
                 this.totalProfit = this.DataProfit.reduce((acc, val) => acc + val, 0);
-                this.stationName=this.revstation.map((item) => item.StationName);
+                this.stationName = this.revstation.map((item) => item.StationName);
             },
         })
         this.loadBarChartDay();
@@ -144,9 +142,9 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                         const year = d.getFullYear();
                         const month = String(d.getMonth() + 1).padStart(2, '0');
                         const day = String(d.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`; 
+                        return `${year}-${month}-${day}`;
                     }
-                    return ''; 
+                    return '';
                 });
                 this.DayAccount = this.revstationday.map((item) => item.TotalRevenue);
                 this.DayProfit = this.revstationday.map((item) => item.TotalProfit);
@@ -185,7 +183,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             console.log('➡️ total revenue:', clickedRevenue);
             console.log('➡️ total profit', clickedProfit);
 
-            this.router.navigate(['user/home/report', clickedStationId,'day', clickedDate]);
+            this.router.navigate(['user/home/report', clickedStationId, 'day', clickedDate]);
             console.log("url: ", this.router.url);
         }
     }
@@ -233,7 +231,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             console.log('🟡 Select month:', clickedMonth);
             console.log('➡️ total profit', clickedProfit);
 
-            this.router.navigate(['user/home/report', clickedStationId,'month', clickedMonth]);
+            this.router.navigate(['user/home/report', clickedStationId, 'month', clickedMonth]);
         }
     }
 
@@ -280,7 +278,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             const clickedYear = this.Year[chartIndex];
             console.log('Station Id: ', clickedStationId);
             console.log('Select year:', clickedYear);
-            this.router.navigate(['user/home/report', clickedStationId,'year', clickedYear]);
+            this.router.navigate(['user/home/report', clickedStationId, 'year', clickedYear]);
         }
     }
 

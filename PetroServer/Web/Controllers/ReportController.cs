@@ -38,7 +38,7 @@ public static class ReportController
         app.Map("ws/type", GetTotalRevenueByType7dayWS);
         app.Map("ws/sumrenuename", GetTotalRevenueByNameWS);
         app.Map("ws/sumrenuetype", GetTotalRevenueByTypeWS);
-        app.Map("ws/sumrevenueday", GetTotalRevenueDayWS);
+        app.Map("ws/sumrevenueday", GetTotalRevenue7DayWS);   // ====
         app.Map("ws/station/{id}", GetSumRevenueByStationWS);
         app.Map("ws/shift/type/{id}", GetSumRevenueShiftByTypeWS);
         app.Map("ws/shift/name/{id}", GetSumRevenueShiftByNameWS);
@@ -63,28 +63,6 @@ public static class ReportController
         app.Map("ws/pagelog/station/{id}", GetPageLogByStationWS);
         return app;
     }
-
-    // [Authorize]
-    // [Permission("user")]
-    // [ProducesResponseType(typeof(List<SumRevenueStation7Day>), 200)]
-    // [ProducesResponseType(StatusCodes.Status404NotFound)]
-    // [SwaggerOperation(
-    //     Summary = "Report total of revenue by day",
-    //     Description = "Report total of revenue by day"
-    // )]
-    // public static async Task<IResult> GetTotalRevenue7Day(IRevenueRepository revenueRepository)
-    // {
-    //     try
-    //     {
-    //         var res = await revenueRepository.GetRevenue7dayAsync();
-    //         return TypedResults.Ok(res);
-    //     }
-    //     catch (PostgresException)
-    //     {
-    //         return TypedResults.InternalServerError();
-    //     }
-    // }
-
     //======================== HTTP =============================
     [Authorize]
     [Permission("user")]
@@ -1614,10 +1592,9 @@ public static class ReportController
         Summary = "Obtain web socket for total of revenue by day",
         Description = "Return a web socket for total of revenue by day"
     )]
-    public static async Task GetTotalRevenueDayWS(HttpContext context, [FromQuery] string token,
-        [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
+    public static async Task GetTotalRevenue7DayWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService, [FromServices] IRevenueRepository revenueRepository)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1637,7 +1614,7 @@ public static class ReportController
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                     previousJson = currentJson;
                 }
-                if (socket.State != WebSocketState.Open && !jWTService.Verify(token))
+                if (socket.State != WebSocketState.Open)
                     break;
                 var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
@@ -1654,16 +1631,60 @@ public static class ReportController
         }
     }
 
+    // public static async Task GetTotalRevenueDayWS(HttpContext context, [FromServices] IRevenueRepository revenueRepository,
+    //     [FromQuery] string token,  [FromServices] IJWTService jWTService)
+    // {
+    //     if (!context.WebSockets.IsWebSocketRequest)
+    //     {
+    //         context.Response.StatusCode = 400; // Không phải WebSocket
+    //         return;
+    //     }
+
+    //     if (!jWTService.Verify(token))
+    //     {
+    //         context.Response.StatusCode = 401; // Token không hợp lệ
+    //         return;
+    //     }
+    //     var socket = await context.WebSockets.AcceptWebSocketAsync();
+    //     var receiveBuffer = new byte[1024 * 4];
+    //     string? previousJson = null;
+    //     try
+    //     {
+    //         while (socket.State == WebSocketState.Open)
+    //         {
+    //             var result = await revenueRepository.GetTotalRevenueByDayAsync();
+    //             var currentJson = JsonSerializer.Serialize(result);
+    //             if (currentJson != previousJson)
+    //             {
+    //                 var buffer = System.Text.Encoding.UTF8.GetBytes(currentJson);
+    //                 await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+    //                 previousJson = currentJson;
+    //             }
+    //             if (socket.State != WebSocketState.Open)
+    //                 break;
+    //             var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+    //             var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
+    //             if (completedTask == receiveTask && receiveTask.Result.MessageType == WebSocketMessageType.Close)
+    //             {
+    //                 await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", CancellationToken.None);
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         TypedResults.NotFound(ex);
+    //     }
+    // }
+
     [SwaggerOperation(
         Summary = "Obtain web socket for total type for shift",
         Description = "Return a web socket for total revenue statistics for the current shift by type"
     )]
     public static async Task GetSumRevenueShiftByTypeWS(HttpContext context, [FromQuery] string token,  [FromServices] IJWTService jWTService,
-        [FromRoute] int id,
-        [FromServices] IRevenueRepository revenueRepository,
-        [FromServices] ILogger<object> logger)
+        [FromRoute] int id, [FromServices] IRevenueRepository revenueRepository, [FromServices] ILogger<object> logger)
     {
-        if (!context.WebSockets.IsWebSocketRequest)
+        if (!context.WebSockets.IsWebSocketRequest && !jWTService.Verify(token))
         {
             context.Response.StatusCode = 400;
             return;
@@ -1684,7 +1705,7 @@ public static class ReportController
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
                     previousJson = currentJson;
                 }
-                if (socket.State != WebSocketState.Open && !jWTService.Verify(token))
+                if (socket.State != WebSocketState.Open)
                     break;
                 var receiveTask = socket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
                 var completedTask = await Task.WhenAny(receiveTask, Task.Delay(3000));  // delay 3s
