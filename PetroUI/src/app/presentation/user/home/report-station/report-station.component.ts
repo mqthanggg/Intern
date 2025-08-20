@@ -178,13 +178,13 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             const clickedDate = this.Day[chartIndex];
             const clickedRevenue = this.DayAccount[chartIndex];
             const clickedProfit = this.DayProfit[chartIndex];
-            console.log('Station Id: ', clickedStationId);
-            console.log('🟡 Select day:', clickedDate);
-            console.log('➡️ total revenue:', clickedRevenue);
-            console.log('➡️ total profit', clickedProfit);
+            // console.log('Station Id: ', clickedStationId);
+            // console.log('🟡 Select day:', clickedDate);
+            // console.log('➡️ total revenue:', clickedRevenue);
+            // console.log('➡️ total profit', clickedProfit);
 
             this.router.navigate(['user/home/report', clickedStationId, 'day', clickedDate]);
-            console.log("url: ", this.router.url);
+            // console.log("url: ", this.router.url);
         }
     }
     loadBarChartMonth() {
@@ -197,7 +197,7 @@ export class ReportStationComponent implements OnInit, OnDestroy {
                 this.Month = this.revstationmonth.map((item) => item.Month);
                 this.MonthAccount = this.revstationmonth.map((item) => item.TotalRevenue);
                 this.MonthProfit = this.revstationmonth.map((item) => item.TotalProfit);
-                console.log("dt: ", this.MonthAccount);
+                // console.log("dt: ", this.MonthAccount);
                 this.barChartData = {
                     labels: this.Month,
                     datasets: [
@@ -227,9 +227,9 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             const clickedStationId = this.StationId[chartIndex];
             const clickedMonth = this.Month[chartIndex];
             const clickedProfit = this.MonthProfit[chartIndex];
-            console.log('Station Id: ', clickedStationId);
-            console.log('🟡 Select month:', clickedMonth);
-            console.log('➡️ total profit', clickedProfit);
+            // console.log('Station Id: ', clickedStationId);
+            // console.log('🟡 Select month:', clickedMonth);
+            // console.log('➡️ total profit', clickedProfit);
 
             this.router.navigate(['user/home/report', clickedStationId, 'month', clickedMonth]);
         }
@@ -240,8 +240,8 @@ export class ReportStationComponent implements OnInit, OnDestroy {
         this.revenueyearsocket.subscribe({
             next: res => {
                 this.revstationyear = res
-                console.log('Bar Chart year Websocket connected');
-                console.log("year data: ", res)
+                // console.log('Bar Chart year Websocket connected');
+                // console.log("year data: ", res)
                 const dateSet = new Set<string>();
                 res.forEach(item => dateSet.add(item.Year));
                 const sortedDates = Array.from(dateSet).sort();
@@ -276,8 +276,8 @@ export class ReportStationComponent implements OnInit, OnDestroy {
             const chartIndex = chartElement.index;
             const clickedStationId = this.StationId[chartIndex];
             const clickedYear = this.Year[chartIndex];
-            console.log('Station Id: ', clickedStationId);
-            console.log('Select year:', clickedYear);
+            // console.log('Station Id: ', clickedStationId);
+            // console.log('Select year:', clickedYear);
             this.router.navigate(['user/home/report', clickedStationId, 'year', clickedYear]);
         }
     }

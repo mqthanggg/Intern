@@ -53,14 +53,14 @@ export class ReportComponent implements OnChanges {
   ngOnInit(): void {
     this.date = this.router.snapshot.params['date'];
     this.id = this.router.parent?.snapshot.params['id'] ?? '';
-    console.log("date: ", this.date, "- ", this.id);
+    // console.log("date: ", this.date, "- ", this.id);
 
     this.piechartfueldaysocket = webSocket<revenuefuel[]>(environment.wsServerURI + `/ws/sumrenuename/getdate/${this.id}/${this.date}?token=${localStorage.getItem('jwt')}`);
     this.piechartfueldaysocket.subscribe({
       next: res => {
         this.revfuelday = res;
-        console.log('==> Pie Chart Websocket connected');
-        console.log('==> data name data:', res);
+        // console.log('==> Pie Chart Websocket connected');
+        // console.log('==> data name data:', res);
         this.DayFuelName = this.revfuelday.map((item) => item.FuelName);
         this.DayTotalLiters = this.revfuelday.map((item) => item.TotalLiters);
         this.pieChartFuelDateData = {
@@ -80,8 +80,8 @@ export class ReportComponent implements OnChanges {
     this.piecharttypedaysocket.subscribe({
       next: res => {
         this.revtypeday = res
-        console.log('Pie Chart date type Websocket connected');
-        console.log("date type data: ", res);
+        // console.log('Pie Chart date type Websocket connected');
+        // console.log("date type data: ", res);
         this.DayTypeName = this.revtypeday.map((item) => item.LogTypeName);
         this.Date = this.revtypeday.map((item) => item.Date);
         this.DayTotalAmount = this.revtypeday.map((item) => item.TotalAmount);

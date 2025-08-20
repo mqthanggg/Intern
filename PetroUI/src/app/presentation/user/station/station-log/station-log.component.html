@@ -39,22 +39,22 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div>
       <label class="block mb-1 font-semibold">From Date</label>
-      <input type="date" [(ngModel)]="startDate" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="date" [(ngModel)]="startDate" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">To Date</label>
-      <input type="date" [(ngModel)]="endDate" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="date" [(ngModel)]="endDate" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">From Price</label>
-      <input type="text" [(ngModel)]="startPrice" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="startPrice" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">To Price</label>
-      <input type="text" [(ngModel)]="endPrice" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="endPrice" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
   </div>
@@ -62,22 +62,22 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div>
       <label class="block mb-1 font-semibold">From Total Amount</label>
-      <input type="text" [(ngModel)]="startAmount" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="startAmount" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">To Total Amount</label>
-      <input type="text" [(ngModel)]="endAmount" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="endAmount" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">From Total Liters</label>
-      <input type="text" [(ngModel)]="startLiter"  (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="startLiter"  [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
     <div>
       <label class="block mb-1 font-semibold">To Total Liters</label>
-      <input type="text" [(ngModel)]="endLiter" (keydown.enter)="loadLogsByFullFilter(1)"
+      <input type="text" [(ngModel)]="endLiter" [@keydown.enter]="loadLogsByFullFilter(1)"
         class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
   </div>

@@ -242,12 +242,12 @@ export class HomeComponent implements OnInit {
     // ✅ Load chart line sum revenue name
     const defaultColors = ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350', '#AB47BC', '#FFEB3B', '#26C6DA', '#8D6E63'];
     this.linecharsocket = webSocket<totalrevenue7day[]>(environment.wsServerURI + `/ws/sumrevenueday?token=${localStorage.getItem('jwt')}`);
-    console.log("url: ", this.linecharsocket);
+    // console.log("url: ", this.linecharsocket);
     this.linecharsocket.subscribe({
       next: res => {
         this.totalDate = res;
-        console.log('Line Chart date Websocket connected');
-        console.log("✔️ line data: ", res);
+        // console.log('Line Chart date Websocket connected');
+        // console.log("✔️ line data: ", res);
         const dateSet = new Set<string>();
         const stationMap = new Map<string, { [date: string]: number }>();
         this.totalDate.forEach(item => {
@@ -264,7 +264,6 @@ export class HomeComponent implements OnInit {
         });
         const sortedDates = Array.from(dateSet).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
         this.DataLable = sortedDates.map(date => new Date(date).toLocaleDateString('vi-VN'));
-        console.log("data label: ", this.DataLable);
         const datasets = Array.from(stationMap.entries()).map(([station, values], index) => {
           const data = sortedDates.map(date => values[date] ?? null); 
           return {
@@ -284,7 +283,6 @@ export class HomeComponent implements OnInit {
           labels: this.DataLable,
           datasets
         };
-        console.log("==> stationMap: ", stationMap);
       },
       complete: () => console.log("WebSocket connection closed"),
       error: err => console.error(err)

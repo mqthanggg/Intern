@@ -31,7 +31,7 @@ export class StationLogComponent implements OnChanges {
     items = [];
     pagedList: LogRecord[] = [];
     totalCount: number = 0;
-    pageSize: number = 20;
+    pageSize: number = 10;
     totalItems: number = 1;
     pagedLogs: PagedResult<LogRecord> | undefined;
 
@@ -94,6 +94,7 @@ export class StationLogComponent implements OnChanges {
     onPageChange(newPage: number) {
         this.loadLogsByFullFilter(newPage);
     }
+
     loadLogsByFullFilter(page: number): void {
         const filter: any = {
             stationId: this.id ?? null,
@@ -136,7 +137,8 @@ export class StationLogComponent implements OnChanges {
         this.loadLogsByDispenserName();
         this.loadLogsByFuelName();
         this.route.paramMap.subscribe(params => {
-            const page = +params.get('page')!;
+            const pageParam = params.get('page');
+            const page = pageParam ? +pageParam : 1;
             this.loadLogsByFullFilter(page);
         });
         this.http.get<StationRecord>(`${environment.serverURI}/station/${this.id}`, this.options).subscribe(
