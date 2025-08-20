@@ -24,10 +24,12 @@ services:
       POSTGRES_DB: "Intern"
       POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
-      TZ: "Asia/Bangkok"
-      PGTZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
+      PGTZ: "Asia/Saigon"
     command: |
       postgres 
+      -c max_connections=200
+      -c shared_buffers=512MB
       -c wal_level=replica 
       -c hot_standby=on 
       -c max_wal_senders=10 
@@ -52,7 +54,7 @@ services:
       DB_PASSWORD: "admin"
       DB_HOST: "database-primary"
       DB_NAME: "Intern"
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
     volumes:
       - ./Database/PgBouncer/pgbouncer_primary.ini:/etc/pgbouncer/pgbouncer.ini
       - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
@@ -72,8 +74,8 @@ services:
       PGPORT: 5433
       PGUSER: "replicator"
       PGPASSWORD: "admin123"
-      TZ: "Asia/Bangkok"
-      PGTZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
+      PGTZ: "Asia/Saigon"
     command: |
       sh -c "
         echo 'Starting base backup from primary...'
@@ -91,7 +93,7 @@ services:
               until ! pg_isready -h database-primary -d Intern -p 5432
               do
                 echo 'Replication on primary is healthy'
-                sleep 1
+                sleep 5
               done
             fi
             echo 'Primary is down. Promoting to master...'
@@ -101,7 +103,7 @@ services:
             while pg_isready -U replicator -h localhost -d Intern -p 5433
             do
               echo 'Replication after promoting is healthy'
-              sleep 1
+              sleep 5
               if pg_isready -h database-primary -d Intern -p 5432; then
                 echo 'Primary is back, stop promoting'
                 pg_ctl stop -D /var/lib/postgresql/data
@@ -130,7 +132,7 @@ services:
     environment:
       DB_USER: "replicator"
       DB_PASSWORD: "admin123"
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
     volumes:
       - ./Database/PgBouncer/pgbouncer_replica.ini:/etc/pgbouncer/pgbouncer.ini
       - ./Database/PgBouncer/init.sh:/usr/local/bin/init.sh
@@ -141,7 +143,7 @@ services:
     volumes:
       - ./Database/HAProxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
     ports:
       - "6001:6001"
       - "6002:6002"
@@ -161,9 +163,9 @@ services:
     networks:
       - petro-network
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Saigon"
       CLIENT_PFX_PATH: "certs/certificate.pfx"
       CLIENT_PFX_PASSWORD: "admin123"
       MOSQUITTO_USERNAME: "mqthanggg"
@@ -209,10 +211,10 @@ services:
     networks:
       - petro-network
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Saigon"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Saigon"
       DEVELOPMENT_AUTHORITY: "http://localhost:5180"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7159"
@@ -253,10 +255,10 @@ services:
     networks:
       - petro-network
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Saigon"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Saigon"
       DEVELOPMENT_AUTHORITY: "http://localhost:5181"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7160"
@@ -297,10 +299,10 @@ services:
     networks:
       - petro-network
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
       SCHEMA: "petro_application"
-      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Bangkok"
-      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Bangkok"
+      DBWRITE_CONNECTION_STRING: "Host=haproxy;Port=6001;Username=write_user;Password=write123;Database=Intern;Timezone=Asia/Saigon"
+      DBREAD_CONNECTION_STRING: "Host=haproxy;Port=6002;Username=read_user;Password=read123;Database=Intern;Timezone=Asia/Saigon"
       DEVELOPMENT_AUTHORITY: "http://localhost:5182"
       DEVELOPMENT_AUDIENCE: "http://localhost:5170"
       PRODUCTION_AUTHORITY: "https://localhost:7161"
@@ -340,7 +342,7 @@ services:
     networks:
       - petro-network
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "https://0.0.0.0:7149;http://0.0.0.0:5170"
       ASPNETCORE_Kestrel__Certificates__Default__Password: "admin123"
@@ -381,7 +383,7 @@ services:
       - petro-network
     restart: no
     environment:
-      TZ: "Asia/Bangkok"
+      TZ: "Asia/Saigon"
     depends_on:
       yarp:
         condition: service_healthy
