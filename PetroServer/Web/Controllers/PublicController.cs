@@ -318,8 +318,9 @@ public static class PublicController
         {
             res = await stationRepository.DeleteAsync(new Station { StationId = id });
         }
-        catch (PostgresException)
-        {
+        catch (PostgresException ex)
+        {   
+            Console.WriteLine(ex);
             return TypedResults.InternalServerError();
         }
         if (res == 1)
@@ -402,8 +403,6 @@ public static class PublicController
         return TypedResults.Ok(res);
     }
     
-    [Authorize]
-    [Permission("administrator")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
@@ -462,7 +461,7 @@ public static class PublicController
         }
     }
 
-    [Permission("user")]
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -248,8 +248,8 @@ ALTER TABLE IF EXISTS petro_application.tank
 ALTER TABLE IF EXISTS petro_application.log
     ADD FOREIGN KEY (dispenser_id)
     REFERENCES petro_application.dispenser (dispenser_id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
     NOT VALID;
 
 ALTER TABLE IF EXISTS petro_application.receipt

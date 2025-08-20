@@ -40,12 +40,12 @@ public static class LogQuery
             @FuelName,
             @TotalLiters,
             @TotalAmount,
-            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00',
+            LOCALTIMESTAMP(0),
             @LogType,
             @CreatedBy,
-            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00',
+            now(),
             @LastModifiedBy,
-            LOCALTIMESTAMP(0) AT TIME ZONE '+07:00'
+            now()
         )
     ";
     public static readonly string UpdateLog = $@"
@@ -103,6 +103,79 @@ public static class LogQuery
         WHERE dp.station_id = @StationId
         ORDER BY log.time DESC 
     ";
+    // public static readonly string SelectPageLogByStationId = $@"
+    //     SELECT 
+    //         dp.name AS Name, 
+    //         log.fuel_name AS FuelName, 
+    //         log.total_liters AS TotalLiters, 
+    //         fuel.price AS Price, 
+    //         log.total_amount AS TotalAmount, 
+    //         log.time AS Time,
+    //         log.log_type AS LogType 
+    //     FROM {Schema}.log as log
+    //     INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+    //     INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+    //     WHERE dp.station_id = @StationId
+    //     ORDER BY log.time DESC 
+    //     OFFSET @Offset 
+    //     LIMIT @PageSize
+    // ";
+    // public static readonly string CountLogByStationId = $@"
+    //     SELECT 
+    //       COUNT(*)
+    //     FROM {Schema}.log as log
+    //     INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+    //     INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
+    //     WHERE dp.station_id = @StationId
+    // ";
+    
+    // public static readonly string SelectFullNullConditionFilterByStationBy = $@"
+    //     SELECT 
+    //         dp.name AS Name, 
+    //         log.fuel_name AS FuelName, 
+    //         log.total_liters AS TotalLiters, 
+    //         fuel.price AS Price, 
+    //         log.total_amount AS TotalAmount, 
+    //         log.""time"" AS Time,
+    //         log.log_type AS LogType 
+    //     FROM {Schema}.""log"" AS log
+    //     INNER JOIN {Schema}.dispenser AS dp ON dp.dispenser_id = log.dispenser_id 
+    //     INNER JOIN {Schema}.fuel AS fuel ON dp.fuel_id = fuel.fuel_id
+    //     WHERE dp.station_id = @StationId
+    //     AND (@Name IS NULL OR dp.name = @Name)
+    //     AND (@FuelName IS NULL OR log.fuel_name = @FuelName)
+    //     AND (@LogType IS NULL OR log.log_type = @LogType)
+    //     AND (@FromPrice IS NULL OR @ToPrice IS NULL OR fuel.price BETWEEN @FromPrice AND @ToPrice)
+    //     AND (@FromDate IS NULL OR @ToDate IS NULL OR log.""time"" BETWEEN @FromDate AND @ToDate)
+    //     AND (@FromAmount IS NULL OR @ToAmount IS NULL OR log.total_amount BETWEEN @FromAmount AND @ToAmount)
+    //     AND (@FromLiter IS NULL OR @ToLiter IS NULL OR log.total_liters BETWEEN @FromLiter AND @ToLiter)
+    //     ORDER BY log.""time"" DESC 
+    //     OFFSET @Offset 
+    //     LIMIT @PageSize
+    // ";
+    // public static readonly string SelectLogConditionFilterByStationBy = $@"
+    //     SELECT 
+    //         dp.name AS Name, 
+    //         log.fuel_name AS FuelName, 
+    //         log.total_liters AS TotalLiters, 
+    //         fuel.price AS Price, 
+    //         log.total_amount AS TotalAmount, 
+    //         log.""time"" AS Time,
+    //         log.log_type AS LogType 
+    //     FROM {Schema}.""log"" AS log
+    //     INNER JOIN {Schema}.dispenser AS dp ON dp.dispenser_id = log.dispenser_id 
+    //     INNER JOIN {Schema}.fuel AS fuel ON dp.fuel_id = fuel.fuel_id
+    //     WHERE dp.station_id = @StationId
+    //     AND (@Name IS NULL OR dp.name = @Name)
+    //     AND (@FuelName IS NULL OR log.fuel_name = @FuelName)
+    //     AND (@LogType IS NULL OR log.log_type = @LogType)
+    //     AND (@FromPrice IS NULL OR @ToPrice IS NULL OR fuel.price BETWEEN @FromPrice AND @ToPrice)
+    //     AND (@FromAmount IS NULL OR @ToAmount IS NULL OR log.total_amount BETWEEN @FromAmount AND @ToAmount)
+    //     AND (@FromLiter IS NULL OR @ToLiter IS NULL OR log.total_liters BETWEEN @FromLiter AND @ToLiter)
+    //     ORDER BY log.""time"" DESC 
+    //     OFFSET @Offset 
+    //     LIMIT @PageSize
+    // ";
     public static readonly string SelectPageLogByStationId = $@"
         SELECT 
             dp.name AS Name, 
@@ -113,16 +186,25 @@ public static class LogQuery
             log.time AS Time,
             log.log_type AS LogType 
         FROM {Schema}.log as log
-        INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
+        INNER JOIN (
+            SELECT 
+                log_id
+            FROM {Schema}.log as l2
+            INNER JOIN {Schema}.dispenser as dp2 
+            ON 
+                dp2.dispenser_id = l2.dispenser_id
+            AND
+                dp2.station_id = @StationId
+            ORDER BY l2.time DESC 
+            OFFSET @Offset 
+            LIMIT @PageSize
+        ) AS tmp USING (log_id)
+        INNER JOIN {Schema}.dispenser as dp ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
-        WHERE dp.station_id = @StationId
-        ORDER BY log.time DESC 
-        OFFSET @Offset 
-        LIMIT @PageSize
     ";
     public static readonly string CountLogByStationId = $@"
         SELECT 
-          COUNT(*)
+          COUNT(1)
         FROM {Schema}.log as log
         INNER JOIN {Schema}.dispenser as dp  ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel as fuel ON dp.fuel_id = fuel.fuel_id
@@ -136,22 +218,33 @@ public static class LogQuery
             log.total_liters AS TotalLiters, 
             fuel.price AS Price, 
             log.total_amount AS TotalAmount, 
-            log.""time"" AS Time,
+            log.time AS Time,
             log.log_type AS LogType 
-        FROM {Schema}.""log"" AS log
+        FROM {Schema}.log AS log
+        INNER JOIN (
+            SELECT 
+                log_id
+            FROM {Schema}.log AS l2
+            INNER JOIN {Schema}.dispenser AS dp2 
+            ON 
+                dp2.dispenser_id = l2.dispenser_id 
+            AND
+                dp2.station_id = @StationId
+            INNER JOIN {Schema}.fuel AS f2 
+            ON dp2.fuel_id = f2.fuel_id
+            AND (@Name IS NULL OR dp2.name = @Name)
+            AND (@FuelName IS NULL OR l2.fuel_name = @FuelName)
+            AND (@LogType IS NULL OR l2.log_type = @LogType)
+            AND (@FromPrice IS NULL OR @ToPrice IS NULL OR f2.price BETWEEN @FromPrice AND @ToPrice)
+            AND (@FromDate IS NULL OR @ToDate IS NULL OR l2.time BETWEEN @FromDate AND @ToDate)
+            AND (@FromAmount IS NULL OR @ToAmount IS NULL OR l2.total_amount BETWEEN @FromAmount AND @ToAmount)
+            AND (@FromLiter IS NULL OR @ToLiter IS NULL OR l2.total_liters BETWEEN @FromLiter AND @ToLiter)
+            ORDER BY l2.time DESC 
+            OFFSET @Offset 
+            LIMIT @PageSize
+        ) AS tmp USING (log_id)
         INNER JOIN {Schema}.dispenser AS dp ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel AS fuel ON dp.fuel_id = fuel.fuel_id
-        WHERE dp.station_id = @StationId
-        AND (@Name IS NULL OR dp.name = @Name)
-        AND (@FuelName IS NULL OR log.fuel_name = @FuelName)
-        AND (@LogType IS NULL OR log.log_type = @LogType)
-        AND (@FromPrice IS NULL OR @ToPrice IS NULL OR fuel.price BETWEEN @FromPrice AND @ToPrice)
-        AND (@FromDate IS NULL OR @ToDate IS NULL OR log.""time"" BETWEEN @FromDate AND @ToDate)
-        AND (@FromAmount IS NULL OR @ToAmount IS NULL OR log.total_amount BETWEEN @FromAmount AND @ToAmount)
-        AND (@FromLiter IS NULL OR @ToLiter IS NULL OR log.total_liters BETWEEN @FromLiter AND @ToLiter)
-        ORDER BY log.""time"" DESC 
-        OFFSET @Offset 
-        LIMIT @PageSize
     ";
     public static readonly string SelectLogConditionFilterByStationBy = $@"
         SELECT 
@@ -160,20 +253,33 @@ public static class LogQuery
             log.total_liters AS TotalLiters, 
             fuel.price AS Price, 
             log.total_amount AS TotalAmount, 
-            log.""time"" AS Time,
+            log.time AS Time,
             log.log_type AS LogType 
-        FROM {Schema}.""log"" AS log
+        FROM {Schema}.log AS log
+        INNER JOIN (
+            SELECT
+                log_id
+            FROM {Schema}.log as l2
+            INNER JOIN {Schema}.dispenser AS dp2 
+            ON 
+                dp2.dispenser_id = l2.dispenser_id 
+            AND
+                dp2.station_id = @StationId
+            INNER JOIN {Schema}.fuel AS f2 
+            ON 
+                dp2.fuel_id = f2.fuel_id
+            AND (@Name IS NULL OR dp2.name = @Name)
+            AND (@FuelName IS NULL OR l2.fuel_name = @FuelName)
+            AND (@LogType IS NULL OR l2.log_type = @LogType)
+            AND (@FromPrice IS NULL OR @ToPrice IS NULL OR f2.price BETWEEN @FromPrice AND @ToPrice)
+            AND (@FromAmount IS NULL OR @ToAmount IS NULL OR l2.total_amount BETWEEN @FromAmount AND @ToAmount)
+            AND (@FromLiter IS NULL OR @ToLiter IS NULL OR l2.total_liters BETWEEN @FromLiter AND @ToLiter)
+            ORDER BY l2.time DESC 
+            OFFSET @Offset 
+            LIMIT @PageSize
+        ) AS tmp USING (log_id)
         INNER JOIN {Schema}.dispenser AS dp ON dp.dispenser_id = log.dispenser_id 
         INNER JOIN {Schema}.fuel AS fuel ON dp.fuel_id = fuel.fuel_id
-        WHERE dp.station_id = @StationId
-        AND (@Name IS NULL OR dp.name = @Name)
-        AND (@FuelName IS NULL OR log.fuel_name = @FuelName)
-        AND (@LogType IS NULL OR log.log_type = @LogType)
-        AND (@FromPrice IS NULL OR @ToPrice IS NULL OR fuel.price BETWEEN @FromPrice AND @ToPrice)
-        AND (@FromAmount IS NULL OR @ToAmount IS NULL OR log.total_amount BETWEEN @FromAmount AND @ToAmount)
-        AND (@FromLiter IS NULL OR @ToLiter IS NULL OR log.total_liters BETWEEN @FromLiter AND @ToLiter)
-        ORDER BY log.""time"" DESC 
-        OFFSET @Offset 
-        LIMIT @PageSize
     ";
+
 }
