@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 public static class PublicController
 {
     public static WebApplication MapPublicController(this WebApplication app)
