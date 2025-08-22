@@ -90,14 +90,17 @@ export class HomeComponent implements OnInit {
           usePointStyle: true,
           pointStyle: 'line'
         }
-      }
+      },
     },
     elements: {
       point: { radius: 0 }
     },
     scales: {
       y: { beginAtZero: true }
-    }
+    },
+    animation: {
+      duration: 0
+    },
   };
 
   public PieBarChartOption: ChartOptions<'pie'> = {
@@ -119,6 +122,9 @@ export class HomeComponent implements OnInit {
     },
     scales: {
       x: { beginAtZero: true },
+    },
+    animation: {
+      duration: 0
     },
   }
 

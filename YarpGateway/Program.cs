@@ -25,7 +25,7 @@ app.UseEndpoints(endpoints =>
     });
 });
 
-app.UseWebSockets(new WebSocketOptions
+app.UseWebSockets(options: new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromSeconds(30)
 });
