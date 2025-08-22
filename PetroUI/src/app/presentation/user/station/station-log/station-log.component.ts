@@ -112,9 +112,9 @@ export class StationLogComponent implements OnChanges {
         };
         let apiUrl: string;
         if (this.startDate && this.endDate) {
-            apiUrl = environment.serverURI + `/get/fulltime/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
+            apiUrl = environment.serverURI + `/get/fulltime/filter?page=${page}&pageSize=${this.pageSize}`;
         } else {
-            apiUrl = environment.serverURI + `/get/full/filter/${this.id}?page=${page}&pageSize=${this.pageSize}`;
+            apiUrl = environment.serverURI + `/get/full/filter?page=${page}&pageSize=${this.pageSize}`;
         }
         this.http.post<PagedResult<LogRecord>>(apiUrl, filter, this.options)
             .subscribe({

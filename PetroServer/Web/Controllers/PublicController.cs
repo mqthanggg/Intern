@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 public static class PublicController
 {
     public static WebApplication MapPublicController(this WebApplication app)
@@ -24,8 +22,8 @@ public static class PublicController
         app.MapPut("account/{id}", ChangeAccountPassword);
         app.MapDelete("account/{id}", RemoveAccount);
         app.MapPost("account", SignUpAccount);
-        app.MapPost("get/fulltime/filter/{id}", GetFullLogByFilterConditions);
-        app.MapPost("get/full/filter/{id}", GetLogByFilterConditions);
+        app.MapPost("get/fulltime/filter", GetFullLogByFilterConditions);
+        app.MapPost("get/full/filter", GetLogByFilterConditions);
         return app;
     }
 
@@ -318,8 +316,9 @@ public static class PublicController
         {
             res = await stationRepository.DeleteAsync(new Station { StationId = id });
         }
-        catch (PostgresException)
-        {
+        catch (PostgresException ex)
+        {   
+            Console.WriteLine(ex);
             return TypedResults.InternalServerError();
         }
         if (res == 1)
@@ -402,8 +401,6 @@ public static class PublicController
         return TypedResults.Ok(res);
     }
     
-    [Authorize]
-    [Permission("administrator")]
     [ProducesResponseType(typeof(TokenResponse), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
@@ -462,8 +459,7 @@ public static class PublicController
         }
     }
 
-    [Authorize]
-    [Permission("user")]
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -610,7 +606,7 @@ public static class PublicController
                     {
                         UserId = id,
                         Password = NewHashedPassword,
-                        Padding = NewPadding
+                        Padding = NewPadding,
                     }
                 );
                 if (affectedRows != 1)

@@ -18,4 +18,7 @@ public class WebSocketHub : IWebSocketHubService{
     public HubConnection GetHubConnection(){
         return _connection;
     }
+    public async Task LeftDevice(string device, int id){
+        await _connection.InvokeAsync("LeftDevice", device, id);
+    }
 }

@@ -1,5 +1,3 @@
-using System.Text;
-
 public static class ReportController
 {
     public static WebApplication MapReport(this WebApplication app)
@@ -636,7 +634,7 @@ public static class ReportController
                 Console.WriteLine($"Websocket closed, reason: {e.Message}");
             }
             subscription.Dispose();
-            await connection.InvokeAsync("LeftDevice", device, id);
+            await hubService.LeftDevice(device, id);
             await hubService.StopAsync();
         }
     }

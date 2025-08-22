@@ -3,4 +3,5 @@ public interface IWebSocketHubService{
     Task StopAsync();
     HubConnection GetHubConnection();
     Task JoinDevice(string device, int id);
+    Task LeftDevice(string device, int id);
 }
